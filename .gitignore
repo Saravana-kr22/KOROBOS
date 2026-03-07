@@ -1,0 +1,31 @@
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+
+# Node environments
+node_modules/
+dist/
+.next/
+coverage/
+
+# Python environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.venv
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# User-specific configuration
+configs/*.env
+!configs/dev.env
+!configs/staging.env
+!configs/prod.env

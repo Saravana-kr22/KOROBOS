@@ -1,0 +1,31 @@
+# CortexOS Enterprise License Policy
+# Used by OSS Review Toolkit and License Guard
+
+policy:
+  version: "1.0"
+  description: "Enterprise open source license usage policy"
+
+licenses:
+  allowed:
+    - MIT
+    - Apache-2.0
+    - BSD
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - ISC
+    - Zlib
+    # The GNU Affero General Public License applies to CortexOS as a whole
+    - AGPL-3.0
+
+  restricted:
+    - GPL-2.0
+    - GPL-3.0
+    - LGPL-2.1
+    - LGPL-3.0
+    - MPL-2.0
+
+  blocked:
+    - Proprietary
+    - Commercial
+    - Commons-Clause
+    - SSPL-1.0
