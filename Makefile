@@ -6,8 +6,12 @@ setup:
 dev:
 	bash scripts/start_dev.sh
 
-test:
-	cd backend && poetry run pytest
+test: test-backend test-frontend
+
+test-backend:
+	cd backend && PYTHONPATH=..:gateway/api-gateway pytest tests/ -v
+
+test-frontend:
 	cd frontend && npm run test
 
 lint:

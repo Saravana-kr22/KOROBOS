@@ -6,5 +6,14 @@ Copyright (c) 2026 Saravana Perumal K
 Licensed under the GNU Affero General Public License v3.
 """
 
-# Event definitions for Notification Service
-# from backend.shared.messaging.schemas import BaseEvent
+from backend.shared.messaging.schemas import BaseEvent
+
+
+class NotificationSentEvent(BaseEvent):
+    event_type: str = "notification.sent"
+    source_service: str = "notification-service"
+
+
+class ReminderTriggeredEvent(BaseEvent):
+    event_type: str = "reminder.triggered"
+    source_service: str = "notification-service"
