@@ -26,4 +26,7 @@ seed-data:
 	bash scripts/seed_data.sh
 
 run:
-	docker-compose up -d
+	docker compose up -d
+
+stop:
+	bash scripts/stop_dev.sh

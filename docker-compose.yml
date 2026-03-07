@@ -1,4 +1,5 @@
 services:
+  # --- Infrastructure ---
   postgres:
     image: postgres:15
     environment:
@@ -40,7 +41,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://kafka:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -70,6 +71,195 @@ services:
       - "9001:9001"
     volumes:
       - minio_data:/data
+
+  # --- Application Microservices ---
+  api-gateway:
+    build:
+      context: backend/gateway/api-gateway
+    ports:
+      - "8080:8000"
+    environment:
+      - SERVICES_AUTH=http://auth-service:8000
+      - SERVICES_NOTES=http://notes-service:8000
+      - SERVICES_HABITS=http://habit-service:8000
+      - SERVICES_LEARNING=http://learning-service:8000
+      - SERVICES_HEALTH=http://health-service:8000
+      - SERVICES_ANALYTICS=http://analytics-service:8000
+      - SERVICES_NOTIFICATIONS=http://notification-service:8000
+      - SERVICES_AI=http://ai-service:8000
+    depends_on:
+      - auth-service
+      - notes-service
+      - habit-service
+      - learning-service
+      - health-service
+      - analytics-service
+      - notification-service
+      - ai-service
+
+  auth-service:
+    build:
+      context: backend
+      dockerfile: services/auth-service/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:9092
+      - JWT_SECRET=dev-secret-key
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  notes-service:
+    build:
+      context: backend
+      dockerfile: services/notes-service/Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:9092
+      - SEARCH_URL=http://meilisearch:7700
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  habit-service:
+    build:
+      context: backend
+      dockerfile: services/habit-service/Dockerfile
+    ports:
+      - "8002:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  learning-service:
+    build:
+      context: backend
+      dockerfile: services/learning-service/Dockerfile
+    ports:
+      - "8003:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  health-service:
+    build:
+      context: backend
+      dockerfile: services/health-service/Dockerfile
+    ports:
+      - "8004:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  analytics-service:
+    build:
+      context: backend
+      dockerfile: services/analytics-service/Dockerfile
+    ports:
+      - "8005:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  notification-service:
+    build:
+      context: backend
+      dockerfile: services/notification-service/Dockerfile
+    ports:
+      - "8006:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  ai-service:
+    build:
+      context: backend
+      dockerfile: services/ai-service/Dockerfile
+    ports:
+      - "8007:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  # --- Frontend Application ---
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+    tty: true
+    stdin_open: true
+    depends_on:
+      - api-gateway
 
 volumes:
   postgres_data:

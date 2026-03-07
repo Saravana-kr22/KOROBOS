@@ -61,7 +61,7 @@ Create the main project repository.
     ├── tools/
     ├── configs/
     │
-    ├── docker-compose.yml
+    ├── docker compose.yml
     ├── Makefile
     ├── README.md
     ├── .gitignore
@@ -214,7 +214,7 @@ Local stack must include:
 
 ------------------------------------------------------------------------
 
-## docker-compose.yml Example
+## docker compose.yml Example
 
     services:
 
@@ -466,7 +466,7 @@ Object storage running
 Sprint 1 is complete when:
 
 -   A developer can clone the repo
--   Run `docker-compose up`
+-   Run `docker compose up`
 -   Start backend services
 -   Start frontend application
 -   Access the platform locally

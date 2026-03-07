@@ -1,25 +1,55 @@
-#!/bin/bash
-set -e
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+echo "Cleaning up existing processes on CortexOS ports..."
+if command_exists fuser; then
+    fuser -k 8000/tcp 8001/tcp 8002/tcp 8003/tcp 8004/tcp 8005/tcp 8006/tcp 8007/tcp 9000/tcp 3000/tcp 2>/dev/null || true
+fi
+sleep 1
+
+# Cleanup function to kill all background processes
+cleanup() {
+    echo ""
+    echo "Stopping CortexOS development servers..."
+    for pid in "${PIDS[@]}"; do
+        if kill -0 "$pid" 2>/dev/null; then
+            kill "$pid" 2>/dev/null
+        fi
+    done
+    exit 0
+}
+
+# Set up trap for cleanup
+trap cleanup SIGINT SIGTERM
 
 echo "Starting CortexOS development servers..."
 
-# Start Backend (Auth Service as example)
-# In a real setup, we might use a process manager like Overmind/Foreman or Docker Compose for services.
-echo "Starting Auth Service on port 8000..."
-cd backend
-poetry run uvicorn services.auth-service.app.main:app --reload --port 8000 &
-BACKEND_PID=$!
-cd ..
+# Ensure poetry is in PATH if installed in default local location
+export PATH="$HOME/.local/bin:$PATH"
 
-# Start Frontend
-echo "Starting Next.js frontend on port 3000..."
-cd frontend
-npm run dev &
-FRONTEND_PID=$!
-cd ..
+# Start Everything via Docker Compose
+echo "Starting all CortexOS services and infrastructure..."
+docker compose up -d --build
 
-echo "Servers running. Press Ctrl+C to stop."
+echo ""
+echo "=================================================="
+echo "🚀 CortexOS is fully containerized and running!"
+echo "=================================================="
+echo "📦 Infrastructure:"
+echo "  - Postgres: localhost:5432"
+echo "  - Redis: localhost:6379"
+echo "  - Kafka: localhost:9092"
+echo "  - Meilisearch: localhost:7700"
+echo "  - MinIO: localhost:9000 (UI: 9001)"
+echo ""
+echo "🌐 Applications:"
+echo "  - Frontend UI    : http://localhost:3000"
+echo "  - API Gateway    : http://localhost:8080/health"
+echo "  - Auth Docs      : http://localhost:8000/docs"
+echo "=================================================="
+echo "Run 'make stop' to gracefully shut down the environment."
 
-# Wait for termination signal
-trap "kill $BACKEND_PID $FRONTEND_PID; exit" SIGINT SIGTERM
-wait
+# Wait forever (or until Ctrl+C)
+tail -f /dev/null

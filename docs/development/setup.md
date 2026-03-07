@@ -29,7 +29,7 @@ make run
 ```
 Verify all containers are up:
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 ## 4. Environment Variables
