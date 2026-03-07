@@ -1,0 +1,136 @@
+name: CortexOS CI Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop", "release/*" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository }}
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff black pytest mypy
+          if [ -f "backend/requirements.txt" ]; then pip install -r backend/requirements.txt; fi
+
+      - name: Lint with Ruff
+        run: ruff check .
+
+      - name: Check formatting with Black
+        run: black --check .
+
+      - name: Run unit tests
+        run: pytest backend/ --tb=short
+
+      - name: Lint Frontend
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm run lint
+
+  build-and-push:
+    needs: test-and-lint
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+
+    strategy:
+      matrix:
+        service: [
+          api-gateway,
+          auth-service,
+          notes-service,
+          habit-service,
+          learning-service,
+          health-service,
+          analytics-service,
+          notification-service,
+          ai-service,
+          frontend
+        ]
+        include:
+          - service: api-gateway
+            context: backend/gateway/api-gateway
+          - service: auth-service
+            context: backend/services/auth-service
+          - service: notes-service
+            context: backend/services/notes-service
+          - service: habit-service
+            context: backend/services/habit-service
+          - service: learning-service
+            context: backend/services/learning-service
+          - service: health-service
+            context: backend/services/health-service
+          - service: analytics-service
+            context: backend/services/analytics-service
+          - service: notification-service
+            context: backend/services/notification-service
+          - service: ai-service
+            context: backend/services/ai-service
+          - service: frontend
+            context: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_PREFIX }}/${{ matrix.service }}
+          tags: |
+            type=sha,format=short
+            type=ref,event=branch
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_PREFIX }}/${{ matrix.service }}:${{ github.ref_name }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

@@ -1,0 +1,68 @@
+# CortexOS Service Mesh Configuration
+# §5 Kubernetes Cluster Setup — Service Mesh (Istio)
+#
+# Install Istio with: istioctl install -f this-file.yaml
+
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: cortexos-istio
+  namespace: istio-system
+spec:
+  profile: default
+  meshConfig:
+    accessLogFile: /dev/stdout
+    enableTracing: true
+    defaultConfig:
+      tracing:
+        zipkin:
+          address: jaeger-collector.cortexos-monitoring:9411
+  components:
+    pilot:
+      k8s:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            type: LoadBalancer
+
+---
+# Enable Istio sidecar injection for CortexOS namespaces
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cortexos-dev
+  labels:
+    istio-injection: enabled
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cortexos-staging
+  labels:
+    istio-injection: enabled
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cortexos-prod
+  labels:
+    istio-injection: enabled
+
+---
+# PeerAuthentication — enforce mTLS across the mesh
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  mtls:
+    mode: STRICT

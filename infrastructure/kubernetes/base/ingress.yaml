@@ -1,0 +1,128 @@
+# CortexOS Ingress Controller Configuration
+# §5 Kubernetes Cluster Setup — Ingress Controller
+#
+# This uses the Istio Gateway + VirtualService pattern.
+# The Istio IngressGateway acts as the entry point.
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: cortexos-gateway
+  namespace: cortexos-dev
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*.cortexos.dev"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: cortexos-tls
+      hosts:
+        - "*.cortexos.dev"
+
+---
+# Route traffic to the API Gateway service
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: api-gateway
+  namespace: cortexos-dev
+spec:
+  hosts:
+    - "api.cortexos.dev"
+  gateways:
+    - cortexos-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /api/v1/auth
+      route:
+        - destination:
+            host: auth-service
+            port:
+              number: 8000
+    - match:
+        - uri:
+            prefix: /api/v1/notes
+      route:
+        - destination:
+            host: notes-service
+            port:
+              number: 8000
+    - match:
+        - uri:
+            prefix: /api/v1/habits
+      route:
+        - destination:
+            host: habit-service
+            port:
+              number: 8000
+    - match:
+        - uri:
+            prefix: /api/v1/learning
+      route:
+        - destination:
+            host: learning-service
+            port:
+              number: 8000
+    - match:
+        - uri:
+            prefix: /api/v1/health
+      route:
+        - destination:
+            host: health-service
+            port:
+              number: 8000
+    - match:
+        - uri:
+            prefix: /api/v1/analytics
+      route:
+        - destination:
+            host: analytics-service
+            port:
+              number: 8000
+    - match:
+        - uri:
+            prefix: /api/v1/notifications
+      route:
+        - destination:
+            host: notification-service
+            port:
+              number: 8000
+    - match:
+        - uri:
+            prefix: /api/v1/ai
+      route:
+        - destination:
+            host: ai-service
+            port:
+              number: 8000
+
+---
+# Frontend VirtualService
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: frontend
+  namespace: cortexos-dev
+spec:
+  hosts:
+    - "app.cortexos.dev"
+  gateways:
+    - cortexos-gateway
+  http:
+    - route:
+        - destination:
+            host: frontend
+            port:
+              number: 3000

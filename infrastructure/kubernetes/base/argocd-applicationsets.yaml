@@ -1,0 +1,95 @@
+# CortexOS ArgoCD ApplicationSet
+# Deploys all services to staging and production namespaces
+# §9 GitOps — Environment promotion: Dev → Staging → Prod
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cortexos-staging
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - service: auth-service
+          - service: notes-service
+          - service: habit-service
+          - service: learning-service
+          - service: health-service
+          - service: analytics-service
+          - service: notification-service
+          - service: ai-service
+  template:
+    metadata:
+      name: "{{service}}-staging"
+    spec:
+      project: cortexos
+      source:
+        repoURL: https://github.com/Saravana-kr22/CortexOS.git
+        targetRevision: main
+        path: "infrastructure/helm/charts/{{service}}"
+        helm:
+          valueFiles:
+            - values.yaml
+          parameters:
+            - name: config.environment
+              value: staging
+            - name: config.logLevel
+              value: INFO
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: cortexos-staging
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cortexos-production
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - service: auth-service
+          - service: notes-service
+          - service: habit-service
+          - service: learning-service
+          - service: health-service
+          - service: analytics-service
+          - service: notification-service
+          - service: ai-service
+  template:
+    metadata:
+      name: "{{service}}-production"
+    spec:
+      project: cortexos
+      source:
+        repoURL: https://github.com/Saravana-kr22/CortexOS.git
+        targetRevision: main
+        path: "infrastructure/helm/charts/{{service}}"
+        helm:
+          valueFiles:
+            - values.yaml
+          parameters:
+            - name: config.environment
+              value: production
+            - name: config.logLevel
+              value: WARNING
+            - name: autoscaling.minReplicas
+              value: "3"
+            - name: autoscaling.maxReplicas
+              value: "20"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: cortexos-prod
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false

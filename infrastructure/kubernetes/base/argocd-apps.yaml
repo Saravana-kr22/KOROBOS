@@ -1,0 +1,192 @@
+# CortexOS ArgoCD Application of Applications
+# §9 Continuous Deployment (GitOps)
+# Deployment flow: Developer push → CI build → Helm chart update → ArgoCD deploy
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: cortexos
+  namespace: argocd
+spec:
+  description: CortexOS Platform
+  sourceRepos:
+    - "*"
+  destinations:
+    - namespace: cortexos-dev
+      server: https://kubernetes.default.svc
+    - namespace: cortexos-staging
+      server: https://kubernetes.default.svc
+    - namespace: cortexos-prod
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+
+---
+# Auth Service
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: auth-service
+  namespace: argocd
+spec:
+  project: cortexos
+  source:
+    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    targetRevision: HEAD
+    path: infrastructure/helm/charts/auth-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cortexos-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Notes Service
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: notes-service
+  namespace: argocd
+spec:
+  project: cortexos
+  source:
+    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    targetRevision: HEAD
+    path: infrastructure/helm/charts/notes-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cortexos-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Habit Service
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: habit-service
+  namespace: argocd
+spec:
+  project: cortexos
+  source:
+    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    targetRevision: HEAD
+    path: infrastructure/helm/charts/habit-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cortexos-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Learning Service
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: learning-service
+  namespace: argocd
+spec:
+  project: cortexos
+  source:
+    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    targetRevision: HEAD
+    path: infrastructure/helm/charts/learning-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cortexos-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Health Service
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: health-service
+  namespace: argocd
+spec:
+  project: cortexos
+  source:
+    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    targetRevision: HEAD
+    path: infrastructure/helm/charts/health-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cortexos-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Analytics Service
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: analytics-service
+  namespace: argocd
+spec:
+  project: cortexos
+  source:
+    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    targetRevision: HEAD
+    path: infrastructure/helm/charts/analytics-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cortexos-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Notification Service
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: notification-service
+  namespace: argocd
+spec:
+  project: cortexos
+  source:
+    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    targetRevision: HEAD
+    path: infrastructure/helm/charts/notification-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cortexos-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# AI Service
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ai-service
+  namespace: argocd
+spec:
+  project: cortexos
+  source:
+    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    targetRevision: HEAD
+    path: infrastructure/helm/charts/ai-service
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cortexos-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

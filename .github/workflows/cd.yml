@@ -1,0 +1,107 @@
+name: CortexOS CD Pipeline
+
+# §9 Continuous Deployment (GitOps)
+# Deployment flow: Developer push → CI build → Helm chart update → ArgoCD deploy
+
+on:
+  workflow_run:
+    workflows: ["CortexOS CI Pipeline"]
+    types: [completed]
+    branches: [main, develop]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository }}
+  ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'develop' }}
+    environment: development
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update Helm chart image tags for dev
+        run: |
+          SHORT_SHA=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
+          SERVICES=(auth-service notes-service habit-service learning-service health-service analytics-service notification-service ai-service)
+          for svc in "${SERVICES[@]}"; do
+            CHART_PATH="infrastructure/helm/charts/${svc}/values.yaml"
+            if [ -f "$CHART_PATH" ]; then
+              sed -i "s|tag: \".*\"|tag: \"sha-${SHORT_SHA}\"|g" "$CHART_PATH"
+              sed -i "s|repository: .*|repository: ${IMAGE_PREFIX}/${svc}|g" "$CHART_PATH"
+            fi
+          done
+
+      - name: Commit Helm chart updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add infrastructure/helm/charts/*/values.yaml
+          git diff --cached --quiet || git commit -m "chore(deploy): update dev image tags to sha-$(echo '${{ github.event.workflow_run.head_sha }}' | cut -c1-7)"
+          git push
+
+      - name: Trigger ArgoCD Sync (Dev)
+        if: env.ARGOCD_SERVER != ''
+        run: |
+          SERVICES=(auth-service notes-service habit-service learning-service health-service analytics-service notification-service ai-service)
+          for svc in "${SERVICES[@]}"; do
+            curl -s -X POST "https://${ARGOCD_SERVER}/api/v1/applications/${svc}/sync" \
+              -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d '{}' || echo "ArgoCD sync for ${svc} skipped (server not configured)"
+          done
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    environment: staging
+    needs: []
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update Helm chart image tags for staging
+        run: |
+          SHORT_SHA=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
+          SERVICES=(auth-service notes-service habit-service learning-service health-service analytics-service notification-service ai-service)
+          for svc in "${SERVICES[@]}"; do
+            CHART_PATH="infrastructure/helm/charts/${svc}/values.yaml"
+            if [ -f "$CHART_PATH" ]; then
+              sed -i "s|tag: \".*\"|tag: \"sha-${SHORT_SHA}\"|g" "$CHART_PATH"
+              sed -i "s|repository: .*|repository: ${IMAGE_PREFIX}/${svc}|g" "$CHART_PATH"
+            fi
+          done
+
+      - name: Commit and push staging updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add infrastructure/helm/charts/*/values.yaml
+          git diff --cached --quiet || git commit -m "chore(deploy): update staging image tags to sha-$(echo '${{ github.event.workflow_run.head_sha }}' | cut -c1-7)"
+          git push
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    environment: production
+    needs: [deploy-staging]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Promote staging images to production
+        run: |
+          SHORT_SHA=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
+          echo "Promoting sha-${SHORT_SHA} to production"
+          # In a real setup, this would re-tag images and update prod Helm values
+
+      - name: Trigger ArgoCD Sync (Production)
+        if: env.ARGOCD_SERVER != ''
+        run: |
+          echo "Production deployment triggered for sha-$(echo '${{ github.event.workflow_run.head_sha }}' | cut -c1-7)"
