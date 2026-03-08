@@ -7,12 +7,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Assuming requirements.txt exists locally or will be created
-COPY requirements.txt ./
+# Copy requirements and install dependencies
+COPY gateway/api-gateway/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt || echo "No requirements.txt found or failed to install"
 
 # Copy service source code
-COPY . .
+COPY gateway/api-gateway/app /app/app
 
 # Expose typical gateway port
 EXPOSE 8000
