@@ -30,7 +30,9 @@ class HabitService:
 
     async def create_habit(self, user_id: UUID, data: HabitCreate) -> Habit:
         habit = await self.repo.create(
-            user_id=user_id, name=data.name, frequency=data.frequency,
+            user_id=user_id,
+            name=data.name,
+            frequency=data.frequency,
             description=data.description or "",
         )
         try:

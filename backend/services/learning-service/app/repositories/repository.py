@@ -73,13 +73,11 @@ class LearningRepository:
             .select_from(LearningSession)
             .where(LearningSession.user_id == user_id)
         )
-        minutes_q = (
-            select(func.coalesce(func.sum(LearningSession.duration), 0))
-            .where(LearningSession.user_id == user_id)
+        minutes_q = select(func.coalesce(func.sum(LearningSession.duration), 0)).where(
+            LearningSession.user_id == user_id
         )
-        topics_q = (
-            select(distinct(LearningSession.topic))
-            .where(LearningSession.user_id == user_id)
+        topics_q = select(distinct(LearningSession.topic)).where(
+            LearningSession.user_id == user_id
         )
 
         total = (await self.session.execute(total_q)).scalar_one()

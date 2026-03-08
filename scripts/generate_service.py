@@ -31,7 +31,9 @@ Licensed under the GNU Affero General Public License v3.
 def generate_service(service_name: str):
     """Generate a new microservice directory structure."""
     label = service_name.replace("-", " ").title().replace(" ", " ")
-    class_name = service_name.replace("-service", "").replace("-", " ").title().replace(" ", "")
+    class_name = (
+        service_name.replace("-service", "").replace("-", " ").title().replace(" ", "")
+    )
     base_dir = os.path.join("backend", "services", service_name, "app")
 
     dirs = [
@@ -52,11 +54,11 @@ def generate_service(service_name: str):
         init_path = os.path.join(d, "__init__.py")
         if not os.path.exists(init_path):
             with open(init_path, "w") as f:
-                f.write(f'{HEADER}\n')
+                f.write(f"{HEADER}\n")
 
     # main.py
     with open(os.path.join(base_dir, "main.py"), "w") as f:
-        f.write(textwrap.dedent(f'''\
+        f.write(textwrap.dedent(f"""\
             {HEADER}
 
             from contextlib import asynccontextmanager
@@ -109,11 +111,11 @@ def generate_service(service_name: str):
             @app.get("/metrics")
             async def metrics():
                 return {{"status": "success", "data": {{"service": "{service_name}", "version": "1.0.0"}}}}
-        '''))
+        """))
 
     # routes.py
     with open(os.path.join(base_dir, "api", "routes.py"), "w") as f:
-        f.write(textwrap.dedent(f'''\
+        f.write(textwrap.dedent(f"""\
             {HEADER}
 
             from fastapi import APIRouter
@@ -124,27 +126,37 @@ def generate_service(service_name: str):
             @router.get("/", tags=["{label}"])
             async def root():
                 return {{"service": "{service_name}", "status": "running"}}
-        '''))
+        """))
 
     # model.py
     with open(os.path.join(base_dir, "models", "model.py"), "w") as f:
-        f.write(f'{HEADER}\n\n# ORM models for {label}\n# from backend.shared.database.base_model import Base, TimestampMixin\n')
+        f.write(
+            f"{HEADER}\n\n# ORM models for {label}\n# from backend.shared.database.base_model import Base, TimestampMixin\n"
+        )
 
     # schema.py
     with open(os.path.join(base_dir, "schemas", "schema.py"), "w") as f:
-        f.write(f'{HEADER}\n\nfrom pydantic import BaseModel\n\n\nclass {class_name}Base(BaseModel):\n    """Base schema for {label}."""\n    pass\n')
+        f.write(
+            f'{HEADER}\n\nfrom pydantic import BaseModel\n\n\nclass {class_name}Base(BaseModel):\n    """Base schema for {label}."""\n    pass\n'
+        )
 
     # repository.py
     with open(os.path.join(base_dir, "repositories", "repository.py"), "w") as f:
-        f.write(f'{HEADER}\n\n\nclass {class_name}Repository:\n    """Data access layer for {label}."""\n    pass\n')
+        f.write(
+            f'{HEADER}\n\n\nclass {class_name}Repository:\n    """Data access layer for {label}."""\n    pass\n'
+        )
 
     # service_logic.py
     with open(os.path.join(base_dir, "services", "service_logic.py"), "w") as f:
-        f.write(f'{HEADER}\n\n\nclass {class_name}Service:\n    """Core business logic for {label}."""\n    pass\n')
+        f.write(
+            f'{HEADER}\n\n\nclass {class_name}Service:\n    """Core business logic for {label}."""\n    pass\n'
+        )
 
     # events.py
     with open(os.path.join(base_dir, "events", "events.py"), "w") as f:
-        f.write(f'{HEADER}\n\nfrom backend.shared.messaging.schemas import BaseEvent\n\n# Define event classes for {label} here\n')
+        f.write(
+            f"{HEADER}\n\nfrom backend.shared.messaging.schemas import BaseEvent\n\n# Define event classes for {label} here\n"
+        )
 
     # config/settings.py
     with open(os.path.join(base_dir, "config", "settings.py"), "w") as f:
@@ -168,11 +180,13 @@ def generate_service(service_name: str):
     # requirements.txt
     svc_dir = os.path.join("backend", "services", service_name)
     with open(os.path.join(svc_dir, "requirements.txt"), "w") as f:
-        f.write("fastapi==0.103.2\\nuvicorn[standard]==0.23.2\\nsqlalchemy[asyncio]==2.0.23\\nasyncpg==0.29.0\\nredis==5.0.1\\naiokafka==0.10.0\\npydantic==2.5.3\\npydantic-settings==2.1.0\\npython-jose[cryptography]==3.3.0\\nalembic==1.13.1\\n")
+        f.write(
+            "fastapi==0.103.2\\nuvicorn[standard]==0.23.2\\nsqlalchemy[asyncio]==2.0.23\\nasyncpg==0.29.0\\nredis==5.0.1\\naiokafka==0.10.0\\npydantic==2.5.3\\npydantic-settings==2.1.0\\npython-jose[cryptography]==3.3.0\\nalembic==1.13.1\\n"
+        )
 
     # Dockerfile
     with open(os.path.join(svc_dir, "Dockerfile"), "w") as f:
-        f.write(textwrap.dedent(f'''\
+        f.write(textwrap.dedent(f"""\
             # CortexOS — Copyright (c) 2026 Saravana Perumal K — AGPL v3
 
             FROM python:3.11-slim
@@ -190,7 +204,7 @@ def generate_service(service_name: str):
 
             EXPOSE 8000
             CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-        '''))
+        """))
 
     print(f"✅ Service '{service_name}' generated at {svc_dir}/")
     print("   Structure:")

@@ -38,20 +38,30 @@ class AnalyticsRepository:
     async def get_latest(
         self, user_id: UUID, metric_type: str
     ) -> Optional[AnalyticsMetric]:
-        q = select(AnalyticsMetric).where(
-            AnalyticsMetric.user_id == user_id,
-            AnalyticsMetric.metric_type == metric_type,
-        ).order_by(AnalyticsMetric.created_at.desc()).limit(1)
+        q = (
+            select(AnalyticsMetric)
+            .where(
+                AnalyticsMetric.user_id == user_id,
+                AnalyticsMetric.metric_type == metric_type,
+            )
+            .order_by(AnalyticsMetric.created_at.desc())
+            .limit(1)
+        )
         result = await self.session.execute(q)
         return result.scalar_one_or_none()
 
     async def list_by_type(
         self, user_id: UUID, metric_type: str, limit: int = 30
     ) -> list[AnalyticsMetric]:
-        q = select(AnalyticsMetric).where(
-            AnalyticsMetric.user_id == user_id,
-            AnalyticsMetric.metric_type == metric_type,
-        ).order_by(AnalyticsMetric.created_at.desc()).limit(limit)
+        q = (
+            select(AnalyticsMetric)
+            .where(
+                AnalyticsMetric.user_id == user_id,
+                AnalyticsMetric.metric_type == metric_type,
+            )
+            .order_by(AnalyticsMetric.created_at.desc())
+            .limit(limit)
+        )
         result = await self.session.execute(q)
         return list(result.scalars().all())
 

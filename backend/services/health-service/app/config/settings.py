@@ -11,7 +11,7 @@ from backend.shared.config.settings import CortexOSSettings
 
 class HealthSettings(CortexOSSettings):
     """Service-specific settings for Health Service."""
-    
+
     model_config = {
         "env_prefix": "HEALTH_",
         "env_file": ".env",

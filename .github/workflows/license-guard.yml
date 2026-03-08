@@ -47,7 +47,7 @@ jobs:
           cd backend
           pip install poetry poetry-plugin-export
           poetry export -f requirements.txt --output requirements.txt || pip freeze > requirements.txt
-          cyclonedx-py environment --outfile ../backend-sbom.json
+          cyclonedx-py environment -o ../backend-sbom.json
           cd ..
 
       - name: Upload SBOMs

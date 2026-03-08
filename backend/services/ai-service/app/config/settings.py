@@ -11,7 +11,7 @@ from backend.shared.config.settings import CortexOSSettings
 
 class AiSettings(CortexOSSettings):
     """Service-specific settings for Ai Service."""
-    
+
     model_config = {
         "env_prefix": "AI_",
         "env_file": ".env",

@@ -11,7 +11,7 @@ from backend.shared.config.settings import CortexOSSettings
 
 class NotificationSettings(CortexOSSettings):
     """Service-specific settings for Notification Service."""
-    
+
     model_config = {
         "env_prefix": "NOTIFICATION_",
         "env_file": ".env",

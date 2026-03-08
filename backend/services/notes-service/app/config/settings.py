@@ -11,7 +11,7 @@ from backend.shared.config.settings import CortexOSSettings
 
 class NotesSettings(CortexOSSettings):
     """Service-specific settings for Notes Service."""
-    
+
     model_config = {
         "env_prefix": "NOTES_",
         "env_file": ".env",

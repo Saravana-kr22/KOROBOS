@@ -33,17 +33,13 @@ class TestErrorResponse:
     """Tests for error_response."""
 
     def test_standard_error(self):
-        result = error_response(
-            code="RESOURCE_NOT_FOUND", message="Note not found"
-        )
+        result = error_response(code="RESOURCE_NOT_FOUND", message="Note not found")
         assert result["status"] == "error"
         assert result["error"]["code"] == "RESOURCE_NOT_FOUND"
         assert result["error"]["message"] == "Note not found"
 
     def test_validation_error(self):
-        result = error_response(
-            code="VALIDATION_ERROR", message="Invalid email format"
-        )
+        result = error_response(code="VALIDATION_ERROR", message="Invalid email format")
         assert result["status"] == "error"
         assert result["error"]["code"] == "VALIDATION_ERROR"
 

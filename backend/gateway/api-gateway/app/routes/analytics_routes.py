@@ -58,8 +58,11 @@ async def _proxy_request(request: Request, target_url: str) -> JSONResponse:
                     getattr(request.state, "roles", ["user"])
                 )
             response = await client.request(
-                method=request.method, url=target_url, headers=headers,
-                params=dict(request.query_params), content=await request.body(),
+                method=request.method,
+                url=target_url,
+                headers=headers,
+                params=dict(request.query_params),
+                content=await request.body(),
             )
             content_type = response.headers.get("content-type", "")
             if "application/json" in content_type:

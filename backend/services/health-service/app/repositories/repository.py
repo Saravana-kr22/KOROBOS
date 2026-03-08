@@ -84,14 +84,12 @@ class HealthRepository:
         )
         workouts = (await self.session.execute(workouts_q)).scalar_one()
 
-        cal_q = select(
-            func.coalesce(func.sum(HealthLog.calories), 0)
-        ).where(HealthLog.user_id == user_id)
+        cal_q = select(func.coalesce(func.sum(HealthLog.calories), 0)).where(
+            HealthLog.user_id == user_id
+        )
         total_cal = (await self.session.execute(cal_q)).scalar_one()
 
-        dur_q = select(
-            func.coalesce(func.sum(HealthLog.duration), 0)
-        ).where(
+        dur_q = select(func.coalesce(func.sum(HealthLog.duration), 0)).where(
             HealthLog.user_id == user_id,
             HealthLog.log_type == "workout",
         )

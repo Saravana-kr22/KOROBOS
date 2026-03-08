@@ -29,9 +29,7 @@ class Habit(Base, TimestampMixin):
         UUID(as_uuid=True), nullable=False, index=True
     )
     name: Mapped[str] = mapped_column(String(300), nullable=False)
-    frequency: Mapped[str] = mapped_column(
-        String(50), nullable=False, default="daily"
-    )
+    frequency: Mapped[str] = mapped_column(String(50), nullable=False, default="daily")
     description: Mapped[str] = mapped_column(Text, nullable=True, default="")
 
     logs: Mapped[list["HabitLog"]] = relationship(

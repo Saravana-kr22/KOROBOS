@@ -41,9 +41,7 @@ class HabitRepository:
         return habit
 
     async def get_by_id(self, habit_id: UUID) -> Optional[Habit]:
-        result = await self.session.execute(
-            select(Habit).where(Habit.id == habit_id)
-        )
+        result = await self.session.execute(select(Habit).where(Habit.id == habit_id))
         return result.scalar_one_or_none()
 
     async def list_by_user(
@@ -100,6 +98,7 @@ class HabitRepository:
             if log.log_date == expected:
                 streak += 1
                 from datetime import timedelta
+
                 expected -= timedelta(days=1)
             else:
                 break

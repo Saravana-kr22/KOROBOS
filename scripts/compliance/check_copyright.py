@@ -6,6 +6,7 @@ Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 """
+
 import os
 import re
 import sys
@@ -23,16 +24,19 @@ FORBIDDEN_PATTERNS = [
 # Standard Copyright format expected in some files, though not strictly required everywhere.
 # We are mainly looking for FORBIDDEN text here.
 
+
 def check_file(filepath):
     """Scans a file for forbidden closed-source/non-OSS patterns."""
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
 
             for pattern in FORBIDDEN_PATTERNS:
                 match = pattern.search(content)
                 if match:
-                    print(f"ERROR: Forbidden text '{match.group()}' found in {filepath}")
+                    print(
+                        f"ERROR: Forbidden text '{match.group()}' found in {filepath}"
+                    )
                     return False
     except UnicodeDecodeError:
         # Skip binary files if they sneak through
@@ -41,6 +45,7 @@ def check_file(filepath):
         print(f"WARNING: Could not process {filepath}: {e}")
 
     return True
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -58,8 +63,14 @@ if __name__ == "__main__":
             has_error = True
 
     if has_error:
-        msg1 = "Commit blocked: " + _PROP.capitalize() + " or " + _CONF + " text detected."
-        msg2 = "CortexOS relies on open source licensing. Please remove " + _PROP + " claims."
+        msg1 = (
+            "Commit blocked: " + _PROP.capitalize() + " or " + _CONF + " text detected."
+        )
+        msg2 = (
+            "CortexOS relies on open source licensing. Please remove "
+            + _PROP
+            + " claims."
+        )
         print("\n" + msg1)
         print(msg2)
         sys.exit(1)

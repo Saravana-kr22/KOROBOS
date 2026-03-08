@@ -11,7 +11,7 @@ from backend.shared.config.settings import CortexOSSettings
 
 class AnalyticsSettings(CortexOSSettings):
     """Service-specific settings for Analytics Service."""
-    
+
     model_config = {
         "env_prefix": "ANALYTICS_",
         "env_file": ".env",

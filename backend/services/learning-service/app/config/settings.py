@@ -11,7 +11,7 @@ from backend.shared.config.settings import CortexOSSettings
 
 class LearningSettings(CortexOSSettings):
     """Service-specific settings for Learning Service."""
-    
+
     model_config = {
         "env_prefix": "LEARNING_",
         "env_file": ".env",

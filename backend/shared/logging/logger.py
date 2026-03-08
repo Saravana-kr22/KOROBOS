@@ -92,9 +92,7 @@ def get_logger(
         handler.setFormatter(JSONFormatter())
     else:
         handler.setFormatter(
-            logging.Formatter(
-                "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
-            )
+            logging.Formatter("%(asctime)s | %(levelname)-8s | %(name)s | %(message)s")
         )
 
     logger.addHandler(handler)

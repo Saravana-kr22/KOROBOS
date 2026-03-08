@@ -58,9 +58,7 @@ async def lifespan(app: FastAPI):
     try:
         import redis.asyncio as aioredis
 
-        _redis_client = aioredis.from_url(
-            settings.redis_url, decode_responses=True
-        )
+        _redis_client = aioredis.from_url(settings.redis_url, decode_responses=True)
         await _redis_client.ping()
         logger.info("Redis connected for rate limiting")
     except Exception as exc:
@@ -148,19 +146,19 @@ async def prometheus_metrics():
         "# TYPE cortexos_gateway_requests_total counter",
     ]
     for path, count in _request_count.items():
-        safe = path.replace('"', '').replace('\\', '')
+        safe = path.replace('"', "").replace("\\", "")
         lines.append(f'cortexos_gateway_requests_total{{path="{safe}"}} {count}')
 
     lines.append("# HELP cortexos_gateway_errors_total Total number of error responses")
     lines.append("# TYPE cortexos_gateway_errors_total counter")
     for path, count in _error_count.items():
-        safe = path.replace('"', '').replace('\\', '')
+        safe = path.replace('"', "").replace("\\", "")
         lines.append(f'cortexos_gateway_errors_total{{path="{safe}"}} {count}')
 
     lines.append("# HELP cortexos_gateway_latency_seconds_total Cumulative latency")
     lines.append("# TYPE cortexos_gateway_latency_seconds_total counter")
     for path, total in _latency_sum.items():
-        safe = path.replace('"', '').replace('\\', '')
+        safe = path.replace('"', "").replace("\\", "")
         metric = f'cortexos_gateway_latency_seconds_total{{path="{safe}"}}'
         lines.append(f"{metric} {total:.4f}")
 

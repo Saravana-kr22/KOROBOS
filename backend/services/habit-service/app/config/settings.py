@@ -11,7 +11,7 @@ from backend.shared.config.settings import CortexOSSettings
 
 class HabitSettings(CortexOSSettings):
     """Service-specific settings for Habit Service."""
-    
+
     model_config = {
         "env_prefix": "HABIT_",
         "env_file": ".env",
