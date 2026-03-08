@@ -69,4 +69,7 @@ async def health_check():
 
 @app.get("/metrics")
 async def metrics():
-    return {"status": "success", "data": {"service": "notes-service", "version": "1.0.0"}}
+    return {
+        "status": "success",
+        "data": {"service": "notes-service", "version": "1.0.0"},
+    }

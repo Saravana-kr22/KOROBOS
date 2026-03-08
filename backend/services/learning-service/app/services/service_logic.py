@@ -23,11 +23,28 @@ class LearningService:
         self.repo = LearningRepository(session)
 
     async def log_session(self, user_id: UUID, data: LearningSessionCreate):
-        session = await self.repo.create(user_id=user_id, topic=data.topic, duration=data.duration, notes=data.notes or "")
+        session = await self.repo.create(
+            user_id=user_id,
+            topic=data.topic,
+            duration=data.duration,
+            notes=data.notes or "",
+        )
         try:
-            await send_event("learning.session.logged", {"event": "learning.session.logged", "payload": {"session_id": str(session.id), "user_id": str(user_id), "topic": data.topic, "duration": data.duration}}, key=str(user_id))
+            await send_event(
+                "learning.session.logged",
+                {
+                    "event": "learning.session.logged",
+                    "payload": {
+                        "session_id": str(session.id),
+                        "user_id": str(user_id),
+                        "topic": data.topic,
+                        "duration": data.duration,
+                    },
+                },
+                key=str(user_id),
+            )
         except Exception as exc:
-            logger.warning(f"Failed to publish learning.session.logged: {exc}")
+            logger.warning("Failed to publish learning.session.logged: %s", exc)
         return session
 
     async def get_session(self, session_id: UUID):

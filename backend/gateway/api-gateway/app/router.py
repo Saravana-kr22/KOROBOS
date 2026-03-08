@@ -37,7 +37,7 @@ api_router.include_router(health_router)
 api_router.include_router(analytics_router)
 
 
-# ── Generic catch-all proxy for remaining services ──────────────────────
+# -- Generic catch-all proxy for remaining services --
 
 
 @api_router.api_route(

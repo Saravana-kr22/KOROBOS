@@ -49,7 +49,12 @@ class AuthService:
         """Register a new user account."""
         existing = await self.repo.get_by_email(data.email)
         if existing:
-            log_audit_event("auth.signup", action="signup", status="failure", metadata={"email": data.email, "reason": "duplicate_email"})
+            log_audit_event(
+                "auth.signup",
+                action="signup",
+                status="failure",
+                metadata={"email": data.email, "reason": "duplicate_email"},
+            )
             raise ValueError("Email already registered")
 
         user = await self.repo.create(
@@ -64,7 +69,12 @@ class AuthService:
             roles=["admin"] if user.is_superuser else ["user"],
         )
 
-        log_audit_event("auth.signup", user_id=user.id, action="signup", status="success")
+        log_audit_event(
+            "auth.signup",
+            user_id=user.id,
+            action="signup",
+            status="success",
+        )
 
         try:
             await send_event(
@@ -85,7 +95,12 @@ class AuthService:
         user = await self.repo.get_by_email(data.email)
 
         if not user or not verify_password(data.password, user.hashed_password):
-            log_audit_event("auth.login", action="login", status="failure", metadata={"email": data.email, "reason": "invalid_credentials"})
+            log_audit_event(
+                "auth.login",
+                action="login",
+                status="failure",
+                metadata={"email": data.email, "reason": "invalid_credentials"},
+            )
             raise ValueError("Invalid email or password")
 
         token = create_access_token(

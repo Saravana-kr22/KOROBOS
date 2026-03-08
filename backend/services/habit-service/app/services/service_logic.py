@@ -36,18 +36,37 @@ class HabitService:
             description=data.description or "",
         )
         try:
-            await send_event("habit.created", {"event": "habit.created", "payload": {"habit_id": str(habit.id), "user_id": str(user_id)}}, key=str(user_id))
+            await send_event(
+                "habit.created",
+                {
+                    "event": "habit.created",
+                    "payload": {
+                        "habit_id": str(habit.id),
+                        "user_id": str(user_id),
+                    },
+                },
+                key=str(user_id),
+            )
         except Exception as exc:
-            logger.warning(f"Failed to publish habit.created: {exc}")
+            logger.warning("Failed to publish habit.created: %s", exc)
         return habit
 
     async def complete_habit(self, habit_id: UUID) -> tuple[bool, int]:
         log = await self.repo.log_completion(habit_id, date.today())
         streak = await self.repo.get_streak(habit_id)
         try:
-            await send_event("habit.completed", {"event": "habit.completed", "payload": {"habit_id": str(habit_id), "streak": streak}})
+            await send_event(
+                "habit.completed",
+                {
+                    "event": "habit.completed",
+                    "payload": {
+                        "habit_id": str(habit_id),
+                        "streak": streak,
+                    },
+                },
+            )
         except Exception as exc:
-            logger.warning(f"Failed to publish habit.completed: {exc}")
+            logger.warning("Failed to publish habit.completed: %s", exc)
         return True, streak
 
     async def get_habit(self, habit_id: UUID) -> Optional[Habit]:

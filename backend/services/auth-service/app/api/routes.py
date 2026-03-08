@@ -30,7 +30,7 @@ logger = get_logger("auth-service.routes")
 router = APIRouter()
 
 
-# ── Public Endpoints ──────────────────────────────────────────────────────
+# -- Public Endpoints --
 
 
 @router.post(
@@ -91,7 +91,7 @@ async def login(
     )
 
 
-# ── Protected Endpoints ──────────────────────────────────────────────────
+# -- Protected Endpoints --
 
 
 @router.get(

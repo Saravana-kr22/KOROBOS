@@ -33,7 +33,13 @@ async def proxy_notes(request: Request, path: str):
     if not target_base:
         return JSONResponse(
             status_code=503,
-            content={"status": "error", "error": {"code": "SERVICE_UNAVAILABLE", "message": "Notes service not configured"}},
+            content={
+                "status": "error",
+                "error": {
+                    "code": "SERVICE_UNAVAILABLE",
+                    "message": "Notes service not configured",
+                },
+            },
         )
 
     target_url = f"{target_base}/{path}"
@@ -75,14 +81,26 @@ async def _proxy_request(request: Request, target_url: str) -> JSONResponse:
                 )
 
         except httpx.ConnectError:
-            logger.error(f"Cannot connect to upstream: {target_url}")
+            logger.error("Cannot connect to upstream: %s", target_url)
             return JSONResponse(
                 status_code=502,
-                content={"status": "error", "error": {"code": "BAD_GATEWAY", "message": "Upstream service unavailable"}},
+                content={
+                    "status": "error",
+                    "error": {
+                        "code": "BAD_GATEWAY",
+                        "message": "Upstream service unavailable",
+                    },
+                },
             )
         except Exception as exc:
-            logger.error(f"Proxy error: {exc}")
+            logger.error("Proxy error: %s", exc)
             return JSONResponse(
                 status_code=502,
-                content={"status": "error", "error": {"code": "BAD_GATEWAY", "message": "Error communicating with upstream service"}},
+                content={
+                    "status": "error",
+                    "error": {
+                        "code": "BAD_GATEWAY",
+                        "message": "Error communicating with upstream service",
+                    },
+                },
             )

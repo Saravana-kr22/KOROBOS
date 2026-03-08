@@ -77,7 +77,11 @@ class BaseEventConsumer(ABC):
         )
         await self.consumer.start()
         self._running = True
-        logger.info(f"Consumer group '{self.group_id}' started for topics: {self.topics}")
+        logger.info(
+            "Consumer group '%s' started for topics: %s",
+            self.group_id,
+            self.topics,
+        )
 
         asyncio.create_task(self._consume_loop())
 
@@ -90,7 +94,12 @@ class BaseEventConsumer(ABC):
                 try:
                     await self.handle_event(msg.topic, msg.value)
                 except Exception as exc:
-                    logger.error(f"Consumer error in group '{self.group_id}' on topic '{msg.topic}': {exc}")
+                    logger.error(
+                        "Consumer error in group '%s' on topic '%s': %s",
+                        self.group_id,
+                        msg.topic,
+                        exc,
+                    )
         finally:
             await self.stop()
 

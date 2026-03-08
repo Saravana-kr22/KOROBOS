@@ -33,18 +33,18 @@ from app.services.service_registry import ServiceRegistry
 
 from backend.shared.logging.logger import get_logger
 
-# ── Logging setup ─────────────────────────────────────────────────────────
+# -- Logging setup --
 
 logger = get_logger("api-gateway")
 
-# ── Prometheus-style counters ─────────────────────────────────────────────
+# -- Prometheus-style counters --
 
 _request_count: dict[str, int] = {}
 _error_count: dict[str, int] = {}
 _latency_sum: dict[str, float] = {}
 
 
-# ── Lifespan ──────────────────────────────────────────────────────────────
+# -- Lifespan --
 
 _redis_client = None
 
@@ -81,7 +81,7 @@ async def lifespan(app: FastAPI):
         logger.info("Redis connection closed")
 
 
-# ── App Factory ───────────────────────────────────────────────────────────
+# -- App Factory --
 
 app = FastAPI(
     title="CortexOS API Gateway",
@@ -93,7 +93,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# ── CORS (configurable via GatewaySettings) ──────────────────────────────
+# -- CORS (configurable via GatewaySettings) --
 
 _settings = get_gateway_settings()
 app.add_middleware(
@@ -104,19 +104,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Middleware Stack (order matters: outermost runs first) ────────────────
-# 1. Logging → 2. Rate Limit → 3. Auth
+# -- Middleware Stack (order matters: outermost runs first) --
+# 1. Logging -> 2. Rate Limit -> 3. Auth
 
 app.add_middleware(AuthMiddleware)
 app.add_middleware(RateLimitMiddleware, redis_client=_redis_client)
 app.add_middleware(LoggingMiddleware)
 
-# ── Routes ────────────────────────────────────────────────────────────────
+# -- Routes --
 
 app.include_router(api_router)
 
 
-# ── Health & Metrics ──────────────────────────────────────────────────────
+# -- Health & Metrics --
 
 
 @app.get("/health", tags=["System"])
@@ -162,7 +162,8 @@ async def prometheus_metrics():
     lines.append("# TYPE cortexos_gateway_latency_seconds_total counter")
     for path, total in _latency_sum.items():
         safe = path.replace('"', '').replace('\\', '')
-        lines.append(f'cortexos_gateway_latency_seconds_total{{path="{safe}"}} {total:.4f}')
+        metric = f'cortexos_gateway_latency_seconds_total{{path="{safe}"}}'
+        lines.append(f"{metric} {total:.4f}")
 
     return "\n".join(lines) + "\n"
 

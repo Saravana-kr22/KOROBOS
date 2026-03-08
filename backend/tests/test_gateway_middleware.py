@@ -86,7 +86,11 @@ async def test_invalid_token_on_protected_route():
 
 @pytest.mark.anyio
 async def test_valid_token_on_protected_route():
-    """Protected routes should accept valid JWT tokens (upstream may fail but auth passes)."""
+    """
+    Protected routes should accept valid JWT tokens.
+
+    Upstream may fail but auth passes.
+    """
     from backend.shared.auth.jwt_handler import create_access_token
 
     token = create_access_token(user_id="test-user-id", roles=["user"])

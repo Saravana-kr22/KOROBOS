@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      
+
       - name: Install SBOM tools
         run: |
           npm install -g @cyclonedx/cyclonedx-npm
@@ -38,7 +38,7 @@ jobs:
       - name: Generate Frontend SBOM
         run: |
           cd frontend
-          npm unities || echo "npm install might have failed but generating sbom" # Try to ensure package-lock is present if omitted
+          npm install || echo "npm install might have failed but generating sbom"
           cyclonedx-npm --output-file ../frontend-sbom.json
           cd ..
 
@@ -64,14 +64,14 @@ jobs:
     needs: sbom-generation
     steps:
       - uses: actions/checkout@v4
-      
+
       # For the scope of this implementation, we use an established scanner proxy (e.g. FOSSA, ORT action)
       # ORT requires a complex docker execution. We simulate the wrapper integration here.
       - name: Download SBOM artifacts
         uses: actions/download-artifact@v4
         with:
           name: sboms
-          
+
       - name: Run License Policy Enforcement Check
         # Here we parse the generated SBOM and cross-reference `scripts/compliance/license_policy.yml`.
         # Pseudo code script placeholder since ORT setup takes a dedicated node runtime:

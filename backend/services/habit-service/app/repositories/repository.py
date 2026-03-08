@@ -24,20 +24,46 @@ class HabitRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, user_id: UUID, name: str, frequency: str, description: str = "") -> Habit:
-        habit = Habit(user_id=user_id, name=name, frequency=frequency, description=description)
+    async def create(
+        self,
+        user_id: UUID,
+        name: str,
+        frequency: str,
+        description: str = "",
+    ) -> Habit:
+        habit = Habit(
+            user_id=user_id,
+            name=name,
+            frequency=frequency,
+            description=description,
+        )
         self.session.add(habit)
         await self.session.flush()
         return habit
 
     async def get_by_id(self, habit_id: UUID) -> Optional[Habit]:
-        result = await self.session.execute(select(Habit).where(Habit.id == habit_id))
+        result = await self.session.execute(
+            select(Habit).where(Habit.id == habit_id)
+        )
         return result.scalar_one_or_none()
 
-    async def list_by_user(self, user_id: UUID, offset: int = 0, limit: int = 50) -> tuple[list[Habit], int]:
-        count_q = select(func.count()).select_from(Habit).where(Habit.user_id == user_id)
+    async def list_by_user(
+        self,
+        user_id: UUID,
+        offset: int = 0,
+        limit: int = 50,
+    ) -> tuple[list[Habit], int]:
+        count_q = (
+            select(func.count()).select_from(Habit).where(Habit.user_id == user_id)
+        )
         total = (await self.session.execute(count_q)).scalar_one()
-        q = select(Habit).where(Habit.user_id == user_id).order_by(Habit.created_at.desc()).offset(offset).limit(limit)
+        q = (
+            select(Habit)
+            .where(Habit.user_id == user_id)
+            .order_by(Habit.created_at.desc())
+            .offset(offset)
+            .limit(limit)
+        )
         result = await self.session.execute(q)
         return list(result.scalars().all()), total
 

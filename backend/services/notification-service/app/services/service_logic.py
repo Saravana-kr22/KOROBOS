@@ -22,8 +22,13 @@ class NotificationService:
         self.repo = NotificationRepository(session)
 
     async def send_notification(self, user_id: UUID, data: NotificationCreate):
-        notif = await self.repo.create(user_id=user_id, title=data.title, body=data.body, channel=data.channel)
-        logger.info(f"Notification sent to user {user_id}: {data.title}")
+        notif = await self.repo.create(
+            user_id=user_id,
+            title=data.title,
+            body=data.body,
+            channel=data.channel,
+        )
+        logger.info("Notification sent to user %s: %s", user_id, data.title)
         return notif
 
     async def list_notifications(self, user_id: UUID, offset=0, limit=50):

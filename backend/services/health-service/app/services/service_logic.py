@@ -23,19 +23,52 @@ class HealthService:
         self.repo = HealthRepository(session)
 
     async def log_meal(self, user_id: UUID, data: MealLogCreate):
-        log = await self.repo.create(user_id=user_id, log_type="meal", calories=data.calories, description=data.description or "")
+        log = await self.repo.create(
+            user_id=user_id,
+            log_type="meal",
+            calories=data.calories,
+            description=data.description or "",
+        )
         try:
-            await send_event("meal.logged", {"event": "meal.logged", "payload": {"log_id": str(log.id), "user_id": str(user_id), "calories": data.calories}}, key=str(user_id))
+            await send_event(
+                "meal.logged",
+                {
+                    "event": "meal.logged",
+                    "payload": {
+                        "log_id": str(log.id),
+                        "user_id": str(user_id),
+                        "calories": data.calories,
+                    },
+                },
+                key=str(user_id),
+            )
         except Exception as exc:
-            logger.warning(f"Failed to publish meal.logged: {exc}")
+            logger.warning("Failed to publish meal.logged: %s", exc)
         return log
 
     async def log_workout(self, user_id: UUID, data: WorkoutLogCreate):
-        log = await self.repo.create(user_id=user_id, log_type="workout", duration=data.duration, calories=data.calories or 0, description=data.description or "")
+        log = await self.repo.create(
+            user_id=user_id,
+            log_type="workout",
+            duration=data.duration,
+            calories=data.calories or 0,
+            description=data.description or "",
+        )
         try:
-            await send_event("workout.logged", {"event": "workout.logged", "payload": {"log_id": str(log.id), "user_id": str(user_id), "duration": data.duration}}, key=str(user_id))
+            await send_event(
+                "workout.logged",
+                {
+                    "event": "workout.logged",
+                    "payload": {
+                        "log_id": str(log.id),
+                        "user_id": str(user_id),
+                        "duration": data.duration,
+                    },
+                },
+                key=str(user_id),
+            )
         except Exception as exc:
-            logger.warning(f"Failed to publish workout.logged: {exc}")
+            logger.warning("Failed to publish workout.logged: %s", exc)
         return log
 
     async def list_logs(self, user_id: UUID, log_type=None, offset=0, limit=50):

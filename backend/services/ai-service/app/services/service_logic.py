@@ -32,17 +32,27 @@ class AIService:
         )
 
         # TODO: Integrate with LLM provider (OpenAI, Gemini, etc.)
-        response_text = f"[AI Response Placeholder] Processed {data.interaction_type} request."
+        response_text = (
+            f"[AI Response Placeholder] Processed {data.interaction_type} request."
+        )
 
         interaction = await self.repo.update_response(interaction, response_text)
 
         try:
-            await send_event("ai.interaction.completed", {
-                "event": "ai.interaction.completed",
-                "payload": {"interaction_id": str(interaction.id), "user_id": str(user_id), "type": data.interaction_type},
-            }, key=str(user_id))
+            await send_event(
+                "ai.interaction.completed",
+                {
+                    "event": "ai.interaction.completed",
+                    "payload": {
+                        "interaction_id": str(interaction.id),
+                        "user_id": str(user_id),
+                        "type": data.interaction_type,
+                    },
+                },
+                key=str(user_id),
+            )
         except Exception as exc:
-            logger.warning(f"Failed to publish ai.interaction.completed: {exc}")
+            logger.warning("Failed to publish ai.interaction.completed: %s", exc)
 
         return interaction
 

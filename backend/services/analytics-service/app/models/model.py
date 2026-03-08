@@ -30,7 +30,9 @@ class AnalyticsMetric(Base, TimestampMixin):
         UUID(as_uuid=True), nullable=False, index=True
     )
     metric_type: Mapped[str] = mapped_column(
-        String(100), nullable=False, comment="e.g. productivity_score, habit_consistency"
+        String(100),
+        nullable=False,
+        comment="e.g. productivity_score, habit_consistency",
     )
     value: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     metadata_json: Mapped[dict] = mapped_column(JSONB, nullable=True, default=dict)

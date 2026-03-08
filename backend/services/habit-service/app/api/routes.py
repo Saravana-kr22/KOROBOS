@@ -33,7 +33,7 @@ def _get_user_id(x_user_id: str = Header(..., alias="X-User-ID")) -> UUID:
     return UUID(x_user_id)
 
 
-# ── CRUD Endpoints ────────────────────────────────────────────────────────
+# -- CRUD Endpoints --
 
 
 @router.post("/habits", response_model=HabitResponse, status_code=201, tags=["Habits"])
@@ -108,7 +108,7 @@ async def delete_habit(
     await session.commit()
 
 
-# ── Completion Endpoints ──────────────────────────────────────────────────
+# -- Completion Endpoints --
 
 
 @router.post(

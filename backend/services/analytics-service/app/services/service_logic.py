@@ -20,7 +20,9 @@ class AnalyticsService:
     def __init__(self, session: AsyncSession):
         self.repo = AnalyticsRepository(session)
 
-    async def record_metric(self, user_id: UUID, metric_type: str, value: float, metadata: dict = None):
+    async def record_metric(
+        self, user_id: UUID, metric_type: str, value: float, metadata: dict = None
+    ):
         return await self.repo.create(user_id, metric_type, value, metadata)
 
     async def get_productivity(self, user_id: UUID) -> dict:

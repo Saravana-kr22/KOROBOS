@@ -15,7 +15,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 
-# ── Request Schemas ───────────────────────────────────────────────────────
+# -- Request Schemas --
 
 
 class NoteCreate(BaseModel):
@@ -40,7 +40,7 @@ class NoteLinkCreate(BaseModel):
     target_note_id: UUID
 
 
-# ── Response Schemas ──────────────────────────────────────────────────────
+# -- Response Schemas --
 
 
 class NoteResponse(BaseModel):

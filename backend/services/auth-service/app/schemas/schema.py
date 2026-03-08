@@ -15,7 +15,7 @@ from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field
 
 
-# ── Request Schemas ───────────────────────────────────────────────────────
+# -- Request Schemas --
 
 
 class UserSignup(BaseModel):
@@ -41,7 +41,7 @@ class UserUpdate(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=150)
 
 
-# ── Response Schemas ──────────────────────────────────────────────────────
+# -- Response Schemas --
 
 
 class UserResponse(BaseModel):

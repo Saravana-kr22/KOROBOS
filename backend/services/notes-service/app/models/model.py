@@ -33,9 +33,14 @@ class Note(Base, TimestampMixin):
     content_md: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     # Relationships
-    tags: Mapped[list["NoteTag"]] = relationship(back_populates="note", cascade="all, delete-orphan")
+    tags: Mapped[list["NoteTag"]] = relationship(
+        back_populates="note",
+        cascade="all, delete-orphan",
+    )
     outgoing_links: Mapped[list["NoteLink"]] = relationship(
-        foreign_keys="NoteLink.source_note_id", back_populates="source_note", cascade="all, delete-orphan"
+        foreign_keys="NoteLink.source_note_id",
+        back_populates="source_note",
+        cascade="all, delete-orphan",
     )
 
 

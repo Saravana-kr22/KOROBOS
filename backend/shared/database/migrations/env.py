@@ -18,15 +18,17 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-# ── Ensure the project root is on sys.path ────────────────────────────────
+# -- Ensure the project root is on sys.path --
 # This allows importing from backend.shared and the service model modules.
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
+)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from backend.shared.database.base_model import Base
 
-# ── Import ALL service models so Base.metadata picks them up ──────────────
+# -- Import ALL service models so Base.metadata picks them up --
 # Every model that inherits from Base must be imported here for autogenerate.
 # The try/except blocks allow running even if some services aren't installed.
 
@@ -51,7 +53,9 @@ for _mod_path in _model_imports:
         PROJECT_ROOT, "backend", "services", _service_dir, "app", "models", "model.py"
     )
     if os.path.exists(_fs_path):
-        spec = importlib.util.spec_from_file_location(f"{_service_dir}.models", _fs_path)
+        spec = importlib.util.spec_from_file_location(
+            f"{_service_dir}.models", _fs_path
+        )
         if spec and spec.loader:
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)

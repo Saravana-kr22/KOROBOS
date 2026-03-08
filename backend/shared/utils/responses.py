@@ -11,7 +11,7 @@ from typing import Any, Optional
 from pydantic import BaseModel, Field
 
 
-# ── Response Schemas ──────────────────────────────────────────────────────
+# -- Response Schemas --
 
 
 class ErrorDetail(BaseModel):
@@ -29,7 +29,7 @@ class APIResponse(BaseModel):
     error: Optional[ErrorDetail] = Field(default=None, description="Error details")
 
 
-# ── Helper Functions ──────────────────────────────────────────────────────
+# -- Helper Functions --
 
 
 def success_response(data: Any = None) -> dict[str, Any]:

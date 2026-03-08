@@ -34,10 +34,15 @@ def _get_user_id(x_user_id: str = Header(..., alias="X-User-ID")) -> UUID:
     return UUID(x_user_id)
 
 
-# ── CRUD Endpoints ────────────────────────────────────────────────────────
+# -- CRUD Endpoints --
 
 
-@router.post("/notes", response_model=NoteResponse, status_code=201, tags=["Notes"])
+@router.post(
+    "/notes",
+    response_model=NoteResponse,
+    status_code=201,
+    tags=["Notes"],
+)
 async def create_note(
     data: NoteCreate,
     user_id: UUID = Depends(_get_user_id),
@@ -109,10 +114,15 @@ async def delete_note(
     await session.commit()
 
 
-# ── Note Linking ──────────────────────────────────────────────────────────
+# -- Note Linking --
 
 
-@router.post("/notes/{note_id}/links", response_model=NoteLinkResponse, status_code=201, tags=["Notes"])
+@router.post(
+    "/notes/{note_id}/links",
+    response_model=NoteLinkResponse,
+    status_code=201,
+    tags=["Notes"],
+)
 async def create_link(
     note_id: UUID,
     data: NoteLinkCreate,

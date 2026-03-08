@@ -41,7 +41,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Standardized: Services listen at '/' and let the gateway handle '/api/v1/{service_name}'
+# Standardized: Services listen at '/' and let the gateway
+# handle '/api/v1/{service_name}'
 app.include_router(api_router)
 
 
@@ -67,4 +68,7 @@ async def health_check():
 
 @app.get("/metrics")
 async def metrics():
-    return {"status": "success", "data": {"service": "auth-service", "version": "1.0.0"}}
+    return {
+        "status": "success",
+        "data": {"service": "auth-service", "version": "1.0.0"},
+    }
