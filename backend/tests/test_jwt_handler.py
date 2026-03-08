@@ -4,15 +4,9 @@ Unit tests for the shared JWT handler.
 Tests: create_access_token, verify_token — valid, expired, and invalid tokens.
 """
 
-import os
 from datetime import timedelta
 
 import pytest
-
-# Set the JWT secret before importing the handler
-os.environ["JWT_SECRET"] = "test-secret-key-for-unit-tests"
-
-
 from backend.shared.auth.jwt_handler import (
     create_access_token,
     verify_token,

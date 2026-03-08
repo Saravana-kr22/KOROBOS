@@ -38,3 +38,8 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["..", ".", "gateway/api-gateway"]
+testpaths = ["tests"]

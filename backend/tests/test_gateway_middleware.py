@@ -5,11 +5,6 @@ Tests: auth middleware (skip public paths, reject missing token, accept valid to
        gateway routing and health endpoints.
 """
 
-import os
-
-os.environ["JWT_SECRET"] = "test-secret-key-for-unit-tests"
-os.environ["REDIS_URL"] = "redis://localhost:6379/0"
-
 import pytest
 from app.main import app
 from httpx import ASGITransport, AsyncClient
