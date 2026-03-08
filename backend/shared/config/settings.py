@@ -6,9 +6,7 @@ Copyright (c) 2026 Saravana Perumal K
 Licensed under the GNU Affero General Public License v3.
 """
 
-import os
 from functools import lru_cache
-from typing import Optional
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings

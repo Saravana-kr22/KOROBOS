@@ -8,7 +8,6 @@ Licensed under the GNU Affero General Public License v3.
 Audit Log Utility — standardized logging for security-sensitive actions.
 """
 
-import json
 from datetime import datetime, timezone
 from typing import Any, Optional
 from uuid import UUID

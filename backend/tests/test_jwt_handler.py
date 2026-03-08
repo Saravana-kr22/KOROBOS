@@ -5,7 +5,6 @@ Tests: create_access_token, verify_token — valid, expired, and invalid tokens.
 """
 
 import os
-import time
 from datetime import timedelta
 
 import pytest
@@ -15,7 +14,6 @@ os.environ["JWT_SECRET"] = "test-secret-key-for-unit-tests"
 
 
 from backend.shared.auth.jwt_handler import (
-    ALGORITHM,
     create_access_token,
     verify_token,
 )

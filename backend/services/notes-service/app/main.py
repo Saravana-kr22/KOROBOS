@@ -10,14 +10,11 @@ Notes Service — knowledge management microservice.
 
 from contextlib import asynccontextmanager
 
+from app.api.routes import router as api_router
+from backend.shared.logging.logger import get_logger
+from backend.shared.messaging.producer import close_producer, get_producer
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-
-from app.api.routes import router as api_router
-
-from backend.shared.logging.logger import get_logger
-from backend.shared.database.connection import get_db_session
-from backend.shared.messaging.producer import get_producer, close_producer
 
 logger = get_logger("notes-service")
 

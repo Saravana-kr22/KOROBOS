@@ -8,13 +8,12 @@ Licensed under the GNU Affero General Public License v3.
 
 from typing import AsyncGenerator
 
+from backend.shared.config.settings import get_settings
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-
-from backend.shared.config.settings import get_settings
 
 settings = get_settings()
 

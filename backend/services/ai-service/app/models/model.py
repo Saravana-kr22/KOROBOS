@@ -9,13 +9,11 @@ ORM model for the AI Service.
 """
 
 import uuid
-from datetime import datetime, timezone
-
-from sqlalchemy import DateTime, String, Text, func
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.shared.database.base_model import Base, TimestampMixin
+from sqlalchemy import String, Text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class AIInteraction(Base, TimestampMixin):

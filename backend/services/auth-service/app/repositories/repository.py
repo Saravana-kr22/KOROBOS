@@ -11,10 +11,9 @@ Data access layer for the Auth Service.
 from typing import Optional
 from uuid import UUID
 
+from app.models.model import User
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.models.model import User
 
 
 class UserRepository:

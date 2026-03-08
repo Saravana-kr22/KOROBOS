@@ -10,12 +10,10 @@ Notification Service — reminders and alerts microservice.
 
 from contextlib import asynccontextmanager
 
+from app.api.routes import router as api_router
+from backend.shared.logging.logger import get_logger
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-
-from app.api.routes import router as api_router
-
-from backend.shared.logging.logger import get_logger
 
 logger = get_logger("notification-service")
 

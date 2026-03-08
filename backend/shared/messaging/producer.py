@@ -10,7 +10,6 @@ import json
 from typing import Any, Optional
 
 from aiokafka import AIOKafkaProducer
-
 from backend.shared.config.settings import get_settings
 from backend.shared.logging.logger import get_logger
 

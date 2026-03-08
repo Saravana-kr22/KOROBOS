@@ -8,9 +8,7 @@ Licensed under the GNU Affero General Public License v3.
 Gateway-specific configuration extending the shared CortexOS settings.
 """
 
-import os
 from functools import lru_cache
-from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings

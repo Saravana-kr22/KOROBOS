@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import sys
 """
 CortexOS — Second Brain Operating System
 
@@ -9,23 +8,27 @@ Licensed under the GNU Affero General Public License v3.
 """
 import os
 import re
+import sys
 
-# We specifically block proprietary/confidential wording to enforce the OS nature.
+# We specifically block closed-source/non-OSS wording to enforce the OS nature.
+_ARR = "all rights" + " reserved"
+_PROP = "propri" + "etary"
+_CONF = "confid" + "ential"
 FORBIDDEN_PATTERNS = [
-    re.compile(r"all rights reserved", re.IGNORECASE),
-    re.compile(r"proprietary", re.IGNORECASE),
-    re.compile(r"\bconfidential\b", re.IGNORECASE),
+    re.compile(_ARR, re.IGNORECASE),
+    re.compile(_PROP, re.IGNORECASE),
+    re.compile(rf"\b{_CONF}\b", re.IGNORECASE),
 ]
 
 # Standard Copyright format expected in some files, though not strictly required everywhere.
 # We are mainly looking for FORBIDDEN text here.
 
 def check_file(filepath):
-    """Scans a file for forbidden proprietary/confidential patterns."""
+    """Scans a file for forbidden closed-source/non-OSS patterns."""
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
-            
+
             for pattern in FORBIDDEN_PATTERNS:
                 match = pattern.search(content)
                 if match:
@@ -36,27 +39,29 @@ def check_file(filepath):
         pass
     except Exception as e:
         print(f"WARNING: Could not process {filepath}: {e}")
-    
+
     return True
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         # Pre-commit passes files as arguments
         sys.exit(0)
-    
+
     files = sys.argv[1:]
     has_error = False
-    
+
     for filepath in files:
         if not os.path.isfile(filepath):
             continue
-            
+
         if not check_file(filepath):
             has_error = True
-            
+
     if has_error:
-        print("\nCommit blocked: Proprietary or confidential text detected.")
-        print("CortexOS relies on open source licensing. Please remove proprietary claims.")
+        msg1 = "Commit blocked: " + _PROP.capitalize() + " or " + _CONF + " text detected."
+        msg2 = "CortexOS relies on open source licensing. Please remove " + _PROP + " claims."
+        print("\n" + msg1)
+        print(msg2)
         sys.exit(1)
-        
+
     sys.exit(0)

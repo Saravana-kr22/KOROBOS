@@ -9,13 +9,11 @@ ORM models for the Auth Service.
 """
 
 import uuid
-from datetime import datetime, timezone
-
-from sqlalchemy import Boolean, DateTime, String, func
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.shared.database.base_model import Base, TimestampMixin
+from sqlalchemy import Boolean, String
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class User(Base, TimestampMixin):

@@ -9,8 +9,8 @@ Alembic environment configuration for async PostgreSQL migrations.
 """
 
 import asyncio
-import sys
 import os
+import sys
 from logging.config import fileConfig
 
 from alembic import context
@@ -26,7 +26,7 @@ PROJECT_ROOT = os.path.abspath(
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from backend.shared.database.base_model import Base
+from backend.shared.database.base_model import Base  # noqa: E402
 
 # -- Import ALL service models so Base.metadata picks them up --
 # Every model that inherits from Base must be imported here for autogenerate.
@@ -43,7 +43,8 @@ _model_imports = [
     "backend.services.ai-service.app.models.model",
 ]
 
-import importlib
+import importlib  # noqa: E402
+
 for _mod_path in _model_imports:
     # Convert hyphenated paths to filesystem-style imports
     # Since Python doesn't allow hyphens, we use importlib to load by path

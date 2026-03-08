@@ -7,13 +7,12 @@ Licensed under the GNU Affero General Public License v3.
 """
 
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.repository import AIRepository
 from app.schemas.schema import AIPromptRequest
-
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import send_event
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = get_logger("ai-service.logic")
 

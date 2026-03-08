@@ -9,10 +9,9 @@ Licensed under the GNU Affero General Public License v3.
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import select, func, distinct
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.model import LearningSession
+from sqlalchemy import distinct, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class LearningRepository:

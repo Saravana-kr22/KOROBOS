@@ -11,9 +11,8 @@ os.environ["JWT_SECRET"] = "test-secret-key-for-unit-tests"
 os.environ["REDIS_URL"] = "redis://localhost:6379/0"
 
 import pytest
-from httpx import ASGITransport, AsyncClient
-
 from app.main import app
+from httpx import ASGITransport, AsyncClient
 
 
 @pytest.fixture

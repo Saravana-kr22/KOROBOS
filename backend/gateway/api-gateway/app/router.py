@@ -15,12 +15,12 @@ import httpx
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
-from app.routes.auth_routes import router as auth_router
-from app.routes.notes_routes import router as notes_router
-from app.routes.habit_routes import router as habit_router
-from app.routes.learning_routes import router as learning_router
-from app.routes.health_routes import router as health_router
 from app.routes.analytics_routes import router as analytics_router
+from app.routes.auth_routes import router as auth_router
+from app.routes.habit_routes import router as habit_router
+from app.routes.health_routes import router as health_router
+from app.routes.learning_routes import router as learning_router
+from app.routes.notes_routes import router as notes_router
 from app.services.service_registry import ServiceRegistry
 
 logger = logging.getLogger("api-gateway.router")

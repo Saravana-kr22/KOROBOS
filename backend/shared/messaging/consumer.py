@@ -8,13 +8,12 @@ Licensed under the GNU Affero General Public License v3.
 Messaging Library — async Kafka consumer utilities and base class.
 """
 
-import json
 import asyncio
+import json
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Coroutine, Optional
 
 from aiokafka import AIOKafkaConsumer
-
 from backend.shared.config.settings import get_settings
 from backend.shared.logging.logger import get_logger
 

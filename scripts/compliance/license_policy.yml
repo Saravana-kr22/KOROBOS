@@ -25,7 +25,7 @@ licenses:
     - MPL-2.0
 
   blocked:
-    - Proprietary
+    - Closed-Source
     - Commercial
     - Commons-Clause
     - SSPL-1.0

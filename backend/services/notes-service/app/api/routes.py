@@ -10,21 +10,18 @@ Notes Service API routes — full CRUD for notes and note linking.
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
-from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.schemas.schema import (
     NoteCreate,
-    NoteUpdate,
-    NoteResponse,
-    NoteListResponse,
     NoteLinkCreate,
     NoteLinkResponse,
+    NoteListResponse,
+    NoteResponse,
+    NoteUpdate,
 )
 from app.services.service_logic import NotesService
-
 from backend.shared.database.connection import get_db_session
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

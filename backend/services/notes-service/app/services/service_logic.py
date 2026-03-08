@@ -11,14 +11,12 @@ Business logic layer for the Notes Service.
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.model import Note
 from app.repositories.repository import NotesRepository
-from app.schemas.schema import NoteCreate, NoteUpdate, NoteResponse, NoteListResponse
-
+from app.schemas.schema import NoteCreate, NoteUpdate
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import send_event
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = get_logger("notes-service.logic")
 

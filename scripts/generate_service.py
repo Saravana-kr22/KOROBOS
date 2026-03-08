@@ -193,11 +193,11 @@ def generate_service(service_name: str):
         '''))
 
     print(f"✅ Service '{service_name}' generated at {svc_dir}/")
-    print(f"   Structure:")
+    print("   Structure:")
     for d in sorted(dirs):
         print(f"   ├── {os.path.relpath(d, svc_dir)}/")
-    print(f"   ├── Dockerfile")
-    print(f"   └── requirements.txt")
+    print("   ├── Dockerfile")
+    print("   └── requirements.txt")
 
 
 if __name__ == "__main__":

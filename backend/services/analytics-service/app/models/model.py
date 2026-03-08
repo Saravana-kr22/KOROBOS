@@ -9,13 +9,11 @@ ORM model for the Analytics Service.
 """
 
 import uuid
-from datetime import datetime, timezone
-
-from sqlalchemy import DateTime, Float, String, func
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.shared.database.base_model import Base, TimestampMixin
+from sqlalchemy import Float, String
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class AnalyticsMetric(Base, TimestampMixin):

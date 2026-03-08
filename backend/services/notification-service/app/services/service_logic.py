@@ -7,12 +7,11 @@ Licensed under the GNU Affero General Public License v3.
 """
 
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.repository import NotificationRepository
 from app.schemas.schema import NotificationCreate
-
 from backend.shared.logging.logger import get_logger
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = get_logger("notification-service.logic")
 

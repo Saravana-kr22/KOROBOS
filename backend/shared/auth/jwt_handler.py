@@ -9,9 +9,8 @@ Licensed under the GNU Affero General Public License v3.
 from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
-from jose import JWTError, jwt
-
 from backend.shared.config.settings import get_settings
+from jose import JWTError, jwt
 
 settings = get_settings()
 

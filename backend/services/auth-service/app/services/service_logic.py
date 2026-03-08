@@ -11,17 +11,15 @@ Auth business logic — registration, login, password hashing, and audit logging
 from typing import Optional
 from uuid import UUID
 
-from passlib.context import CryptContext
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.model import User
 from app.repositories.repository import UserRepository
-from app.schemas.schema import UserSignup, UserLogin
-
+from app.schemas.schema import UserLogin, UserSignup
 from backend.shared.auth.jwt_handler import create_access_token
-from backend.shared.logging.logger import get_logger
 from backend.shared.logging.audit import log_audit_event
+from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import send_event
+from passlib.context import CryptContext
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = get_logger("auth-service.logic")
 

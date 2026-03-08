@@ -12,14 +12,12 @@ from datetime import date
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.model import Habit
 from app.repositories.repository import HabitRepository
 from app.schemas.schema import HabitCreate, HabitUpdate
-
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import send_event
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = get_logger("habit-service.logic")
 
@@ -52,7 +50,7 @@ class HabitService:
         return habit
 
     async def complete_habit(self, habit_id: UUID) -> tuple[bool, int]:
-        log = await self.repo.log_completion(habit_id, date.today())
+        await self.repo.log_completion(habit_id, date.today())
         streak = await self.repo.get_streak(habit_id)
         try:
             await send_event(

@@ -11,10 +11,9 @@ Data access layer for the Notes Service.
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.model import Note, NoteLink, NoteTag, Tag
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class NotesRepository:

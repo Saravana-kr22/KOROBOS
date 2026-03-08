@@ -10,14 +10,12 @@ Validates Bearer tokens on every request except public paths.
 """
 
 import logging
-import time
 
-from fastapi import Request, HTTPException
+from fastapi import Request
 from fastapi.responses import JSONResponse
+from jose import JWTError, jwt
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import Response
-
-from jose import JWTError, jwt
 
 from app.config.gateway_settings import get_gateway_settings
 

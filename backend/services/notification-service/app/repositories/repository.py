@@ -6,13 +6,11 @@ Copyright (c) 2026 Saravana Perumal K
 Licensed under the GNU Affero General Public License v3.
 """
 
-from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import select, func, update
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.model import Notification
+from sqlalchemy import func, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class NotificationRepository:

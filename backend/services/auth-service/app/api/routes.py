@@ -10,20 +10,17 @@ Auth Service API routes — signup, login, and user profile.
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
-from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.schemas.schema import (
-    UserSignup,
+    TokenResponse,
     UserLogin,
     UserResponse,
-    TokenResponse,
+    UserSignup,
 )
 from app.services.service_logic import AuthService
-
 from backend.shared.database.connection import get_db_session
 from backend.shared.logging.logger import get_logger
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = get_logger("auth-service.routes")
 

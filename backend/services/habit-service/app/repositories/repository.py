@@ -12,10 +12,9 @@ from datetime import date
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.model import Habit, HabitLog
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class HabitRepository:
