@@ -1,0 +1,4 @@
+# Trivy ignore file
+# Add CVE IDs here to ignore them in CI scans
+# Example:
+# CVE-2024-XXXXX

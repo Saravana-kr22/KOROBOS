@@ -3,13 +3,13 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Install basic system dependencies
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install dependencies
 COPY gateway/api-gateway/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt || echo "No requirements.txt found or failed to install"
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy service source code
 COPY gateway/api-gateway/app /app/app
