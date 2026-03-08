@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:22-slim
 
 WORKDIR /app
 
@@ -7,7 +7,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Enable legacy peer deps for Next.js 14 on Node 20
+# Upgrade npm to fix bundled dependency vulnerabilities
+# (cross-spawn, glob, minimatch, tar)
+RUN npm install -g npm@latest
+
 COPY package.json package-lock.json* ./
 RUN npm ci --legacy-peer-deps
 
