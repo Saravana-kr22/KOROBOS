@@ -6,7 +6,7 @@ authors = ["CortexOS Devs <devs@cortexos.local>"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.115.8"
+fastapi = "^0.135.0"
 uvicorn = "^0.34.0"
 pydantic = "^2.0"
 pydantic-settings = "^2.7.1"
@@ -17,7 +17,7 @@ redis = "^5.0"
 aiokafka = "^0.10.0"
 python-jose = {extras = ["cryptography"], version = "^3.5.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-python-multipart = "^0.0.6"
+python-multipart = "^0.0.22"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
