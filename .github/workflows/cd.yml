@@ -3,6 +3,10 @@ name: CortexOS CD Pipeline
 # §9 Continuous Deployment (GitOps)
 # Deployment flow: Developer push → CI build → Helm chart update → ArgoCD deploy
 
+permissions:
+  contents: write
+  packages: write
+
 on:
   workflow_run:
     workflows: ["CortexOS CI Pipeline"]
