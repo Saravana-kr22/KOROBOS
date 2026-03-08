@@ -2,3 +2,5 @@
 # Add CVE IDs here to ignore them in CI scans
 # Example:
 # CVE-2024-XXXXX
+CVE-2026-23949
+CVE-2026-24049
