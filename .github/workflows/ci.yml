@@ -78,25 +78,35 @@ jobs:
         ]
         include:
           - service: api-gateway
-            context: backend/gateway/api-gateway
+            context: backend
+            dockerfile: backend/gateway/api-gateway/Dockerfile
           - service: auth-service
-            context: backend/services/auth-service
+            context: backend
+            dockerfile: backend/services/auth-service/Dockerfile
           - service: notes-service
-            context: backend/services/notes-service
+            context: backend
+            dockerfile: backend/services/notes-service/Dockerfile
           - service: habit-service
-            context: backend/services/habit-service
+            context: backend
+            dockerfile: backend/services/habit-service/Dockerfile
           - service: learning-service
-            context: backend/services/learning-service
+            context: backend
+            dockerfile: backend/services/learning-service/Dockerfile
           - service: health-service
-            context: backend/services/health-service
+            context: backend
+            dockerfile: backend/services/health-service/Dockerfile
           - service: analytics-service
-            context: backend/services/analytics-service
+            context: backend
+            dockerfile: backend/services/analytics-service/Dockerfile
           - service: notification-service
-            context: backend/services/notification-service
+            context: backend
+            dockerfile: backend/services/notification-service/Dockerfile
           - service: ai-service
-            context: backend/services/ai-service
+            context: backend
+            dockerfile: backend/services/ai-service/Dockerfile
           - service: frontend
             context: frontend
+            dockerfile: frontend/Dockerfile
 
     steps:
       - name: Checkout repository
@@ -122,6 +132,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -140,6 +151,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
