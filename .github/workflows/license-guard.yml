@@ -87,4 +87,4 @@ jobs:
     if: success()
     steps:
       - name: All compliance checks passed
-        run: echo "🎉 Build Allowed: License Guard approved"
+        run: echo "Build Allowed - License Guard approved"
