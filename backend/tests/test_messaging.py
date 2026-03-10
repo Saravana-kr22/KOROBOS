@@ -1,4 +1,12 @@
-"""Unit tests for the Kafka messaging primitives added in Sprint 4."""
+"""
+CortexOS — Second Brain Operating System
+
+Copyright (c) 2026 Saravana Perumal K
+
+Licensed under the GNU Affero General Public License v3.
+
+Unit tests for the Kafka messaging primitives added in Sprint 4.
+"""
 
 from types import SimpleNamespace
 

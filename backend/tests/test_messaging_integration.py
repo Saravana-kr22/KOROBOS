@@ -1,4 +1,12 @@
-"""Integration tests that exercise the messaging stack with Kafka."""
+"""
+CortexOS — Second Brain Operating System
+
+Copyright (c) 2026 Saravana Perumal K
+
+Licensed under the GNU Affero General Public License v3.
+
+Integration tests that exercise the messaging stack with Kafka.
+"""
 
 import asyncio
 from uuid import uuid4

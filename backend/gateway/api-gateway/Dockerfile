@@ -1,3 +1,9 @@
+# CortexOS — Second Brain Operating System
+#
+# Copyright (c) 2026 Saravana Perumal K
+#
+# Licensed under the GNU Affero General Public License v3.
+
 FROM python:3.11-slim
 
 WORKDIR /app

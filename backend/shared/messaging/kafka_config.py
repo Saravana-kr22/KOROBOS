@@ -1,4 +1,10 @@
 """
+CortexOS — Second Brain Operating System
+
+Copyright (c) 2026 Saravana Perumal K
+
+Licensed under the GNU Affero General Public License v3.
+
 Kafka client configuration helpers shared by producers and consumers.
 """
 
@@ -30,9 +36,7 @@ def build_kafka_client_options(settings: CortexOSSettings) -> dict[str, Any]:
 
     if protocol.startswith("SASL_"):
         if not settings.kafka_sasl_username or not settings.kafka_sasl_password:
-            raise ValueError(
-                "Kafka SASL credentials are required when SASL is enabled"
-            )
+            raise ValueError("Kafka SASL credentials are required when SASL is enabled")
         options["sasl_mechanism"] = settings.kafka_sasl_mechanism
         options["sasl_plain_username"] = settings.kafka_sasl_username
         options["sasl_plain_password"] = settings.kafka_sasl_password

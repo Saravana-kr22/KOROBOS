@@ -1,4 +1,10 @@
 """
+CortexOS — Second Brain Operating System
+
+Copyright (c) 2026 Saravana Perumal K
+
+Licensed under the GNU Affero General Public License v3.
+
 Search Worker
 
 Consumes note events and upserts documents into the notes Meilisearch index.
