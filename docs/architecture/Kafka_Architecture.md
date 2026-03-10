@@ -1,356 +1,137 @@
 # CortexOS Kafka Event Streaming Architecture
 
-Version: 1.0 \
+Version: 1.1  
 Owner: Saravana Perumal K
 
-------------------------------------------------------------------------
+## 1. Overview
 
-# 1. Overview
+CortexOS uses Kafka as the asynchronous event backbone between domain
+microservices and background workers. Services publish domain events after
+successful writes, workers consume those topics with retry and DLQ handling,
+and shared schemas in `schemas/events/` keep the event contract stable.
 
-CortexOS uses **Apache Kafka** as the central event streaming platform
-to enable asynchronous communication between microservices.
+## 2. Runtime Topology
 
-Kafka allows services to publish events without tightly coupling to
-other services.
+```text
+Domain Services
+    -> Kafka Producer Library
+    -> Kafka Topics
+    -> Worker Consumer Groups
+    -> Analytics / Notifications / AI / Search
+```
 
-Benefits:
+Local development uses:
 
--   Event driven architecture
--   High throughput event processing
--   Scalable microservice communication
--   Reliable message delivery
--   Real‑time analytics pipelines
+- `kafka`: single-broker Kafka for Compose-based development
+- `kafka-init`: one-shot topic bootstrap using
+  `infrastructure/docker/kafka/create-topics.sh`
+- `kafka-exporter`: Prometheus-compatible Kafka metrics at `:9308/metrics`
 
-------------------------------------------------------------------------
+## 3. Event Envelope
 
-# 2. Kafka Architecture
+All CortexOS Kafka events use the shared `BaseEvent` envelope:
 
-    Microservices
-         ↓
-    Kafka Producers
-         ↓
-    Kafka Cluster (Brokers)
-         ↓
-    Kafka Topics
-         ↓
-    Kafka Consumers
-         ↓
-    Analytics / AI / Notifications / Search
-
-------------------------------------------------------------------------
-
-# 3. Kafka Components
-
-## Kafka Brokers
-
-Kafka cluster contains multiple brokers.
-
-Responsibilities:
-
--   store event logs
--   manage partitions
--   replicate data for fault tolerance
-
-Example cluster
-
-    Broker 1
-    Broker 2
-    Broker 3
-
-------------------------------------------------------------------------
-
-## Kafka Topics
-
-Topics are event streams where producers send messages.
-
-Example topics used in CortexOS:
-
-  Topic                     Description
-  ------------------------- -------------------
-  note.created              New note created
-  note.link.created         Notes linked
-  habit.completed           Habit finished
-  learning.session.logged   Learning activity
-  meal.logged               Meal recorded
-  workout.logged            Workout activity
-
-------------------------------------------------------------------------
-
-## Partitions
-
-Each topic contains partitions to allow parallel processing.
-
-Example
-
-    Topic: note.created
-
-    Partition 0
-    Partition 1
-    Partition 2
-
-Benefits:
-
--   horizontal scaling
--   parallel consumer processing
-
-------------------------------------------------------------------------
-
-# 4. Event Producers
-
-Services publishing events.
-
-  Service            Produced Events
-  ------------------ -----------------------------
-  Notes Service      note.created
-  Habit Service      habit.completed
-  Learning Service   learning.session.logged
-  Health Service     meal.logged, workout.logged
-  Auth Service       user.created
-
-Example producer flow
-
-    API Request
-       ↓
-    Service Logic
-       ↓
-    Kafka Producer
-       ↓
-    Publish Event to Topic
-
-------------------------------------------------------------------------
-
-# 5. Event Consumers
-
-Services subscribing to events.
-
-  Consumer               Consumed Events
-  ---------------------- ---------------------
-  Analytics Service      all activity events
-  Notification Service   habit.completed
-  AI Service             note.created
-  Search Indexer         note.created
-
-Consumer flow
-
-    Kafka Topic
-       ↓
-    Consumer Group
-       ↓
-    Process Event
-       ↓
-    Update Service
-
-------------------------------------------------------------------------
-
-# 6. Consumer Groups
-
-Multiple consumers can read from a topic.
-
-Example
-
-    Topic: habit.completed
-
-    Consumer Group: analytics-service
-    Consumer Group: notification-service
-
-Benefits:
-
--   load balancing
--   fault tolerance
-
-------------------------------------------------------------------------
-
-# 7. Event Flow Example
-
-## Note Creation Flow
-
-    User creates note
-          ↓
-    Notes Service
-          ↓
-    Kafka Producer
-          ↓
-    Topic: note.created
-          ↓
-    Consumers:
-        Analytics Service
-        AI Service
-        Search Indexer
-
-------------------------------------------------------------------------
-
-# 8. Event Schema Design
-
-Example event payload
-
-Topic: note.created
-
-``` json
+```json
 {
   "event_id": "uuid",
   "event_type": "note.created",
+  "schema_version": 1,
   "timestamp": "2026-01-01T10:00:00Z",
-  "user_id": "uuid",
-  "note_id": "uuid",
-  "title": "Machine Learning"
+  "correlation_id": "uuid-or-null",
+  "producer": "notes-service",
+  "payload": {}
 }
 ```
 
-------------------------------------------------------------------------
+Notes:
 
-# 9. Topic Naming Convention
+- `producer` is the wire-format field name used in Kafka messages.
+- Schemas are loaded from `schemas/events/*.json`.
+- The producer validates events before publish.
+- Partition keys are inferred from the schema registry when available.
 
-Standard topic naming pattern
+## 4. Produced Topics
 
-    <domain>.<event>
+| Topic | Producer | Current Consumers | Partition Key |
+| --- | --- | --- | --- |
+| `note.created` | Notes Service | `analytics-group`, `search-group`, `ai-group` | `user_id` |
+| `note.updated` | Notes Service | `search-group`, `ai-group` | `user_id` |
+| `note.link.created` | Notes Service | `analytics-group` | `user_id` |
+| `habit.created` | Habit Service | `analytics-group` | `user_id` |
+| `habit.completed` | Habit Service | `analytics-group`, `notification-group` | `user_id` |
+| `learning.session.logged` | Learning Service | `analytics-group`, `ai-group` | `user_id` |
+| `meal.logged` | Health Service | `analytics-group` | `user_id` |
+| `workout.logged` | Health Service | `analytics-group` | `user_id` |
+| `user.registered` | Auth Service | `analytics-group` | `user_id` |
+| `user.login` | Auth Service | `analytics-group` | `user_id` |
+| `ai.interaction.completed` | AI Service | `analytics-group` | `user_id` |
 
-Examples
+The sprint document also references future graph and dashboard-style consumers.
+Those are not separate worker processes today; the existing workers above are
+the current implementation of record.
 
-    note.created
-    note.updated
-    habit.completed
-    learning.session.logged
-    health.workout.logged
+## 5. Consumer Groups
 
-------------------------------------------------------------------------
+| Consumer Group | Worker | Subscriptions |
+| --- | --- | --- |
+| `analytics-group` | `backend.workers.analytics_worker` | `note.created`, `note.link.created`, `habit.created`, `habit.completed`, `learning.session.logged`, `meal.logged`, `workout.logged`, `user.registered`, `user.login`, `ai.interaction.completed` |
+| `notification-group` | `backend.workers.notification_worker` | `habit.completed` |
+| `search-group` | `backend.workers.search_worker` | `note.created`, `note.updated` |
+| `ai-group` | `backend.workers.ai_worker` | `note.created`, `note.updated`, `learning.session.logged` |
 
-# 10. Partition Strategy
+## 6. Retry, Commit, and DLQ Behavior
 
-Partition key examples
+- Producer retries use the Sprint 4 schedule: immediate, `5s`, `30s`.
+- Consumer retries use the same `0s / 5s / 30s` schedule.
+- Consumer offsets are committed only after successful handling or successful
+  DLQ publish.
+- Failed events are redirected to `<topic>.dlq`.
 
-  Topic                     Partition Key
-  ------------------------- ---------------
-  note.created              user_id
-  habit.completed           habit_id
-  learning.session.logged   user_id
+This keeps replay and DLQ behavior consistent with Sprint 4 expectations.
 
-Benefits
+## 7. Local Development Security
 
--   ordered processing per entity
--   balanced partition distribution
+The Compose stack now uses self-signed TLS and SASL/PLAIN for Kafka client and
+broker traffic. Development certificates are generated by
+`infrastructure/docker/kafka/generate-certs.sh`, and service containers mount
+the resulting CA bundle so shared `aiokafka` clients connect over `SASL_SSL`.
 
-------------------------------------------------------------------------
+Staging and production must still enforce:
 
-# 11. Retention Policy
+- TLS with managed certificates for broker traffic
+- SASL with centrally managed secrets for producer and consumer authentication
+- Kafka ACLs for topic-level authorization
 
-Kafka stores events for a configurable duration.
+## 8. Monitoring
 
-Example configuration
+Kafka-related monitoring is currently exposed through:
 
-    Retention: 7 days
-    Cleanup Policy: delete
+- `kafka-exporter` at `http://localhost:9308/metrics`
+- gateway application metrics at `/metrics/prometheus`
 
-Long term analytics events may be stored longer.
+The Terraform monitoring module remains the place where Prometheus and Grafana
+are provisioned for cluster environments. Local Compose exposes the Kafka
+exporter endpoint so those stacks have broker and topic metrics to scrape.
 
-------------------------------------------------------------------------
+Primary Kafka metrics of interest:
 
-# 12. Exactly Once Processing
+- topic throughput
+- consumer lag
+- failed-message volume
+- broker availability
 
-Strategies
+## 9. Dev Assets
 
--   idempotent producers
--   consumer offset tracking
--   transactional writes
+Kafka-specific local assets live in `infrastructure/docker/kafka/`:
 
-Ensures reliable analytics processing.
+- `generate-certs.sh`: creates self-signed TLS assets for the dev broker
+- `create-topics.sh`: creates event topics and DLQ topics
+- `README.md`: documents the scope of the dev-only Kafka assets
 
-------------------------------------------------------------------------
+## 10. Future Extensions
 
-# 13. Dead Letter Queue
+Likely next consumers:
 
-Failed messages are redirected to DLQ topics.
-
-Example
-
-    note.created.dlq
-    habit.completed.dlq
-
-Used for debugging and reprocessing.
-
-------------------------------------------------------------------------
-
-# 14. Kafka Security
-
-Security mechanisms
-
--   TLS encryption
--   SASL authentication
--   ACL authorization
-
-Example
-
-    Producer Auth → Kafka Broker
-    Consumer Auth → Kafka Broker
-
-------------------------------------------------------------------------
-
-# 15. Monitoring Kafka
-
-Monitoring tools
-
--   Prometheus
--   Grafana
--   Kafka Exporter
-
-Key metrics
-
--   message throughput
--   consumer lag
--   broker health
-
-------------------------------------------------------------------------
-
-# 16. Deployment Architecture
-
-Kafka cluster deployed inside Kubernetes.
-
-    Kubernetes Cluster
-          ↓
-    Kafka StatefulSet
-          ↓
-    Persistent Volumes
-
-Recommended operators
-
--   Strimzi Kafka Operator
-
-------------------------------------------------------------------------
-
-# 17. Scaling Strategy
-
-Scaling options
-
--   increase topic partitions
--   add consumer instances
--   add Kafka brokers
-
-Target throughput
-
-    100k+ events per second
-
-------------------------------------------------------------------------
-
-# 18. CortexOS Kafka Topic Map
-
-  Topic                     Producer           Consumers
-  ------------------------- ------------------ --------------------------
-  note.created              Notes Service      AI, Analytics
-  note.link.created         Notes Service      Graph Service
-  habit.completed           Habit Service      Analytics, Notifications
-  learning.session.logged   Learning Service   Analytics
-  meal.logged               Health Service     Analytics
-  workout.logged            Health Service     Analytics
-
-------------------------------------------------------------------------
-
-# Final Architecture Vision
-
-Kafka enables CortexOS to operate as a **real‑time intelligence
-platform**.
-
-Key characteristics
-
--   asynchronous microservices
--   real time analytics
--   AI event pipelines
--   scalable event streaming
+- a knowledge graph worker for richer `note.link.created` processing
+- broader dashboard aggregation beyond the current analytics worker
+- hardened staged or production Kafka security and managed dashboards

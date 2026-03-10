@@ -128,7 +128,7 @@ async def create_link(
 ):
     """Create a link between two notes."""
     svc = NotesService(session)
-    link = await svc.link_notes(note_id, data.target_note_id)
+    link = await svc.link_notes(note_id, data.target_note_id, user_id)
     await session.commit()
     return link
 

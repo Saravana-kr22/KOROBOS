@@ -1,0 +1,13 @@
+{
+  "event_type": "meal.logged",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": ["log_id", "user_id", "calories", "description"],
+  "payload_properties": {
+    "log_id": { "type": "string" },
+    "user_id": { "type": "string" },
+    "calories": { "type": "integer" },
+    "description": { "type": "string" }
+  },
+  "allow_additional_payload": true
+}

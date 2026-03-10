@@ -44,11 +44,47 @@ class CortexOSSettings(BaseSettings):
         default="localhost:9092",
         description="Kafka bootstrap server(s)",
     )
+    kafka_security_protocol: str = Field(
+        default="PLAINTEXT",
+        description="Kafka security protocol (PLAINTEXT, SSL, SASL_SSL, etc.)",
+    )
+    kafka_sasl_mechanism: str = Field(
+        default="PLAIN",
+        description="Kafka SASL mechanism when SASL is enabled",
+    )
+    kafka_sasl_username: str = Field(
+        default="",
+        description="Kafka SASL username",
+    )
+    kafka_sasl_password: str = Field(
+        default="",
+        description="Kafka SASL password",
+    )
+    kafka_ssl_ca_file: str = Field(
+        default="",
+        description="Optional CA bundle used for Kafka TLS verification",
+    )
+    kafka_ssl_cert_file: str = Field(
+        default="",
+        description="Optional client certificate for Kafka TLS auth",
+    )
+    kafka_ssl_key_file: str = Field(
+        default="",
+        description="Optional client private key for Kafka TLS auth",
+    )
+    kafka_ssl_check_hostname: bool = Field(
+        default=True,
+        description="Whether to verify Kafka broker hostnames for TLS",
+    )
 
     # ── Search ──
     search_url: str = Field(
         default="http://localhost:7700",
         description="Meilisearch URL",
+    )
+    search_api_key: str = Field(
+        default="",
+        description="Optional API key for the search backend",
     )
 
     # ── Object Storage ──
@@ -76,6 +112,17 @@ class CortexOSSettings(BaseSettings):
             raise ValueError(f"environment must be one of {allowed}, got '{v}'")
         return v
 
+    @field_validator("debug", mode="before")
+    @classmethod
+    def normalize_debug(cls, v):
+        if isinstance(v, str):
+            normalized = v.strip().lower()
+            if normalized in {"release", "prod", "production", "off"}:
+                return False
+            if normalized in {"debug", "dev", "development", "on"}:
+                return True
+        return v
+
     @field_validator("log_level")
     @classmethod
     def validate_log_level(cls, v: str) -> str:
@@ -83,6 +130,29 @@ class CortexOSSettings(BaseSettings):
         v_upper = v.upper()
         if v_upper not in allowed:
             raise ValueError(f"log_level must be one of {allowed}, got '{v}'")
+        return v_upper
+
+    @field_validator("kafka_security_protocol")
+    @classmethod
+    def validate_kafka_security_protocol(cls, v: str) -> str:
+        allowed = {"PLAINTEXT", "SSL", "SASL_PLAINTEXT", "SASL_SSL"}
+        v_upper = v.upper()
+        if v_upper not in allowed:
+            raise ValueError(
+                "kafka_security_protocol must be one of "
+                f"{allowed}, got '{v}'"
+            )
+        return v_upper
+
+    @field_validator("kafka_sasl_mechanism")
+    @classmethod
+    def validate_kafka_sasl_mechanism(cls, v: str) -> str:
+        allowed = {"PLAIN", "SCRAM-SHA-256", "SCRAM-SHA-512"}
+        v_upper = v.upper()
+        if v_upper not in allowed:
+            raise ValueError(
+                f"kafka_sasl_mechanism must be one of {allowed}, got '{v}'"
+            )
         return v_upper
 
     model_config = {

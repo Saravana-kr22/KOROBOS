@@ -1,0 +1,144 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top, rgba(75, 95, 255, 0.12), transparent 42%),
+    linear-gradient(180deg, #f5f7fb 0%, #eef2f7 100%);
+  padding: 32px;
+}
+
+.panel {
+  width: min(100%, 960px);
+  display: grid;
+  gap: 32px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 32px 80px rgba(15, 23, 42, 0.08);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brandText {
+  display: grid;
+  gap: 4px;
+}
+
+.eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #0f172a;
+}
+
+.description {
+  margin: 0;
+  max-width: 48rem;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #334155;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.primaryAction {
+  background: #111827;
+  color: #ffffff;
+  box-shadow: 0 16px 30px rgba(17, 24, 39, 0.2);
+}
+
+.secondaryAction {
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.primaryAction:hover,
+.secondaryAction:hover {
+  transform: translateY(-1px);
+}
+
+.primaryAction:hover {
+  background: #1f2937;
+}
+
+.secondaryAction:hover {
+  border-color: rgba(15, 23, 42, 0.28);
+  background: #f8fafc;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.metaCard {
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(248, 250, 252, 0.85);
+  padding: 18px 20px;
+}
+
+.metaLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.metaValue {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #0f172a;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 20px;
+  }
+
+  .panel {
+    padding: 28px;
+  }
+}

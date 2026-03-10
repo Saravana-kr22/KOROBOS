@@ -8,13 +8,11 @@ Licensed under the GNU Affero General Public License v3.
 
 from uuid import UUID
 
+from app.events.events import AIInteractionCompletedEvent
 from app.repositories.repository import AIRepository
 from app.schemas.schema import AIPromptRequest
-from backend.shared.logging.logger import get_logger
-from backend.shared.messaging.producer import send_event
+from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
-
-logger = get_logger("ai-service.logic")
 
 
 class AIService:
@@ -37,21 +35,14 @@ class AIService:
 
         interaction = await self.repo.update_response(interaction, response_text)
 
-        try:
-            await send_event(
-                "ai.interaction.completed",
-                {
-                    "event": "ai.interaction.completed",
-                    "payload": {
-                        "interaction_id": str(interaction.id),
-                        "user_id": str(user_id),
-                        "type": data.interaction_type,
-                    },
-                },
-                key=str(user_id),
-            )
-        except Exception as exc:
-            logger.warning("Failed to publish ai.interaction.completed: %s", exc)
+        event = AIInteractionCompletedEvent(
+            payload={
+                "interaction_id": str(interaction.id),
+                "user_id": str(user_id),
+                "type": data.interaction_type,
+            }
+        )
+        await publish_event(event, key=str(user_id))
 
         return interaction
 

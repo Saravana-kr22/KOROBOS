@@ -8,13 +8,11 @@ Licensed under the GNU Affero General Public License v3.
 
 from uuid import UUID
 
+from app.events.events import MealLoggedEvent, WorkoutLoggedEvent
 from app.repositories.repository import HealthRepository
 from app.schemas.schema import MealLogCreate, WorkoutLogCreate
-from backend.shared.logging.logger import get_logger
-from backend.shared.messaging.producer import send_event
+from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
-
-logger = get_logger("health-service.logic")
 
 
 class HealthService:
@@ -28,21 +26,15 @@ class HealthService:
             calories=data.calories,
             description=data.description or "",
         )
-        try:
-            await send_event(
-                "meal.logged",
-                {
-                    "event": "meal.logged",
-                    "payload": {
-                        "log_id": str(log.id),
-                        "user_id": str(user_id),
-                        "calories": data.calories,
-                    },
-                },
-                key=str(user_id),
-            )
-        except Exception as exc:
-            logger.warning("Failed to publish meal.logged: %s", exc)
+        event = MealLoggedEvent(
+            payload={
+                "log_id": str(log.id),
+                "user_id": str(user_id),
+                "calories": data.calories,
+                "description": data.description or "",
+            }
+        )
+        await publish_event(event, key=str(user_id))
         return log
 
     async def log_workout(self, user_id: UUID, data: WorkoutLogCreate):
@@ -53,21 +45,16 @@ class HealthService:
             calories=data.calories or 0,
             description=data.description or "",
         )
-        try:
-            await send_event(
-                "workout.logged",
-                {
-                    "event": "workout.logged",
-                    "payload": {
-                        "log_id": str(log.id),
-                        "user_id": str(user_id),
-                        "duration": data.duration,
-                    },
-                },
-                key=str(user_id),
-            )
-        except Exception as exc:
-            logger.warning("Failed to publish workout.logged: %s", exc)
+        event = WorkoutLoggedEvent(
+            payload={
+                "log_id": str(log.id),
+                "user_id": str(user_id),
+                "duration": data.duration,
+                "calories": data.calories or 0,
+                "description": data.description or "",
+            }
+        )
+        await publish_event(event, key=str(user_id))
         return log
 
     async def list_logs(self, user_id: UUID, log_type=None, offset=0, limit=50):

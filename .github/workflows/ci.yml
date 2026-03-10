@@ -6,6 +6,8 @@ permissions:
 on:
   push:
     branches: [ "main", "develop", "release/*" ]
+    paths-ignore:
+      - "infrastructure/helm/charts/**"
   pull_request:
     branches: [ "main", "develop" ]
 
@@ -42,23 +44,33 @@ jobs:
         run: |
           poetry install --with dev
 
+      - name: Install Frontend dependencies
+        working-directory: ./frontend
+        run: npm ci --legacy-peer-deps
+
       - name: Lint with Ruff
         working-directory: ./backend
         run: poetry run ruff check .
 
-      - name: Check formatting with Black
+      - name: Check formatting with Ruff
         working-directory: ./backend
-        run: poetry run black --check .
+        run: poetry run ruff format --check .
 
-      - name: Run unit tests
+      - name: Run backend test suite
         working-directory: ./backend
-        run: poetry run pytest tests/ --tb=short
+        run: poetry run pytest tests --tb=short --ignore=tests/test_messaging_integration.py
+
+      - name: Run Kafka integration tests
+        working-directory: ./backend
+        run: poetry run pytest tests/test_messaging_integration.py -q
 
       - name: Lint Frontend
         working-directory: ./frontend
-        run: |
-          npm ci --legacy-peer-deps
-          npm run lint
+        run: npm run lint
+
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: npm run build
 
   build-and-push:
     needs: test-and-lint
@@ -77,6 +89,7 @@ jobs:
           analytics-service,
           notification-service,
           ai-service,
+          workers,
           frontend
         ]
         include:
@@ -107,6 +120,9 @@ jobs:
           - service: ai-service
             context: backend
             dockerfile: backend/services/ai-service/Dockerfile
+          - service: workers
+            context: backend
+            dockerfile: backend/workers/Dockerfile
           - service: frontend
             context: frontend
             dockerfile: frontend/Dockerfile

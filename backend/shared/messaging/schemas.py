@@ -10,19 +10,30 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from backend.shared.logging.logger import get_correlation_id
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 
 class BaseEvent(BaseModel):
     """Base schema for all CortexOS Kafka events."""
 
+    model_config = ConfigDict(populate_by_name=True)
+
     event_id: str = Field(default_factory=lambda: str(uuid4()))
     event_type: str = Field(..., description="Type of event, e.g. 'note.created'")
+    schema_version: int = Field(default=1, ge=1)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    source_service: str = Field(..., description="Service that emitted the event")
     correlation_id: Optional[str] = Field(
-        default=None, description="Request correlation ID for tracing"
+        default_factory=get_correlation_id,
+        description="Request correlation ID for tracing",
     )
     payload: dict[str, Any] = Field(
         default_factory=dict, description="Event-specific data"
+    )
+
+    source_service: str = Field(
+        ...,
+        description="Service that emitted the event",
+        validation_alias=AliasChoices("source_service", "producer"),
+        serialization_alias="producer",
     )
