@@ -1,0 +1,12 @@
+{
+  "event_type": "ai.interaction.completed",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": ["interaction_id", "user_id", "type"],
+  "payload_properties": {
+    "interaction_id": { "type": "string" },
+    "user_id": { "type": "string" },
+    "type": { "type": "string" }
+  },
+  "allow_additional_payload": true
+}

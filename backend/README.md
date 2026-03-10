@@ -14,3 +14,4 @@ Format: `poetry run ruff format .`
 Lint: `poetry run ruff check .`
 Type check: `poetry run mypy .`
 Test: `poetry run pytest`
+Kafka integration test: `poetry run pytest tests/test_messaging_integration.py`

@@ -21,5 +21,8 @@ for path in [PROJECT_ROOT, BACKEND_ROOT, GATEWAY_APP]:
         sys.path.insert(0, path)
 
 # Set test environment variables
-os.environ.setdefault("JWT_SECRET", "test-secret-key-for-unit-tests")
-os.environ.setdefault("REDIS_URL", "redis://localhost:6379/0")
+os.environ["ENVIRONMENT"] = "test"
+os.environ["DEBUG"] = "false"
+os.environ["JWT_SECRET"] = "test-secret-key-for-unit-tests"
+os.environ["REDIS_URL"] = "redis://localhost:6379/0"
+os.environ["SERVICE_NAME"] = "test-suite"

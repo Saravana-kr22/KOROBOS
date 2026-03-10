@@ -6,6 +6,8 @@ permissions:
 on:
   push:
     branches: [ "main", "develop", "release/*" ]
+    paths-ignore:
+      - "infrastructure/helm/charts/**"
   pull_request:
     branches: [ "main", "develop" ]
 
@@ -42,23 +44,33 @@ jobs:
         run: |
           poetry install --with dev
 
+      - name: Install Frontend dependencies
+        working-directory: ./frontend
+        run: npm ci --legacy-peer-deps
+
       - name: Lint with Ruff
         working-directory: ./backend
         run: poetry run ruff check .
 
-      - name: Check formatting with Black
+      - name: Check formatting with Ruff
         working-directory: ./backend
-        run: poetry run black --check .
+        run: poetry run ruff format --check .
 
-      - name: Run unit tests
+      - name: Run backend test suite
         working-directory: ./backend
-        run: poetry run pytest tests/ --tb=short
+        run: poetry run pytest tests --tb=short --ignore=tests/test_messaging_integration.py
+
+      - name: Run Kafka integration tests
+        working-directory: ./backend
+        run: poetry run pytest tests/test_messaging_integration.py -q
 
       - name: Lint Frontend
         working-directory: ./frontend
-        run: |
-          npm ci --legacy-peer-deps
-          npm run lint
+        run: npm run lint
+
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: npm run build
 
   build-and-push:
     needs: test-and-lint
@@ -77,36 +89,40 @@ jobs:
           analytics-service,
           notification-service,
           ai-service,
+          workers,
           frontend
         ]
         include:
           - service: api-gateway
-            context: backend
+            context: .
             dockerfile: backend/gateway/api-gateway/Dockerfile
           - service: auth-service
-            context: backend
+            context: .
             dockerfile: backend/services/auth-service/Dockerfile
           - service: notes-service
-            context: backend
+            context: .
             dockerfile: backend/services/notes-service/Dockerfile
           - service: habit-service
-            context: backend
+            context: .
             dockerfile: backend/services/habit-service/Dockerfile
           - service: learning-service
-            context: backend
+            context: .
             dockerfile: backend/services/learning-service/Dockerfile
           - service: health-service
-            context: backend
+            context: .
             dockerfile: backend/services/health-service/Dockerfile
           - service: analytics-service
-            context: backend
+            context: .
             dockerfile: backend/services/analytics-service/Dockerfile
           - service: notification-service
-            context: backend
+            context: .
             dockerfile: backend/services/notification-service/Dockerfile
           - service: ai-service
-            context: backend
+            context: .
             dockerfile: backend/services/ai-service/Dockerfile
+          - service: workers
+            context: .
+            dockerfile: backend/workers/Dockerfile
           - service: frontend
             context: frontend
             dockerfile: frontend/Dockerfile

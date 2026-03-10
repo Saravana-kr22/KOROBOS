@@ -21,23 +21,26 @@ env:
 jobs:
   deploy-dev:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'develop' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'develop' }}
     environment: development
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+
+      - name: Lowercase image prefix
+        run: echo "IMAGE_PREFIX=${IMAGE_PREFIX,,}" >> ${GITHUB_ENV}
 
       - name: Update Helm chart image tags for dev
         run: |
           SHORT_SHA=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
-          SERVICES=(auth-service notes-service habit-service learning-service health-service analytics-service notification-service ai-service)
-          for svc in "${SERVICES[@]}"; do
-            CHART_PATH="infrastructure/helm/charts/${svc}/values.yaml"
-            if [ -f "$CHART_PATH" ]; then
-              sed -i "s|tag: \".*\"|tag: \"sha-${SHORT_SHA}\"|g" "$CHART_PATH"
-              sed -i "s|repository: .*|repository: ${IMAGE_PREFIX}/${svc}|g" "$CHART_PATH"
-            fi
+          for chart_path in infrastructure/helm/charts/*/values.yaml; do
+            svc=$(basename "$(dirname "$chart_path")")
+            sed -i "s|tag: \".*\"|tag: \"sha-${SHORT_SHA}\"|g" "$chart_path"
+            sed -i "s|repository: .*|repository: ${IMAGE_PREFIX}/${svc}|g" "$chart_path"
           done
 
       - name: Commit Helm chart updates
@@ -45,14 +48,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add infrastructure/helm/charts/*/values.yaml
-          git diff --cached --quiet || git commit -m "chore(deploy): update dev image tags to sha-$(echo '${{ github.event.workflow_run.head_sha }}' | cut -c1-7)"
-          git push
+          if git diff --cached --quiet; then
+            echo "No Helm chart updates to commit for development."
+          else
+            git commit -m "chore(deploy): update dev image tags to sha-$(echo '${{ github.event.workflow_run.head_sha }}' | cut -c1-7)"
+            git push origin HEAD:${{ github.event.workflow_run.head_branch }}
+          fi
 
       - name: Trigger ArgoCD Sync (Dev)
         if: env.ARGOCD_SERVER != ''
         run: |
-          SERVICES=(auth-service notes-service habit-service learning-service health-service analytics-service notification-service ai-service)
-          for svc in "${SERVICES[@]}"; do
+          for chart_path in infrastructure/helm/charts/*/values.yaml; do
+            svc=$(basename "$(dirname "$chart_path")")
             curl -s -X POST "https://${ARGOCD_SERVER}/api/v1/applications/${svc}/sync" \
               -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
               -H "Content-Type: application/json" \
@@ -61,24 +68,27 @@ jobs:
 
   deploy-staging:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' }}
     environment: staging
     needs: []
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+
+      - name: Lowercase image prefix
+        run: echo "IMAGE_PREFIX=${IMAGE_PREFIX,,}" >> ${GITHUB_ENV}
 
       - name: Update Helm chart image tags for staging
         run: |
           SHORT_SHA=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
-          SERVICES=(auth-service notes-service habit-service learning-service health-service analytics-service notification-service ai-service)
-          for svc in "${SERVICES[@]}"; do
-            CHART_PATH="infrastructure/helm/charts/${svc}/values.yaml"
-            if [ -f "$CHART_PATH" ]; then
-              sed -i "s|tag: \".*\"|tag: \"sha-${SHORT_SHA}\"|g" "$CHART_PATH"
-              sed -i "s|repository: .*|repository: ${IMAGE_PREFIX}/${svc}|g" "$CHART_PATH"
-            fi
+          for chart_path in infrastructure/helm/charts/*/values.yaml; do
+            svc=$(basename "$(dirname "$chart_path")")
+            sed -i "s|tag: \".*\"|tag: \"sha-${SHORT_SHA}\"|g" "$chart_path"
+            sed -i "s|repository: .*|repository: ${IMAGE_PREFIX}/${svc}|g" "$chart_path"
           done
 
       - name: Commit and push staging updates
@@ -86,18 +96,25 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add infrastructure/helm/charts/*/values.yaml
-          git diff --cached --quiet || git commit -m "chore(deploy): update staging image tags to sha-$(echo '${{ github.event.workflow_run.head_sha }}' | cut -c1-7)"
-          git push
+          if git diff --cached --quiet; then
+            echo "No Helm chart updates to commit for staging."
+          else
+            git commit -m "chore(deploy): update staging image tags to sha-$(echo '${{ github.event.workflow_run.head_sha }}' | cut -c1-7)"
+            git push origin HEAD:${{ github.event.workflow_run.head_branch }}
+          fi
 
   deploy-production:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' }}
     environment: production
     needs: [deploy-staging]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
 
       - name: Promote staging images to production
         run: |

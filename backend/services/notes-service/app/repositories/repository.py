@@ -97,3 +97,13 @@ class NotesRepository:
             tag = await self.get_or_create_tag(name)
             self.session.add(NoteTag(note_id=note_id, tag_id=tag.id))
         await self.session.flush()
+
+    async def list_note_tag_names(self, note_id: UUID) -> list[str]:
+        """Return tag names for a note in stable order."""
+        result = await self.session.execute(
+            select(Tag.name)
+            .join(NoteTag, Tag.id == NoteTag.tag_id)
+            .where(NoteTag.note_id == note_id)
+            .order_by(Tag.name.asc())
+        )
+        return list(result.scalars().all())

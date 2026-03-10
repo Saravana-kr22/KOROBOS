@@ -8,13 +8,11 @@ Licensed under the GNU Affero General Public License v3.
 
 from uuid import UUID
 
+from app.events.events import LearningSessionLoggedEvent
 from app.repositories.repository import LearningRepository
 from app.schemas.schema import LearningSessionCreate
-from backend.shared.logging.logger import get_logger
-from backend.shared.messaging.producer import send_event
+from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
-
-logger = get_logger("learning-service.logic")
 
 
 class LearningService:
@@ -28,22 +26,16 @@ class LearningService:
             duration=data.duration,
             notes=data.notes or "",
         )
-        try:
-            await send_event(
-                "learning.session.logged",
-                {
-                    "event": "learning.session.logged",
-                    "payload": {
-                        "session_id": str(session.id),
-                        "user_id": str(user_id),
-                        "topic": data.topic,
-                        "duration": data.duration,
-                    },
-                },
-                key=str(user_id),
-            )
-        except Exception as exc:
-            logger.warning("Failed to publish learning.session.logged: %s", exc)
+        event = LearningSessionLoggedEvent(
+            payload={
+                "session_id": str(session.id),
+                "user_id": str(user_id),
+                "topic": data.topic,
+                "duration": data.duration,
+                "notes": data.notes or "",
+            }
+        )
+        await publish_event(event, key=str(user_id))
         return session
 
     async def get_session(self, session_id: UUID):

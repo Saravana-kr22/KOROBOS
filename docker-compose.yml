@@ -36,19 +36,100 @@ services:
     ports:
       - "2181:2181"
 
+  kafka-certs:
+    image: confluentinc/cp-kafka:7.5.0
+    volumes:
+      - kafka_certs:/etc/kafka/secrets
+      - ./infrastructure/docker/kafka/generate-certs.sh:/opt/cortexos/kafka/generate-certs.sh:ro
+    entrypoint: ["/bin/bash", "/opt/cortexos/kafka/generate-certs.sh"]
+    restart: "no"
+
   kafka:
     image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - /etc/confluent/docker/configure && /etc/confluent/docker/launch
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://kafka:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_LISTENERS: SASL_SSL://0.0.0.0:9093,SASL_SSL_INTERNAL://0.0.0.0:29093
+      KAFKA_ADVERTISED_LISTENERS: SASL_SSL://localhost:9093,SASL_SSL_INTERNAL://kafka:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: SASL_SSL:SASL_SSL,SASL_SSL_INTERNAL:SASL_SSL
+      KAFKA_INTER_BROKER_LISTENER_NAME: SASL_SSL_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/server.keystore.jks
+      KAFKA_SSL_KEYSTORE_PASSWORD: changeit
+      KAFKA_SSL_KEYSTORE_TYPE: JKS
+      KAFKA_SSL_KEY_PASSWORD: changeit
+      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/server.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_PASSWORD: changeit
+      KAFKA_SSL_TRUSTSTORE_TYPE: JKS
+      KAFKA_SSL_KEYSTORE_FILENAME: server.keystore.jks
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: keystore_creds
+      KAFKA_SSL_KEY_CREDENTIALS: key_creds
+      KAFKA_SSL_TRUSTSTORE_FILENAME: server.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: truststore_creds
+      KAFKA_SSL_CLIENT_AUTH: none
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf -Dzookeeper.sasl.clientconfig=ZkClient
+      KAFKA_LISTENER_NAME_SASL_SSL_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="cortexos" password="cortexos-secret" user_cortexos="cortexos-secret";
+      KAFKA_LISTENER_NAME_SASL_SSL_INTERNAL_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="cortexos" password="cortexos-secret" user_cortexos="cortexos-secret";
     ports:
-      - "9092:9092"
+      - "9093:9093"
+    volumes:
+      - kafka_certs:/etc/kafka/secrets
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "kafka-broker-api-versions --bootstrap-server localhost:9093 --command-config /etc/kafka/secrets/client.properties >/dev/null 2>&1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_started
+      kafka-certs:
+        condition: service_completed_successfully
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP_SERVER=kafka:29093
+      - KAFKA_CLIENT_CONFIG=/etc/kafka/secrets/client.properties
+    volumes:
+      - kafka_certs:/etc/kafka/secrets:ro
+      - ./infrastructure/docker/kafka/create-topics.sh:/opt/cortexos/kafka/create-topics.sh:ro
+    entrypoint: ["/bin/bash", "/opt/cortexos/kafka/create-topics.sh"]
+    restart: "no"
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.7.0
+    command:
+      - --kafka.server=kafka:29093
+      - --tls.enabled
+      - --tls.ca-file=/etc/kafka/secrets/ca.crt
+      - --sasl.enabled
+      - --sasl.username=cortexos
+      - --sasl.password=cortexos-secret
+      - --sasl.mechanism=plain
+      - --web.listen-address=:9308
+    ports:
+      - "9308:9308"
+    volumes:
+      - kafka_certs:/etc/kafka/secrets:ro
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
 
   meilisearch:
     image: getmeili/meilisearch:latest
@@ -75,7 +156,8 @@ services:
   # --- Application Microservices ---
   api-gateway:
     build:
-      context: backend/gateway/api-gateway
+      context: .
+      dockerfile: backend/gateway/api-gateway/Dockerfile
     ports:
       - "8080:8000"
     environment:
@@ -87,6 +169,8 @@ services:
       - SERVICES_ANALYTICS=http://analytics-service:8000
       - SERVICES_NOTIFICATIONS=http://notification-service:8000
       - SERVICES_AI=http://ai-service:8000
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=dev-secret-key
     depends_on:
       - auth-service
       - notes-service
@@ -96,18 +180,26 @@ services:
       - analytics-service
       - notification-service
       - ai-service
+      - redis
 
   auth-service:
     build:
-      context: backend
-      dockerfile: services/auth-service/Dockerfile
+      context: .
+      dockerfile: backend/services/auth-service/Dockerfile
     ports:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
       - REDIS_URL=redis://redis:6379/0
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
       - JWT_SECRET=dev-secret-key
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -115,18 +207,28 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
 
   notes-service:
     build:
-      context: backend
-      dockerfile: services/notes-service/Dockerfile
+      context: .
+      dockerfile: backend/services/notes-service/Dockerfile
     ports:
       - "8001:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
       - REDIS_URL=redis://redis:6379/0
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
       - SEARCH_URL=http://meilisearch:7700
+      - SEARCH_API_KEY=masterKey
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -134,17 +236,26 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
 
   habit-service:
     build:
-      context: backend
-      dockerfile: services/habit-service/Dockerfile
+      context: .
+      dockerfile: backend/services/habit-service/Dockerfile
     ports:
       - "8002:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
       - REDIS_URL=redis://redis:6379/0
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -152,17 +263,26 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
 
   learning-service:
     build:
-      context: backend
-      dockerfile: services/learning-service/Dockerfile
+      context: .
+      dockerfile: backend/services/learning-service/Dockerfile
     ports:
       - "8003:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
       - REDIS_URL=redis://redis:6379/0
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -170,17 +290,26 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
 
   health-service:
     build:
-      context: backend
-      dockerfile: services/health-service/Dockerfile
+      context: .
+      dockerfile: backend/services/health-service/Dockerfile
     ports:
       - "8004:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
       - REDIS_URL=redis://redis:6379/0
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -188,17 +317,26 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
 
   analytics-service:
     build:
-      context: backend
-      dockerfile: services/analytics-service/Dockerfile
+      context: .
+      dockerfile: backend/services/analytics-service/Dockerfile
     ports:
       - "8005:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
       - REDIS_URL=redis://redis:6379/0
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -206,17 +344,26 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
 
   notification-service:
     build:
-      context: backend
-      dockerfile: services/notification-service/Dockerfile
+      context: .
+      dockerfile: backend/services/notification-service/Dockerfile
     ports:
       - "8006:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
       - REDIS_URL=redis://redis:6379/0
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -224,17 +371,26 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
 
   ai-service:
     build:
-      context: backend
-      dockerfile: services/ai-service/Dockerfile
+      context: .
+      dockerfile: backend/services/ai-service/Dockerfile
     ports:
       - "8007:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
       - REDIS_URL=redis://redis:6379/0
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -242,6 +398,105 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
+
+  analytics-worker:
+    build:
+      context: .
+      dockerfile: backend/workers/Dockerfile
+    command: ["python", "-m", "backend.workers.analytics_worker"]
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - SERVICE_NAME=analytics-worker
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
+
+  notification-worker:
+    build:
+      context: .
+      dockerfile: backend/workers/Dockerfile
+    command: ["python", "-m", "backend.workers.notification_worker"]
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - SERVICE_NAME=notification-worker
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
+
+  search-worker:
+    build:
+      context: .
+      dockerfile: backend/workers/Dockerfile
+    command: ["python", "-m", "backend.workers.search_worker"]
+    environment:
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - SEARCH_URL=http://meilisearch:7700
+      - SEARCH_API_KEY=masterKey
+      - SERVICE_NAME=search-worker
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
+    depends_on:
+      kafka:
+        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
+      meilisearch:
+        condition: service_started
+
+  ai-worker:
+    build:
+      context: .
+      dockerfile: backend/workers/Dockerfile
+    command: ["python", "-m", "backend.workers.ai_worker"]
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=cortexos
+      - KAFKA_SASL_PASSWORD=cortexos-secret
+      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - SERVICE_NAME=ai-worker
+    volumes:
+      - kafka_certs:/etc/cortexos/kafka:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
 
   # --- Frontend Application ---
   frontend:
@@ -266,3 +521,4 @@ volumes:
   redis_data:
   meilisearch_data:
   minio_data:
+  kafka_certs:

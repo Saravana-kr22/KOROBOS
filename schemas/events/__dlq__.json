@@ -1,0 +1,13 @@
+{
+  "event_type": "*.dlq",
+  "schema_version": 1,
+  "required_payload_fields": ["original_topic", "original_payload", "error"],
+  "payload_properties": {
+    "original_topic": { "type": "string" },
+    "original_event_id": { "type": "string", "nullable": true },
+    "original_event_type": { "type": "string", "nullable": true },
+    "original_payload": { "type": "object" },
+    "error": { "type": "string" }
+  },
+  "allow_additional_payload": true
+}

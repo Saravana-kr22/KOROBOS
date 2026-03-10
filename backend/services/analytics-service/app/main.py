@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 
 from app.api.routes import router as api_router
 from backend.shared.logging.logger import get_logger
+from backend.shared.messaging.producer import close_producer, get_producer
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -21,7 +22,12 @@ logger = get_logger("analytics-service")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Analytics Service starting up")
+    try:
+        await get_producer()
+    except Exception as exc:
+        logger.warning("Kafka producer unavailable: %s", exc)
     yield
+    await close_producer()
     logger.info("Analytics Service shutting down")
 
 

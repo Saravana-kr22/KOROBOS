@@ -11,17 +11,15 @@ Auth business logic — registration, login, password hashing, and audit logging
 from typing import Optional
 from uuid import UUID
 
+from app.events.events import UserLoginEvent, UserRegisteredEvent
 from app.models.model import User
 from app.repositories.repository import UserRepository
 from app.schemas.schema import UserLogin, UserSignup
 from backend.shared.auth.jwt_handler import create_access_token
 from backend.shared.logging.audit import log_audit_event
-from backend.shared.logging.logger import get_logger
-from backend.shared.messaging.producer import send_event
+from backend.shared.messaging.producer import publish_event
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
-
-logger = get_logger("auth-service.logic")
 
 # bcrypt password context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -74,17 +72,10 @@ class AuthService:
             status="success",
         )
 
-        try:
-            await send_event(
-                topic="user.registered",
-                value={
-                    "event": "user.registered",
-                    "payload": {"user_id": str(user.id), "email": user.email},
-                },
-                key=str(user.id),
-            )
-        except Exception:
-            pass
+        event = UserRegisteredEvent(
+            payload={"user_id": str(user.id), "email": user.email}
+        )
+        await publish_event(event, key=str(user.id))
 
         return user, token
 
@@ -108,14 +99,8 @@ class AuthService:
 
         log_audit_event("auth.login", user_id=user.id, action="login", status="success")
 
-        try:
-            await send_event(
-                topic="user.login",
-                value={"event": "user.login", "payload": {"user_id": str(user.id)}},
-                key=str(user.id),
-            )
-        except Exception:
-            pass
+        event = UserLoginEvent(payload={"user_id": str(user.id)})
+        await publish_event(event, key=str(user.id))
 
         return user, token
 

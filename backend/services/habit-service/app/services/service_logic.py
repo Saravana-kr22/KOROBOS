@@ -12,14 +12,12 @@ from datetime import date
 from typing import Optional
 from uuid import UUID
 
+from app.events.events import HabitCompletedEvent, HabitCreatedEvent
 from app.models.model import Habit
 from app.repositories.repository import HabitRepository
 from app.schemas.schema import HabitCreate, HabitUpdate
-from backend.shared.logging.logger import get_logger
-from backend.shared.messaging.producer import send_event
+from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
-
-logger = get_logger("habit-service.logic")
 
 
 class HabitService:
@@ -35,38 +33,30 @@ class HabitService:
             frequency=data.frequency,
             description=data.description or "",
         )
-        try:
-            await send_event(
-                "habit.created",
-                {
-                    "event": "habit.created",
-                    "payload": {
-                        "habit_id": str(habit.id),
-                        "user_id": str(user_id),
-                    },
-                },
-                key=str(user_id),
-            )
-        except Exception as exc:
-            logger.warning("Failed to publish habit.created: %s", exc)
+        event = HabitCreatedEvent(
+            payload={
+                "habit_id": str(habit.id),
+                "user_id": str(user_id),
+            }
+        )
+        await publish_event(event, key=str(user_id))
         return habit
 
     async def complete_habit(self, habit_id: UUID) -> tuple[bool, int]:
+        habit = await self.repo.get_by_id(habit_id)
+        if habit is None:
+            return False, 0
+
         await self.repo.log_completion(habit_id, date.today())
         streak = await self.repo.get_streak(habit_id)
-        try:
-            await send_event(
-                "habit.completed",
-                {
-                    "event": "habit.completed",
-                    "payload": {
-                        "habit_id": str(habit_id),
-                        "streak": streak,
-                    },
-                },
-            )
-        except Exception as exc:
-            logger.warning("Failed to publish habit.completed: %s", exc)
+        event = HabitCompletedEvent(
+            payload={
+                "habit_id": str(habit_id),
+                "user_id": str(habit.user_id),
+                "streak": streak,
+            }
+        )
+        await publish_event(event, key=str(habit.user_id))
         return True, streak
 
     async def get_habit(self, habit_id: UUID) -> Optional[Habit]:
