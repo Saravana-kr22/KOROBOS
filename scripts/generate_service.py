@@ -181,7 +181,7 @@ def generate_service(service_name: str):
     svc_dir = os.path.join("backend", "services", service_name)
     with open(os.path.join(svc_dir, "requirements.txt"), "w") as f:
         f.write(
-            "fastapi==0.103.2\\nuvicorn[standard]==0.23.2\\nsqlalchemy[asyncio]==2.0.23\\nasyncpg==0.29.0\\nredis==5.0.1\\naiokafka==0.10.0\\npydantic==2.5.3\\npydantic-settings==2.1.0\\npython-jose[cryptography]==3.3.0\\nalembic==1.13.1\\n"
+            "fastapi>=0.135.0\\nstarlette>=0.49.1,<0.50.0\\nuvicorn[standard]==0.23.2\\nsqlalchemy[asyncio]==2.0.23\\nasyncpg==0.29.0\\nredis==5.0.1\\naiokafka==0.10.0\\npydantic==2.5.3\\npydantic-settings==2.1.0\\npython-jose[cryptography]==3.3.0\\nalembic==1.13.1\\n"
         )
 
     # Dockerfile
