@@ -1,16 +1,16 @@
-# CortexOS Production Environment Config
+# KOROBOS Production Environment Config
 # §3 Environment Strategy — Production: live customer system, HA, autoscaling
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cortexos-env-config
-  namespace: cortexos-prod
+  name: korobos-env-config
+  namespace: korobos-prod
 data:
   ENVIRONMENT: "production"
   LOG_LEVEL: "WARNING"
-  DATABASE_URL: "postgresql+asyncpg://cortexos:${DB_PASSWORD}@cortexos-prod-postgres.rds.amazonaws.com:5432/cortexos"
-  REDIS_URL: "redis://cortexos-prod-redis.cache.amazonaws.com:6379/0"
-  KAFKA_BROKER: "cortexos-prod-kafka.msk.amazonaws.com:9092"
-  SEARCH_URL: "http://meilisearch.cortexos-prod:7700"
-  OBJECT_STORAGE_URL: "https://cortexos-prod-storage.s3.amazonaws.com"
+  DATABASE_URL: "postgresql+asyncpg://korobos:${DB_PASSWORD}@korobos-prod-postgres.rds.amazonaws.com:5432/korobos"
+  REDIS_URL: "redis://korobos-prod-redis.cache.amazonaws.com:6379/0"
+  KAFKA_BROKER: "korobos-prod-kafka.msk.amazonaws.com:9092"
+  SEARCH_URL: "http://meilisearch.korobos-prod:7700"
+  OBJECT_STORAGE_URL: "https://korobos-prod-storage.s3.amazonaws.com"

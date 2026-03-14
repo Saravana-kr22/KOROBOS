@@ -1,5 +1,5 @@
 # Terraform Module: Kubernetes
-# CortexOS EKS Cluster Setup
+# KOROBOS EKS Cluster Setup
 # Implements §5 Kubernetes Cluster: Control Plane, Worker Nodes, Autoscaler
 
 terraform {
@@ -14,7 +14,7 @@ terraform {
 # ── IAM Role for EKS Cluster ──
 
 resource "aws_iam_role" "eks_cluster" {
-  name = "cortexos-${var.environment}-eks-cluster-role"
+  name = "korobos-${var.environment}-eks-cluster-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -29,7 +29,7 @@ resource "aws_iam_role" "eks_cluster" {
 
   tags = {
     Environment = var.environment
-    Project     = "cortexos"
+    Project     = "korobos"
   }
 }
 
@@ -41,7 +41,7 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
 # ── EKS Cluster ──
 
 resource "aws_eks_cluster" "main" {
-  name     = "cortexos-${var.environment}"
+  name     = "korobos-${var.environment}"
   role_arn = aws_iam_role.eks_cluster.arn
   version  = var.kubernetes_version
 
@@ -52,16 +52,16 @@ resource "aws_eks_cluster" "main" {
   }
 
   tags = {
-    Name        = "cortexos-${var.environment}-eks"
+    Name        = "korobos-${var.environment}-eks"
     Environment = var.environment
-    Project     = "cortexos"
+    Project     = "korobos"
   }
 }
 
 # ── IAM Role for Worker Nodes ──
 
 resource "aws_iam_role" "eks_nodes" {
-  name = "cortexos-${var.environment}-eks-node-role"
+  name = "korobos-${var.environment}-eks-node-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -94,7 +94,7 @@ resource "aws_iam_role_policy_attachment" "ecr_read_only" {
 
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "cortexos-${var.environment}-nodes"
+  node_group_name = "korobos-${var.environment}-nodes"
   node_role_arn   = aws_iam_role.eks_nodes.arn
   subnet_ids      = var.subnet_ids
   instance_types  = [var.node_instance_type]
@@ -106,7 +106,7 @@ resource "aws_eks_node_group" "main" {
   }
 
   tags = {
-    Name        = "cortexos-${var.environment}-node-group"
+    Name        = "korobos-${var.environment}-node-group"
     Environment = var.environment
   }
 }
@@ -114,7 +114,7 @@ resource "aws_eks_node_group" "main" {
 # ── Cluster Autoscaler ── (§5 Cluster Components)
 
 resource "aws_iam_role" "cluster_autoscaler" {
-  name = "cortexos-${var.environment}-cluster-autoscaler"
+  name = "korobos-${var.environment}-cluster-autoscaler"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -129,7 +129,7 @@ resource "aws_iam_role" "cluster_autoscaler" {
 }
 
 resource "aws_iam_role_policy" "cluster_autoscaler" {
-  name = "cortexos-${var.environment}-cluster-autoscaler"
+  name = "korobos-${var.environment}-cluster-autoscaler"
   role = aws_iam_role.cluster_autoscaler.id
 
   policy = jsonencode({

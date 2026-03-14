@@ -1,5 +1,5 @@
 # Terraform Module: VPC
-# CortexOS Network Infrastructure
+# KOROBOS Network Infrastructure
 # Implements §14 Network Security Architecture: public/private subnets
 
 terraform {
@@ -19,9 +19,9 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags = {
-    Name        = "cortexos-${var.environment}-vpc"
+    Name        = "korobos-${var.environment}-vpc"
     Environment = var.environment
-    Project     = "cortexos"
+    Project     = "korobos"
   }
 }
 
@@ -35,7 +35,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name        = "cortexos-${var.environment}-public-${count.index}"
+    Name        = "korobos-${var.environment}-public-${count.index}"
     Environment = var.environment
     Tier        = "public"
   }
@@ -50,7 +50,7 @@ resource "aws_subnet" "private" {
   availability_zone = var.availability_zones[count.index]
 
   tags = {
-    Name        = "cortexos-${var.environment}-private-${count.index}"
+    Name        = "korobos-${var.environment}-private-${count.index}"
     Environment = var.environment
     Tier        = "private"
   }
@@ -62,7 +62,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name        = "cortexos-${var.environment}-igw"
+    Name        = "korobos-${var.environment}-igw"
     Environment = var.environment
   }
 }
@@ -73,7 +73,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = {
-    Name        = "cortexos-${var.environment}-nat-eip"
+    Name        = "korobos-${var.environment}-nat-eip"
     Environment = var.environment
   }
 }
@@ -83,7 +83,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id     = aws_subnet.public[0].id
 
   tags = {
-    Name        = "cortexos-${var.environment}-nat"
+    Name        = "korobos-${var.environment}-nat"
     Environment = var.environment
   }
 }
@@ -99,7 +99,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "cortexos-${var.environment}-public-rt"
+    Name = "korobos-${var.environment}-public-rt"
   }
 }
 
@@ -112,7 +112,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "cortexos-${var.environment}-private-rt"
+    Name = "korobos-${var.environment}-private-rt"
   }
 }
 

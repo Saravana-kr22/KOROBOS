@@ -1,11 +1,11 @@
-# CortexOS Kafka Event Streaming Architecture
+# KOROBOS Kafka Event Streaming Architecture
 
 Version: 1.1  
 Owner: Saravana Perumal K
 
 ## 1. Overview
 
-CortexOS uses Kafka as the asynchronous event backbone between domain
+KOROBOS uses Kafka as the asynchronous event backbone between domain
 microservices and background workers. Services publish domain events after
 successful writes, workers consume those topics with retry and DLQ handling,
 and shared schemas in `schemas/events/` keep the event contract stable.
@@ -29,7 +29,7 @@ Local development uses:
 
 ## 3. Event Envelope
 
-All CortexOS Kafka events use the shared `BaseEvent` envelope:
+All KOROBOS Kafka events use the shared `BaseEvent` envelope:
 
 ```json
 {

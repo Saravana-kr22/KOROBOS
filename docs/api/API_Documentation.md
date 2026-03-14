@@ -1,4 +1,4 @@
-# CortexOS Complete API Documentation
+# KOROBOS Complete API Documentation
 
 Version: 1.0 \
 Owner: Saravana Perumal K
@@ -335,7 +335,7 @@ All APIs return standard errors
 
 # Final API Vision
 
-The CortexOS API layer exposes all platform capabilities through a
+The KOROBOS API layer exposes all platform capabilities through a
 unified REST interface.
 
 Key characteristics

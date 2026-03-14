@@ -1,4 +1,4 @@
-name: CortexOS CD Pipeline
+name: KOROBOS CD Pipeline
 
 # §9 Continuous Deployment (GitOps)
 # Deployment flow: Developer push → CI build → Helm chart update → ArgoCD deploy
@@ -9,7 +9,7 @@ permissions:
 
 on:
   workflow_run:
-    workflows: ["CortexOS CI Pipeline"]
+    workflows: ["KOROBOS CI Pipeline"]
     types: [completed]
     branches: [main, develop]
 

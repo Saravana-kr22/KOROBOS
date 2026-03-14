@@ -1,5 +1,5 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -8,10 +8,10 @@ Licensed under the GNU Affero General Public License v3.
 Service-specific settings for the Auth Service.
 """
 
-from backend.shared.config.settings import CortexOSSettings
+from backend.shared.config.settings import KOROBOSSettings
 
 
-class AuthSettings(CortexOSSettings):
+class AuthSettings(KOROBOSSettings):
     """Auth-specific settings."""
 
     model_config = {

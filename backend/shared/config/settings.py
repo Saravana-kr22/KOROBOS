@@ -1,5 +1,5 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -12,9 +12,9 @@ from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
 
 
-class CortexOSSettings(BaseSettings):
+class KOROBOSSettings(BaseSettings):
     """
-    Centralized, typed configuration for CortexOS microservices.
+    Centralized, typed configuration for KOROBOS microservices.
 
     Features:
       - environment variable parsing (automatic via pydantic-settings)
@@ -29,7 +29,7 @@ class CortexOSSettings(BaseSettings):
 
     # ── Database ──
     database_url: str = Field(
-        default="postgresql+asyncpg://cortexos:password@localhost:5432/cortexos",
+        default="postgresql+asyncpg://korobos:password@localhost:5432/korobos",
         description="Async PostgreSQL connection string",
     )
 
@@ -100,7 +100,7 @@ class CortexOSSettings(BaseSettings):
     )
 
     # ── Service ──
-    service_name: str = Field(default="cortexos", description="Name of this service")
+    service_name: str = Field(default="korobos", description="Name of this service")
     service_port: int = Field(default=8000, description="Port this service listens on")
     log_level: str = Field(default="INFO", description="Logging level")
 
@@ -163,6 +163,6 @@ class CortexOSSettings(BaseSettings):
 
 
 @lru_cache()
-def get_settings() -> CortexOSSettings:
+def get_settings() -> KOROBOSSettings:
     """Return a cached singleton of the application settings."""
-    return CortexOSSettings()
+    return KOROBOSSettings()

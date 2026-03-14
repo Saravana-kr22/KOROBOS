@@ -3,15 +3,15 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_USER: cortexos
+      POSTGRES_USER: korobos
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: cortexos
+      POSTGRES_DB: korobos
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U cortexos -d cortexos" ]
+      test: [ "CMD-SHELL", "pg_isready -U korobos -d korobos" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -40,8 +40,8 @@ services:
     image: confluentinc/cp-kafka:7.5.0
     volumes:
       - kafka_certs:/etc/kafka/secrets
-      - ./infrastructure/docker/kafka/generate-certs.sh:/opt/cortexos/kafka/generate-certs.sh:ro
-    entrypoint: ["/bin/bash", "/opt/cortexos/kafka/generate-certs.sh"]
+      - ./infrastructure/docker/kafka/generate-certs.sh:/opt/korobos/kafka/generate-certs.sh:ro
+    entrypoint: ["/bin/bash", "/opt/korobos/kafka/generate-certs.sh"]
     restart: "no"
 
   kafka:
@@ -75,8 +75,8 @@ services:
       KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
       KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
       KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf -Dzookeeper.sasl.clientconfig=ZkClient
-      KAFKA_LISTENER_NAME_SASL_SSL_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="cortexos" password="cortexos-secret" user_cortexos="cortexos-secret";
-      KAFKA_LISTENER_NAME_SASL_SSL_INTERNAL_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="cortexos" password="cortexos-secret" user_cortexos="cortexos-secret";
+      KAFKA_LISTENER_NAME_SASL_SSL_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="korobos" password="korobos-secret" user_korobos="korobos-secret";
+      KAFKA_LISTENER_NAME_SASL_SSL_INTERNAL_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="korobos" password="korobos-secret" user_korobos="korobos-secret";
     ports:
       - "9093:9093"
     volumes:
@@ -107,8 +107,8 @@ services:
       - KAFKA_CLIENT_CONFIG=/etc/kafka/secrets/client.properties
     volumes:
       - kafka_certs:/etc/kafka/secrets:ro
-      - ./infrastructure/docker/kafka/create-topics.sh:/opt/cortexos/kafka/create-topics.sh:ro
-    entrypoint: ["/bin/bash", "/opt/cortexos/kafka/create-topics.sh"]
+      - ./infrastructure/docker/kafka/create-topics.sh:/opt/korobos/kafka/create-topics.sh:ro
+    entrypoint: ["/bin/bash", "/opt/korobos/kafka/create-topics.sh"]
     restart: "no"
 
   kafka-exporter:
@@ -118,8 +118,8 @@ services:
       - --tls.enabled
       - --tls.ca-file=/etc/kafka/secrets/ca.crt
       - --sasl.enabled
-      - --sasl.username=cortexos
-      - --sasl.password=cortexos-secret
+      - --sasl.username=korobos
+      - --sasl.password=korobos-secret
       - --sasl.mechanism=plain
       - --web.listen-address=:9308
     ports:
@@ -189,17 +189,17 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - JWT_SECRET=dev-secret-key
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -217,18 +217,18 @@ services:
     ports:
       - "8001:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - SEARCH_URL=http://meilisearch:7700
       - SEARCH_API_KEY=masterKey
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -246,16 +246,16 @@ services:
     ports:
       - "8002:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -273,16 +273,16 @@ services:
     ports:
       - "8003:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -300,16 +300,16 @@ services:
     ports:
       - "8004:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -327,16 +327,16 @@ services:
     ports:
       - "8005:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -354,16 +354,16 @@ services:
     ports:
       - "8006:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -381,16 +381,16 @@ services:
     ports:
       - "8007:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -407,16 +407,16 @@ services:
       dockerfile: backend/workers/Dockerfile
     command: ["python", "-m", "backend.workers.analytics_worker"]
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - SERVICE_NAME=analytics-worker
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -431,16 +431,16 @@ services:
       dockerfile: backend/workers/Dockerfile
     command: ["python", "-m", "backend.workers.notification_worker"]
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - SERVICE_NAME=notification-worker
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -458,14 +458,14 @@ services:
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - SEARCH_URL=http://meilisearch:7700
       - SEARCH_API_KEY=masterKey
       - SERVICE_NAME=search-worker
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       kafka:
         condition: service_started
@@ -480,16 +480,16 @@ services:
       dockerfile: backend/workers/Dockerfile
     command: ["python", "-m", "backend.workers.ai_worker"]
     environment:
-      - DATABASE_URL=postgresql+asyncpg://cortexos:password@postgres:5432/cortexos
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
-      - KAFKA_SASL_USERNAME=cortexos
-      - KAFKA_SASL_PASSWORD=cortexos-secret
-      - KAFKA_SSL_CA_FILE=/etc/cortexos/kafka/ca.crt
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - SERVICE_NAME=ai-worker
     volumes:
-      - kafka_certs:/etc/cortexos/kafka:ro
+      - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
         condition: service_healthy

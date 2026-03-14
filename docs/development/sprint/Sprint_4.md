@@ -1,4 +1,4 @@
-# CortexOS --- Sprint 4 Execution Plan
+# KOROBOS --- Sprint 4 Execution Plan
 
 ## Event Bus Infrastructure
 
@@ -10,9 +10,9 @@ Owner: Saravana Perumal
 # 1. Sprint Objective
 
 Sprint 4 establishes the **Event Bus Infrastructure** that enables
-asynchronous communication between CortexOS microservices.
+asynchronous communication between KOROBOS microservices.
 
-CortexOS backend is built on an **event‑driven architecture**, allowing
+KOROBOS backend is built on an **event‑driven architecture**, allowing
 services to communicate through events instead of direct calls.
 
 Benefits:
@@ -35,7 +35,7 @@ After Sprint 4 completion the platform will support:
 
 # 2. Event Driven Architecture Overview
 
-CortexOS services communicate using **events published to an event
+KOROBOS services communicate using **events published to an event
 bus**.
 
 Architecture flow:
@@ -516,7 +516,7 @@ Before sprint completion verify:
 
 # Final Sprint Outcome
 
-After Sprint 4 the CortexOS platform will have a **fully operational
+After Sprint 4 the KOROBOS platform will have a **fully operational
 event‑driven backbone**.
 
 All services will communicate through events.

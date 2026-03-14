@@ -1,4 +1,4 @@
-# CortexOS Enterprise License Policy
+# KOROBOS Enterprise License Policy
 # Used by OSS Review Toolkit and License Guard
 
 policy:
@@ -14,7 +14,7 @@ licenses:
     - BSD-3-Clause
     - ISC
     - Zlib
-    # The GNU Affero General Public License applies to CortexOS as a whole
+    # The GNU Affero General Public License applies to KOROBOS as a whole
     - AGPL-3.0
 
   restricted:

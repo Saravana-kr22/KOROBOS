@@ -1,4 +1,4 @@
-# **CortexOS**
+# **KOROBOS**
 
 # **User Journey Maps**
 
@@ -11,7 +11,7 @@
 
 **User Journey Maps describe:**
 
-**• how users interact with CortexOS**  
+**• how users interact with KOROBOS**  
 **• what goals they try to achieve**  
 **• where friction may occur**  
 **• where AI and analytics improve experience**
@@ -27,7 +27,7 @@
 
 # **2\. Primary User Personas**
 
-**From the PRD, CortexOS targets knowledge workers and productivity-focused users.**
+**From the PRD, KOROBOS targets knowledge workers and productivity-focused users.**
 
 ### **Persona 1 — Knowledge Worker**
 
@@ -79,7 +79,7 @@
 
 # **3\. User Journey Overview**
 
-**Core journeys in CortexOS:**
+**Core journeys in KOROBOS:**
 
 **1️⃣ Onboarding Journey**  
 **2️⃣ Daily Productivity Journey**  
@@ -162,7 +162,7 @@
 
 | Stage | User Action | System |
 | ----- | ----- | ----- |
-| **Login** | **Opens CortexOS** | **Dashboard loads** |
+| **Login** | **Opens KOROBOS** | **Dashboard loads** |
 | **Review** | **Checks widgets** | **Analytics displayed** |
 | **Update** | **Marks habit complete** | **Habit logs stored** |
 | **Log** | **Adds learning session** | **Learning stats updated** |
@@ -363,13 +363,13 @@
          ↓
       Dashboard Recommendations
 
-**This aligns with the AI pipeline architecture in CortexOS.**
+**This aligns with the AI pipeline architecture in KOROBOS.**
 
 ---
 
 # **12\. Cross-Journey Experience**
 
-**CortexOS journeys are interconnected.**
+**KOROBOS journeys are interconnected.**
 
 **Example:**
 
@@ -449,7 +449,7 @@
 
 # **Final UX Journey Vision**
 
-**CortexOS should create a continuous improvement loop.**
+**KOROBOS should create a continuous improvement loop.**
 
       Capture
       ↓

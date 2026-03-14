@@ -23,7 +23,7 @@ else
     -keyout "${secrets_dir}/ca.key" \
     -out "${secrets_dir}/ca.crt" \
     -days 3650 \
-    -subj "/CN=CortexOS Kafka Dev CA"
+    -subj "/CN=KOROBOS Kafka Dev CA"
 
   cat > "${secrets_dir}/server-ext.cnf" <<'EOF'
 subjectAltName=DNS:kafka,DNS:localhost,IP:127.0.0.1
@@ -93,7 +93,7 @@ printf '%s' "${storepass}" > "${secrets_dir}/truststore_creds"
 cat > "${secrets_dir}/client.properties" <<EOF
 security.protocol=SASL_SSL
 sasl.mechanism=PLAIN
-sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="cortexos" password="cortexos-secret";
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="korobos" password="korobos-secret";
 ssl.truststore.location=${secrets_dir}/server.truststore.jks
 ssl.truststore.password=${storepass}
 EOF
@@ -101,15 +101,15 @@ EOF
 cat > "${secrets_dir}/kafka_server_jaas.conf" <<'EOF'
 KafkaServer {
   org.apache.kafka.common.security.plain.PlainLoginModule required
-  username="cortexos"
-  password="cortexos-secret"
-  user_cortexos="cortexos-secret";
+  username="korobos"
+  password="korobos-secret"
+  user_korobos="korobos-secret";
 };
 
 Client {
   org.apache.kafka.common.security.plain.PlainLoginModule required
-  username="cortexos"
-  password="cortexos-secret";
+  username="korobos"
+  password="korobos-secret";
 };
 EOF
 

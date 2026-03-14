@@ -1,6 +1,6 @@
-# CortexOS – Enterprise LLD Template
+# KOROBOS – Enterprise LLD Template
 Document Name: Event Architecture Low Level Design
-Project: CortexOS – Second Brain Operating System
+Project: KOROBOS – Second Brain Operating System
 Version: 1.0
 Author: Saravana Perumal K
 Date: 2026-03-07

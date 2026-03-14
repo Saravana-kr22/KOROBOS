@@ -1,4 +1,4 @@
-# CortexOS Backend System Design
+# KOROBOS Backend System Design
 
 Version: 1.0 \
 Owner: Saravana Perumal K
@@ -7,7 +7,7 @@ Owner: Saravana Perumal K
 
 # 1. System Overview
 
-CortexOS backend powers the **Second Brain Operating System**.\
+KOROBOS backend powers the **Second Brain Operating System**.\
 The system is designed as a **microservice, event-driven architecture**
 that supports:
 
@@ -549,7 +549,7 @@ Target
 
 # Final Backend Vision
 
-The CortexOS backend operates as an **intelligence engine** for the
+The KOROBOS backend operates as an **intelligence engine** for the
 Second Brain system.
 
 Key characteristics
@@ -559,6 +559,6 @@ Key characteristics
 -   AI-powered insights
 -   scalable cloud infrastructure
 
-The backend enables CortexOS to function as a **personal productivity
+The backend enables KOROBOS to function as a **personal productivity
 operating system** integrating knowledge, habits, learning, health, and
 analytics into a unified platform.

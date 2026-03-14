@@ -1,11 +1,11 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 
-API Gateway — single entry point for all CortexOS client requests.
+API Gateway — single entry point for all KOROBOS client requests.
 
 Responsibilities:
   - Request routing to microservices
@@ -81,8 +81,8 @@ async def lifespan(app: FastAPI):
 # -- App Factory --
 
 app = FastAPI(
-    title="CortexOS API Gateway",
-    description="Single entry point for all CortexOS microservice requests",
+    title="KOROBOS API Gateway",
+    description="Single entry point for all KOROBOS microservice requests",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -142,24 +142,24 @@ async def metrics():
 async def prometheus_metrics():
     """Prometheus-compatible exposition format."""
     lines = [
-        "# HELP cortexos_gateway_requests_total Total number of requests",
-        "# TYPE cortexos_gateway_requests_total counter",
+        "# HELP korobos_gateway_requests_total Total number of requests",
+        "# TYPE korobos_gateway_requests_total counter",
     ]
     for path, count in _request_count.items():
         safe = path.replace('"', "").replace("\\", "")
-        lines.append(f'cortexos_gateway_requests_total{{path="{safe}"}} {count}')
+        lines.append(f'korobos_gateway_requests_total{{path="{safe}"}} {count}')
 
-    lines.append("# HELP cortexos_gateway_errors_total Total number of error responses")
-    lines.append("# TYPE cortexos_gateway_errors_total counter")
+    lines.append("# HELP korobos_gateway_errors_total Total number of error responses")
+    lines.append("# TYPE korobos_gateway_errors_total counter")
     for path, count in _error_count.items():
         safe = path.replace('"', "").replace("\\", "")
-        lines.append(f'cortexos_gateway_errors_total{{path="{safe}"}} {count}')
+        lines.append(f'korobos_gateway_errors_total{{path="{safe}"}} {count}')
 
-    lines.append("# HELP cortexos_gateway_latency_seconds_total Cumulative latency")
-    lines.append("# TYPE cortexos_gateway_latency_seconds_total counter")
+    lines.append("# HELP korobos_gateway_latency_seconds_total Cumulative latency")
+    lines.append("# TYPE korobos_gateway_latency_seconds_total counter")
     for path, total in _latency_sum.items():
         safe = path.replace('"', "").replace("\\", "")
-        metric = f'cortexos_gateway_latency_seconds_total{{path="{safe}"}}'
+        metric = f'korobos_gateway_latency_seconds_total{{path="{safe}"}}'
         lines.append(f"{metric} {total:.4f}")
 
     return "\n".join(lines) + "\n"

@@ -1,4 +1,4 @@
-# CortexOS Vault Configuration
+# KOROBOS Vault Configuration
 # §13 Secret Management — HashiCorp Vault integration
 
 terraform {
@@ -17,17 +17,17 @@ provider "vault" {
 
 # ── Vault KV Secrets Engine ──
 
-resource "vault_mount" "cortexos" {
-  path        = "cortexos"
+resource "vault_mount" "korobos" {
+  path        = "korobos"
   type        = "kv"
   options     = { version = "2" }
-  description = "CortexOS secrets store"
+  description = "KOROBOS secrets store"
 }
 
 # ── Per-environment secret paths ──
 
 resource "vault_kv_secret_v2" "app_secrets" {
-  mount = vault_mount.cortexos.path
+  mount = vault_mount.korobos.path
   name  = "${var.environment}/app"
 
   data_json = jsonencode({
@@ -39,13 +39,13 @@ resource "vault_kv_secret_v2" "app_secrets" {
   })
 }
 
-# ── Vault Policy for CortexOS services ──
+# ── Vault Policy for KOROBOS services ──
 
-resource "vault_policy" "cortexos_read" {
-  name = "cortexos-${var.environment}-read"
+resource "vault_policy" "korobos_read" {
+  name = "korobos-${var.environment}-read"
 
   policy = <<-EOT
-    path "cortexos/data/${var.environment}/*" {
+    path "korobos/data/${var.environment}/*" {
       capabilities = ["read", "list"]
     }
   EOT
@@ -64,11 +64,11 @@ resource "vault_kubernetes_auth_backend_config" "main" {
   kubernetes_ca_cert = var.kubernetes_ca_cert
 }
 
-resource "vault_kubernetes_auth_backend_role" "cortexos" {
+resource "vault_kubernetes_auth_backend_role" "korobos" {
   backend                          = vault_auth_backend.kubernetes.path
-  role_name                        = "cortexos-${var.environment}"
-  bound_service_account_names      = ["cortexos-sa"]
-  bound_service_account_namespaces = ["cortexos-${var.environment}"]
-  token_policies                   = [vault_policy.cortexos_read.name]
+  role_name                        = "korobos-${var.environment}"
+  bound_service_account_names      = ["korobos-sa"]
+  bound_service_account_namespaces = ["korobos-${var.environment}"]
+  token_policies                   = [vault_policy.korobos_read.name]
   token_ttl                        = 3600
 }

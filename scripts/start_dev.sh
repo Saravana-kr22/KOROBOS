@@ -3,7 +3,7 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-echo "Cleaning up existing processes on CortexOS ports..."
+echo "Cleaning up existing processes on KOROBOS ports..."
 if command_exists fuser; then
     fuser -k 8000/tcp 8001/tcp 8002/tcp 8003/tcp 8004/tcp 8005/tcp 8006/tcp 8007/tcp 9000/tcp 3000/tcp 2>/dev/null || true
 fi
@@ -12,7 +12,7 @@ sleep 1
 # Cleanup function to kill all background processes
 cleanup() {
     echo ""
-    echo "Stopping CortexOS development servers..."
+    echo "Stopping KOROBOS development servers..."
     for pid in "${PIDS[@]}"; do
         if kill -0 "$pid" 2>/dev/null; then
             kill "$pid" 2>/dev/null
@@ -24,18 +24,18 @@ cleanup() {
 # Set up trap for cleanup
 trap cleanup SIGINT SIGTERM
 
-echo "Starting CortexOS development servers..."
+echo "Starting KOROBOS development servers..."
 
 # Ensure poetry is in PATH if installed in default local location
 export PATH="$HOME/.local/bin:$PATH"
 
 # Start Everything via Docker Compose
-echo "Starting all CortexOS services and infrastructure..."
+echo "Starting all KOROBOS services and infrastructure..."
 docker compose up -d --build
 
 echo ""
 echo "=================================================="
-echo "🚀 CortexOS is fully containerized and running!"
+echo "🚀 KOROBOS is fully containerized and running!"
 echo "=================================================="
 echo "📦 Infrastructure:"
 echo "  - Postgres: localhost:5432"

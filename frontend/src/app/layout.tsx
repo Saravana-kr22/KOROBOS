@@ -1,5 +1,5 @@
 /*
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -9,8 +9,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CortexOS Frontend",
-  description: "CortexOS Next.js frontend",
+  title: "KOROBOS Frontend",
+  description: "KOROBOS Next.js frontend",
 };
 
 export default function RootLayout({

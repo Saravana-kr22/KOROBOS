@@ -1,11 +1,11 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 
-Gateway-specific configuration extending the shared CortexOS settings.
+Gateway-specific configuration extending the shared KOROBOS settings.
 """
 
 from functools import lru_cache

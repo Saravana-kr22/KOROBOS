@@ -1,16 +1,16 @@
-# CortexOS Staging Environment Config
+# KOROBOS Staging Environment Config
 # §3 Environment Strategy — Staging: production mirror, QA testing, load testing
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cortexos-env-config
-  namespace: cortexos-staging
+  name: korobos-env-config
+  namespace: korobos-staging
 data:
   ENVIRONMENT: "staging"
   LOG_LEVEL: "INFO"
-  DATABASE_URL: "postgresql+asyncpg://cortexos:${DB_PASSWORD}@cortexos-staging-postgres.rds.amazonaws.com:5432/cortexos"
-  REDIS_URL: "redis://cortexos-staging-redis.cache.amazonaws.com:6379/0"
-  KAFKA_BROKER: "cortexos-staging-kafka.msk.amazonaws.com:9092"
-  SEARCH_URL: "http://meilisearch.cortexos-staging:7700"
-  OBJECT_STORAGE_URL: "https://cortexos-staging-storage.s3.amazonaws.com"
+  DATABASE_URL: "postgresql+asyncpg://korobos:${DB_PASSWORD}@korobos-staging-postgres.rds.amazonaws.com:5432/korobos"
+  REDIS_URL: "redis://korobos-staging-redis.cache.amazonaws.com:6379/0"
+  KAFKA_BROKER: "korobos-staging-kafka.msk.amazonaws.com:9092"
+  SEARCH_URL: "http://meilisearch.korobos-staging:7700"
+  OBJECT_STORAGE_URL: "https://korobos-staging-storage.s3.amazonaws.com"

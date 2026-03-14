@@ -13,7 +13,7 @@ FRONTEND_DIR := frontend
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
 SHORT_SHA := $(shell git rev-parse --short HEAD 2>/dev/null)
 GITHUB_REPOSITORY := $(shell git config --get remote.origin.url | sed -E 's#(git@github.com:|https://github.com/)##; s#\.git$$##' | tr '[:upper:]' '[:lower:]')
-IMAGE_PREFIX ?= $(if $(GITHUB_REPOSITORY),ghcr.io/$(GITHUB_REPOSITORY),ghcr.io/saravana-kr22/cortexos)
+IMAGE_PREFIX ?= $(if $(GITHUB_REPOSITORY),ghcr.io/$(GITHUB_REPOSITORY),ghcr.io/saravana-kr22/korobos)
 HELM_VALUES_FILES := $(wildcard infrastructure/helm/charts/*/values.yaml)
 
 setup:

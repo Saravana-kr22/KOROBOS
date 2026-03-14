@@ -1,10 +1,10 @@
-# CortexOS Architecture Document
+# KOROBOS Architecture Document
 
 ## High Level Design (HLD)
 
 Version: 1.0 \
 Owner: Saravana Perumal K \
-Project: CortexOS -- Second Brain Operating System
+Project: KOROBOS -- Second Brain Operating System
 
 ------------------------------------------------------------------------
 
@@ -12,7 +12,7 @@ Project: CortexOS -- Second Brain Operating System
 
 ## 1.1 System Overview
 
-CortexOS is a modular personal productivity platform consisting of
+KOROBOS is a modular personal productivity platform consisting of
 services responsible for knowledge management, life tracking, analytics,
 and notifications.
 

@@ -1,4 +1,4 @@
-# CortexOS
+# KOROBOS
 
 # Frontend Component & UI Architecture
 
@@ -9,7 +9,7 @@ Owner: Saravana Perumal K
 
 ## 1. Frontend Architecture Overview
 
-The CortexOS frontend is a modular React application designed around:
+The KOROBOS frontend is a modular React application designed around:
 
 -   Reusable UI components
 -   Widget-driven dashboards
@@ -485,12 +485,12 @@ Deployment:
 
 # Final Vision
 
-The CortexOS UI architecture enables:
+The KOROBOS UI architecture enables:
 
 -   scalable component design
 -   modular widget dashboards
 -   microservice-driven APIs
 -   real-time productivity insights
 
-This architecture allows CortexOS to function as a **personal
+This architecture allows KOROBOS to function as a **personal
 productivity operating system interface**.

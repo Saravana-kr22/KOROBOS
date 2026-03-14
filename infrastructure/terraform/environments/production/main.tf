@@ -1,5 +1,5 @@
 # Environment: production
-# CortexOS Infrastructure setup
+# KOROBOS Infrastructure setup
 
 module "vpc" {
   source = "../../modules/vpc"

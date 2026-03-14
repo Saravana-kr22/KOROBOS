@@ -1,4 +1,4 @@
-# **CortexOS**
+# **KOROBOS**
 
 # **UX Flow Diagrams**
 
@@ -9,7 +9,7 @@
 
 # **1\. UX Flow Overview**
 
-**UX Flows define the step-by-step interaction between the user and CortexOS.**
+**UX Flows define the step-by-step interaction between the user and KOROBOS.**
 
 **Primary flows:**
 
@@ -30,7 +30,7 @@
 
 ### **Goal**
 
-**Allow new users to quickly understand CortexOS and start using it.**
+**Allow new users to quickly understand KOROBOS and start using it.**
 
 ---
 
@@ -360,7 +360,7 @@ InsightGeneration --> DashboardDisplay
  - **productivity improvements**  
  - **habit adjustments**
 
-**This aligns with the AI pipeline architecture in CortexOS.**
+**This aligns with the AI pipeline architecture in KOROBOS.**
 
 ---
 
@@ -432,7 +432,7 @@ ErrorMessage --> Retry
 
 # **15\. Cross Module Interaction Flow**
 
-**CortexOS modules are interconnected.**
+**KOROBOS modules are interconnected.**
 
 ---
 
@@ -478,7 +478,7 @@ AIInsights --> Dashboard
 
 # **Final UX Flow Summary**
 
-**CortexOS user flows revolve around five core loops:**
+**KOROBOS user flows revolve around five core loops:**
 
        Capture Knowledge
               ↓

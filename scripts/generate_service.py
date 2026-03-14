@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 
-Service Template Generator — scaffolds a new CortexOS microservice.
+Service Template Generator — scaffolds a new KOROBOS microservice.
 
 Usage:
     python scripts/generate_service.py <service-name>
@@ -20,7 +20,7 @@ import sys
 import textwrap
 
 HEADER = '''"""
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -89,7 +89,7 @@ def generate_service(service_name: str):
 
             app = FastAPI(
                 title="{label}",
-                description="CortexOS {label}",
+                description="KOROBOS {label}",
                 version="1.0.0",
                 lifespan=lifespan,
             )
@@ -163,10 +163,10 @@ def generate_service(service_name: str):
         f.write(textwrap.dedent(f'''\
             {HEADER}
 
-            from backend.shared.config.settings import CortexOSSettings
+            from backend.shared.config.settings import KOROBOSSettings
 
 
-            class {class_name}Settings(CortexOSSettings):
+            class {class_name}Settings(KOROBOSSettings):
                 """Service-specific settings for {label}."""
 
                 model_config = {{
@@ -187,7 +187,7 @@ def generate_service(service_name: str):
     # Dockerfile
     with open(os.path.join(svc_dir, "Dockerfile"), "w") as f:
         f.write(textwrap.dedent(f"""\
-            # CortexOS — Copyright (c) 2026 Saravana Perumal K — AGPL v3
+            # KOROBOS — Copyright (c) 2026 Saravana Perumal K — AGPL v3
 
             FROM python:3.11-slim
 

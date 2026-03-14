@@ -1,5 +1,5 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -21,7 +21,7 @@ class ErrorDetail(BaseModel):
 
 
 class APIResponse(BaseModel):
-    """Standard envelope for all CortexOS API responses."""
+    """Standard envelope for all KOROBOS API responses."""
 
     status: str = Field(..., description="'success' or 'error'")
     data: Optional[Any] = Field(default=None, description="Response payload")

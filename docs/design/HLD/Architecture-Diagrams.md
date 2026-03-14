@@ -1,8 +1,8 @@
-# CortexOS -- Architecture Diagram
+# KOROBOS -- Architecture Diagram
 
 Version: 1.0 \
 Owner: Saravana Perumal K \
-Project: CortexOS -- Second Brain Operating System
+Project: KOROBOS -- Second Brain Operating System
 
 ------------------------------------------------------------------------
 

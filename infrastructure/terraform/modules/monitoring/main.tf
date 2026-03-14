@@ -1,5 +1,5 @@
 # Terraform Module: Monitoring
-# CortexOS Observability Stack
+# KOROBOS Observability Stack
 # Implements §12: Prometheus, Grafana, OpenTelemetry, Jaeger, ELK
 #
 # This module deploys the observability stack using Helm charts
@@ -22,10 +22,10 @@ terraform {
 
 resource "kubernetes_namespace" "monitoring" {
   metadata {
-    name = "cortexos-monitoring"
+    name = "korobos-monitoring"
     labels = {
       environment = var.environment
-      project     = "cortexos"
+      project     = "korobos"
     }
   }
 }

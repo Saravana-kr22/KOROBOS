@@ -1,6 +1,6 @@
-# CortexOS Developer Setup Guide
+# KOROBOS Developer Setup Guide
 
-Welcome to the CortexOS engineering team! Follow these steps to get your local environment running.
+Welcome to the KOROBOS engineering team! Follow these steps to get your local environment running.
 
 ## Prerequisites
 - Python 3.11+
@@ -13,7 +13,7 @@ Welcome to the CortexOS engineering team! Follow these steps to get your local e
 ## 1. Clone Repository
 ```bash
 git clone <repository-url>
-cd CortexOS
+cd KOROBOS
 ```
 
 ## 2. Install Dependencies

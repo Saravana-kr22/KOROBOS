@@ -1,4 +1,4 @@
-# CortexOS ArgoCD Application of Applications
+# KOROBOS ArgoCD Application of Applications
 # §9 Continuous Deployment (GitOps)
 # Deployment flow: Developer push → CI build → Helm chart update → ArgoCD deploy
 
@@ -6,18 +6,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: cortexos
+  name: korobos
   namespace: argocd
 spec:
-  description: CortexOS Platform
+  description: KOROBOS Platform
   sourceRepos:
     - "*"
   destinations:
-    - namespace: cortexos-dev
+    - namespace: korobos-dev
       server: https://kubernetes.default.svc
-    - namespace: cortexos-staging
+    - namespace: korobos-staging
       server: https://kubernetes.default.svc
-    - namespace: cortexos-prod
+    - namespace: korobos-prod
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: ""
@@ -31,14 +31,14 @@ metadata:
   name: auth-service
   namespace: argocd
 spec:
-  project: cortexos
+  project: korobos
   source:
-    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    repoURL: https://github.com/Saravana-kr22/KOROBOS.git
     targetRevision: HEAD
     path: infrastructure/helm/charts/auth-service
   destination:
     server: https://kubernetes.default.svc
-    namespace: cortexos-dev
+    namespace: korobos-dev
   syncPolicy:
     automated:
       prune: true
@@ -52,14 +52,14 @@ metadata:
   name: notes-service
   namespace: argocd
 spec:
-  project: cortexos
+  project: korobos
   source:
-    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    repoURL: https://github.com/Saravana-kr22/KOROBOS.git
     targetRevision: HEAD
     path: infrastructure/helm/charts/notes-service
   destination:
     server: https://kubernetes.default.svc
-    namespace: cortexos-dev
+    namespace: korobos-dev
   syncPolicy:
     automated:
       prune: true
@@ -73,14 +73,14 @@ metadata:
   name: habit-service
   namespace: argocd
 spec:
-  project: cortexos
+  project: korobos
   source:
-    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    repoURL: https://github.com/Saravana-kr22/KOROBOS.git
     targetRevision: HEAD
     path: infrastructure/helm/charts/habit-service
   destination:
     server: https://kubernetes.default.svc
-    namespace: cortexos-dev
+    namespace: korobos-dev
   syncPolicy:
     automated:
       prune: true
@@ -94,14 +94,14 @@ metadata:
   name: learning-service
   namespace: argocd
 spec:
-  project: cortexos
+  project: korobos
   source:
-    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    repoURL: https://github.com/Saravana-kr22/KOROBOS.git
     targetRevision: HEAD
     path: infrastructure/helm/charts/learning-service
   destination:
     server: https://kubernetes.default.svc
-    namespace: cortexos-dev
+    namespace: korobos-dev
   syncPolicy:
     automated:
       prune: true
@@ -115,14 +115,14 @@ metadata:
   name: health-service
   namespace: argocd
 spec:
-  project: cortexos
+  project: korobos
   source:
-    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    repoURL: https://github.com/Saravana-kr22/KOROBOS.git
     targetRevision: HEAD
     path: infrastructure/helm/charts/health-service
   destination:
     server: https://kubernetes.default.svc
-    namespace: cortexos-dev
+    namespace: korobos-dev
   syncPolicy:
     automated:
       prune: true
@@ -136,14 +136,14 @@ metadata:
   name: analytics-service
   namespace: argocd
 spec:
-  project: cortexos
+  project: korobos
   source:
-    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    repoURL: https://github.com/Saravana-kr22/KOROBOS.git
     targetRevision: HEAD
     path: infrastructure/helm/charts/analytics-service
   destination:
     server: https://kubernetes.default.svc
-    namespace: cortexos-dev
+    namespace: korobos-dev
   syncPolicy:
     automated:
       prune: true
@@ -157,14 +157,14 @@ metadata:
   name: notification-service
   namespace: argocd
 spec:
-  project: cortexos
+  project: korobos
   source:
-    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    repoURL: https://github.com/Saravana-kr22/KOROBOS.git
     targetRevision: HEAD
     path: infrastructure/helm/charts/notification-service
   destination:
     server: https://kubernetes.default.svc
-    namespace: cortexos-dev
+    namespace: korobos-dev
   syncPolicy:
     automated:
       prune: true
@@ -178,14 +178,14 @@ metadata:
   name: ai-service
   namespace: argocd
 spec:
-  project: cortexos
+  project: korobos
   source:
-    repoURL: https://github.com/Saravana-kr22/CortexOS.git
+    repoURL: https://github.com/Saravana-kr22/KOROBOS.git
     targetRevision: HEAD
     path: infrastructure/helm/charts/ai-service
   destination:
     server: https://kubernetes.default.svc
-    namespace: cortexos-dev
+    namespace: korobos-dev
   syncPolicy:
     automated:
       prune: true

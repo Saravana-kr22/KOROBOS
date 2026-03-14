@@ -1,4 +1,4 @@
-# CortexOS
+# KOROBOS
 
 Second Brain Operating System unifying knowledge management, habit tracking, and analytics.
 

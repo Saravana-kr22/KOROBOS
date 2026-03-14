@@ -1,4 +1,4 @@
-name: CortexOS CI Pipeline
+name: KOROBOS CI Pipeline
 
 permissions:
   contents: read

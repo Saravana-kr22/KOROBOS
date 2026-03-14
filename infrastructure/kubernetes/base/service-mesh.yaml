@@ -1,4 +1,4 @@
-# CortexOS Service Mesh Configuration
+# KOROBOS Service Mesh Configuration
 # §5 Kubernetes Cluster Setup — Service Mesh (Istio)
 #
 # Install Istio with: istioctl install -f this-file.yaml
@@ -6,7 +6,7 @@
 apiVersion: install.istio.io/v1alpha1
 kind: IstioOperator
 metadata:
-  name: cortexos-istio
+  name: korobos-istio
   namespace: istio-system
 spec:
   profile: default
@@ -16,7 +16,7 @@ spec:
     defaultConfig:
       tracing:
         zipkin:
-          address: jaeger-collector.cortexos-monitoring:9411
+          address: jaeger-collector.korobos-monitoring:9411
   components:
     pilot:
       k8s:
@@ -32,11 +32,11 @@ spec:
             type: LoadBalancer
 
 ---
-# Enable Istio sidecar injection for CortexOS namespaces
+# Enable Istio sidecar injection for KOROBOS namespaces
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cortexos-dev
+  name: korobos-dev
   labels:
     istio-injection: enabled
 
@@ -44,7 +44,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cortexos-staging
+  name: korobos-staging
   labels:
     istio-injection: enabled
 
@@ -52,7 +52,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cortexos-prod
+  name: korobos-prod
   labels:
     istio-injection: enabled
 

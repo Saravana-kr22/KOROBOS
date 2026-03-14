@@ -1,11 +1,11 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 
-Canonical Kafka topic subscriptions for CortexOS background workers.
+Canonical Kafka topic subscriptions for KOROBOS background workers.
 """
 
 ANALYTICS_TOPICS = (

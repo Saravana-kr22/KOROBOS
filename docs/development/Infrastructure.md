@@ -1,12 +1,12 @@
-## **CortexOS – Infrastructure & Deployment Specification**
+## **KOROBOS – Infrastructure & Deployment Specification**
 
-This document provides a comprehensive overview of the **CortexOS Infrastructure**, detailing the cloud-native environment, network topology, and resource management strategies required to support an enterprise-level "Second Brain" platform.
+This document provides a comprehensive overview of the **KOROBOS Infrastructure**, detailing the cloud-native environment, network topology, and resource management strategies required to support an enterprise-level "Second Brain" platform.
 
 ### ---
 
 **1\. Infrastructure Architecture Overview**
 
-CortexOS utilizes a **Cloud-Native Microservices Architecture**. The system is designed to be highly available, scalable, and secure, leveraging container orchestration and distributed data layers.
+KOROBOS utilizes a **Cloud-Native Microservices Architecture**. The system is designed to be highly available, scalable, and secure, leveraging container orchestration and distributed data layers.
 
 #### **1.1 Core Infrastructure Components**
 
@@ -33,7 +33,7 @@ The infrastructure is segmented into public and private subnets to ensure the pr
 
 **3\. Scaling & Resiliency Strategy**
 
-To meet the target of **100k concurrent users**, CortexOS employs multiple scaling vectors:
+To meet the target of **100k concurrent users**, KOROBOS employs multiple scaling vectors:
 
 | Component | Scaling Strategy | Trigger |
 | :---- | :---- | :---- |
@@ -46,7 +46,7 @@ To meet the target of **100k concurrent users**, CortexOS employs multiple scali
 
 **4\. Storage & Data Persistence**
 
-CortexOS utilizes a polyglot persistence approach to handle diverse data types:
+KOROBOS utilizes a polyglot persistence approach to handle diverse data types:
 
 * **Relational Data (PostgreSQL)**: Handles Users, Notes metadata, Habit logs, and Learning sessions.  
 * **Unstructured Data (Object Storage)**: Stores raw markdown files and media embeds.  

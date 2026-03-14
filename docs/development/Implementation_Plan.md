@@ -1,4 +1,4 @@
-# CortexOS -- Implementation Execution Plan
+# KOROBOS -- Implementation Execution Plan
 
 Version: 1.0 \
 Owner: Saravana Perumal K
@@ -8,7 +8,7 @@ Owner: Saravana Perumal K
 # 1. Purpose
 
 This document defines the **execution strategy for implementing
-CortexOS**, a Second Brain Operating System that integrates knowledge
+KOROBOS**, a Second Brain Operating System that integrates knowledge
 management, life analytics, habit tracking, learning tracking, health
 tracking, and AI insights into a unified productivity platform.
 
@@ -29,7 +29,7 @@ workflow**, not timelines or team sizing.
 
 # 2. Execution Philosophy
 
-The CortexOS implementation follows several engineering principles:
+The KOROBOS implementation follows several engineering principles:
 
 ## Modular Architecture
 
@@ -100,7 +100,7 @@ The project uses a monorepo structure.
 
 Example:
 
-    cortexos/
+    korobos/
 
     frontend/
     backend/
@@ -613,7 +613,7 @@ RTO: rapid service recovery
 
 # 22. Continuous Improvement Loop
 
-CortexOS operates as a feedback-driven platform.
+KOROBOS operates as a feedback-driven platform.
 
 Cycle:
 
@@ -627,13 +627,13 @@ Cycle:
            ↓
     Improve Productivity
 
-This loop defines the core philosophy of the CortexOS system.
+This loop defines the core philosophy of the KOROBOS system.
 
 ------------------------------------------------------------------------
 
 # Final Execution Vision
 
-CortexOS is designed to function as a **distributed intelligence
+KOROBOS is designed to function as a **distributed intelligence
 platform**.
 
 Key characteristics:

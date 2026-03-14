@@ -1,31 +1,31 @@
-# CortexOS Kubernetes Base Namespace Configuration
+# KOROBOS Kubernetes Base Namespace Configuration
 # §5 Kubernetes Cluster Setup — Namespaces
 
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cortexos-dev
+  name: korobos-dev
   labels:
-    project: cortexos
+    project: korobos
     environment: dev
 
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cortexos-staging
+  name: korobos-staging
   labels:
-    project: cortexos
+    project: korobos
     environment: staging
 
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cortexos-prod
+  name: korobos-prod
   labels:
-    project: cortexos
+    project: korobos
     environment: prod
 
 ---
@@ -33,7 +33,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cortexos-ingress
+  name: korobos-ingress
   labels:
-    project: cortexos
+    project: korobos
     component: ingress

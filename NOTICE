@@ -1,4 +1,4 @@
-CortexOS — Second Brain Operating System Copyright (c) 2026 Saravana
+KOROBOS — Second Brain Operating System Copyright (c) 2026 Saravana
 Perumal
 
 Licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
@@ -12,11 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 Third‑Party Dependencies
 
-CortexOS may include third‑party libraries that are licensed under their
+KOROBOS may include third‑party libraries that are licensed under their
 own open source licenses. Those licenses remain in effect for their
 respective components.
 
 Contributors
 
-All contributions to CortexOS are licensed under AGPL v3 unless
+All contributions to KOROBOS are licensed under AGPL v3 unless
 explicitly stated otherwise.

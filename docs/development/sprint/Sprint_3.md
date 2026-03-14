@@ -1,4 +1,4 @@
-# CortexOS --- Sprint 3 Execution Plan
+# KOROBOS --- Sprint 3 Execution Plan
 
 ## API Gateway & Service Template Implementation
 
@@ -32,7 +32,7 @@ development.
 
 # 2. Platform Context
 
-The CortexOS backend uses a **microservice architecture**.
+The KOROBOS backend uses a **microservice architecture**.
 
 Architecture flow:
 
@@ -412,7 +412,7 @@ Security layers:
 
 # Final Sprint Outcome
 
-After Sprint 3 completion the CortexOS backend will have a **complete
+After Sprint 3 completion the KOROBOS backend will have a **complete
 service framework**.
 
 Developers can:
@@ -422,5 +422,5 @@ Developers can:
 -   publish events to the event bus
 -   maintain standardized architecture
 
-This enables rapid implementation of CortexOS domain services in future
+This enables rapid implementation of KOROBOS domain services in future
 sprints.

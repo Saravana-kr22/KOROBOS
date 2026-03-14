@@ -1,4 +1,4 @@
-# CortexOS Ingress Controller Configuration
+# KOROBOS Ingress Controller Configuration
 # §5 Kubernetes Cluster Setup — Ingress Controller
 #
 # This uses the Istio Gateway + VirtualService pattern.
@@ -8,8 +8,8 @@
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
-  name: cortexos-gateway
-  namespace: cortexos-dev
+  name: korobos-gateway
+  namespace: korobos-dev
 spec:
   selector:
     istio: ingressgateway
@@ -19,16 +19,16 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "*.cortexos.dev"
+        - "*.korobos.dev"
     - port:
         number: 443
         name: https
         protocol: HTTPS
       tls:
         mode: SIMPLE
-        credentialName: cortexos-tls
+        credentialName: korobos-tls
       hosts:
-        - "*.cortexos.dev"
+        - "*.korobos.dev"
 
 ---
 # Route traffic to the API Gateway service
@@ -36,12 +36,12 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: api-gateway
-  namespace: cortexos-dev
+  namespace: korobos-dev
 spec:
   hosts:
-    - "api.cortexos.dev"
+    - "api.korobos.dev"
   gateways:
-    - cortexos-gateway
+    - korobos-gateway
   http:
     - match:
         - uri:
@@ -114,12 +114,12 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: frontend
-  namespace: cortexos-dev
+  namespace: korobos-dev
 spec:
   hosts:
-    - "app.cortexos.dev"
+    - "app.korobos.dev"
   gateways:
-    - cortexos-gateway
+    - korobos-gateway
   http:
     - route:
         - destination:

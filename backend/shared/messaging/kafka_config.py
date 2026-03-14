@@ -1,5 +1,5 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -11,10 +11,10 @@ Kafka client configuration helpers shared by producers and consumers.
 import ssl
 from typing import Any
 
-from backend.shared.config.settings import CortexOSSettings
+from backend.shared.config.settings import KOROBOSSettings
 
 
-def build_kafka_client_options(settings: CortexOSSettings) -> dict[str, Any]:
+def build_kafka_client_options(settings: KOROBOSSettings) -> dict[str, Any]:
     """
     Build aiokafka connection options from settings.
 
@@ -44,7 +44,7 @@ def build_kafka_client_options(settings: CortexOSSettings) -> dict[str, Any]:
     return options
 
 
-def _build_ssl_context(settings: CortexOSSettings) -> ssl.SSLContext:
+def _build_ssl_context(settings: KOROBOSSettings) -> ssl.SSLContext:
     if settings.kafka_ssl_ca_file:
         ssl_context = ssl.create_default_context(cafile=settings.kafka_ssl_ca_file)
     else:

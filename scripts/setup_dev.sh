@@ -6,7 +6,7 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-echo "Setting up CortexOS development environment..."
+echo "Setting up KOROBOS development environment..."
 
 # 0. Check for Poetry
 if ! command_exists poetry; then

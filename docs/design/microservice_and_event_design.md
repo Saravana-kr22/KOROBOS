@@ -1,4 +1,4 @@
-# CortexOS Backend Detailed Design 
+# KOROBOS Backend Detailed Design 
 
 Version: 1.0 \
 Owner: Saravana Perumal K
@@ -7,7 +7,7 @@ Owner: Saravana Perumal K
 
 # 1. System Overview
 
-CortexOS backend is a **microservice-based, event-driven system**
+KOROBOS backend is a **microservice-based, event-driven system**
 designed to power a Second Brain productivity platform.
 
 Core capabilities:
@@ -429,7 +429,7 @@ Logging
 
 # Final Architecture Vision
 
-CortexOS backend acts as a **distributed intelligence engine**.
+KOROBOS backend acts as a **distributed intelligence engine**.
 
 Key characteristics
 
@@ -438,5 +438,5 @@ Key characteristics
 -   AI-powered insights
 -   scalable cloud infrastructure
 
-The system enables CortexOS to function as a **Second Brain Operating
+The system enables KOROBOS to function as a **Second Brain Operating
 System**.

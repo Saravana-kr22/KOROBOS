@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD)
 
-## CortexOS -- Your Second Brain Operating System
+## KOROBOS -- Your Second Brain Operating System
 
 Version: 1.0\
 Owner: Saravana Perumal K\
@@ -12,7 +12,7 @@ Status: Draft
 
 ## Purpose
 
-The CortexOS Platform is a unified productivity operating system
+The KOROBOS Platform is a unified productivity operating system
 that integrates knowledge management, life tracking, analytics, and AI
 insights into a single intelligent dashboard.
 

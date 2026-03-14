@@ -1,5 +1,5 @@
 # Terraform Module: Redis
-# CortexOS Redis Cache Cluster
+# KOROBOS Redis Cache Cluster
 
 terraform {
   required_providers {
@@ -11,7 +11,7 @@ terraform {
 }
 
 resource "aws_elasticache_subnet_group" "main" {
-  name       = "cortexos-${var.environment}-redis-subnet"
+  name       = "korobos-${var.environment}-redis-subnet"
   subnet_ids = var.subnet_ids
 
   tags = {
@@ -20,7 +20,7 @@ resource "aws_elasticache_subnet_group" "main" {
 }
 
 resource "aws_security_group" "redis" {
-  name_prefix = "cortexos-${var.environment}-redis-"
+  name_prefix = "korobos-${var.environment}-redis-"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -38,14 +38,14 @@ resource "aws_security_group" "redis" {
   }
 
   tags = {
-    Name        = "cortexos-${var.environment}-redis-sg"
+    Name        = "korobos-${var.environment}-redis-sg"
     Environment = var.environment
   }
 }
 
 resource "aws_elasticache_replication_group" "main" {
-  replication_group_id = "cortexos-${var.environment}-redis"
-  description          = "CortexOS ${var.environment} Redis cluster"
+  replication_group_id = "korobos-${var.environment}-redis"
+  description          = "KOROBOS ${var.environment} Redis cluster"
   node_type            = var.node_type
   num_cache_clusters   = var.environment == "production" ? 2 : 1
   port                 = 6379
@@ -58,8 +58,8 @@ resource "aws_elasticache_replication_group" "main" {
   automatic_failover_enabled = var.environment == "production" ? true : false
 
   tags = {
-    Name        = "cortexos-${var.environment}-redis"
+    Name        = "korobos-${var.environment}-redis"
     Environment = var.environment
-    Project     = "cortexos"
+    Project     = "korobos"
   }
 }

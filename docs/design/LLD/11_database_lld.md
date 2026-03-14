@@ -1,6 +1,6 @@
-# CortexOS – Enterprise LLD Template
+# KOROBOS – Enterprise LLD Template
 Document Name: Global Database Low Level Design
-Project: CortexOS – Second Brain Operating System
+Project: KOROBOS – Second Brain Operating System
 Version: 1.0
 Author: Saravana Perumal K
 Date: 2026-03-07
@@ -8,7 +8,7 @@ Status: Draft
 
 ## 1. Overview
 ### 1.1 Purpose
-Defines the centralized relational schema for all persistent data across the CortexOS ecosystem.
+Defines the centralized relational schema for all persistent data across the KOROBOS ecosystem.
 
 ## 2. Architecture
 ### 2.1 Technology Stack

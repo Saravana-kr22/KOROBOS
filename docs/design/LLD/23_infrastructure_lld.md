@@ -1,6 +1,6 @@
-# CortexOS – Enterprise LLD Template
+# KOROBOS – Enterprise LLD Template
 Document Name: Infrastructure Low Level Design
-Project: CortexOS – Second Brain Operating System
+Project: KOROBOS – Second Brain Operating System
 Version: 1.0
 Author: Saravana Perumal K
 Date: 2026-03-07
@@ -8,7 +8,7 @@ Status: Draft
 
 ## 1. Overview
 ### 1.1 Purpose
-Defines the cloud-native hosting environment for CortexOS.
+Defines the cloud-native hosting environment for KOROBOS.
 
 ## 2. Architecture
 * **Orchestration**: Kubernetes Cluster.

@@ -1,5 +1,5 @@
 # Terraform Module: Postgres
-# CortexOS Database Cluster
+# KOROBOS Database Cluster
 # Implements §15 Disaster Recovery: automated snapshots, WAL archiving
 
 terraform {
@@ -14,11 +14,11 @@ terraform {
 # ── DB Subnet Group ──
 
 resource "aws_db_subnet_group" "main" {
-  name       = "cortexos-${var.environment}-db-subnet"
+  name       = "korobos-${var.environment}-db-subnet"
   subnet_ids = var.subnet_ids
 
   tags = {
-    Name        = "cortexos-${var.environment}-db-subnet"
+    Name        = "korobos-${var.environment}-db-subnet"
     Environment = var.environment
   }
 }
@@ -26,7 +26,7 @@ resource "aws_db_subnet_group" "main" {
 # ── Security Group for RDS ──
 
 resource "aws_security_group" "rds" {
-  name_prefix = "cortexos-${var.environment}-rds-"
+  name_prefix = "korobos-${var.environment}-rds-"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -44,7 +44,7 @@ resource "aws_security_group" "rds" {
   }
 
   tags = {
-    Name        = "cortexos-${var.environment}-rds-sg"
+    Name        = "korobos-${var.environment}-rds-sg"
     Environment = var.environment
   }
 }
@@ -52,7 +52,7 @@ resource "aws_security_group" "rds" {
 # ── RDS PostgreSQL Instance ──
 
 resource "aws_db_instance" "main" {
-  identifier     = "cortexos-${var.environment}-postgres"
+  identifier     = "korobos-${var.environment}-postgres"
   engine         = "postgres"
   engine_version = "15"
   instance_class = var.instance_class
@@ -61,8 +61,8 @@ resource "aws_db_instance" "main" {
   max_allocated_storage = var.max_allocated_storage
   storage_encrypted     = true
 
-  db_name  = "cortexos"
-  username = "cortexos"
+  db_name  = "korobos"
+  username = "korobos"
   password = var.db_password
 
   db_subnet_group_name   = aws_db_subnet_group.main.name
@@ -81,14 +81,14 @@ resource "aws_db_instance" "main" {
 
   # Final snapshot before deletion
   skip_final_snapshot       = var.environment == "dev" ? true : false
-  final_snapshot_identifier = var.environment != "dev" ? "cortexos-${var.environment}-final-snapshot" : null
+  final_snapshot_identifier = var.environment != "dev" ? "korobos-${var.environment}-final-snapshot" : null
   deletion_protection       = var.environment == "production" ? true : false
 
   performance_insights_enabled = var.environment != "dev" ? true : false
 
   tags = {
-    Name        = "cortexos-${var.environment}-postgres"
+    Name        = "korobos-${var.environment}-postgres"
     Environment = var.environment
-    Project     = "cortexos"
+    Project     = "korobos"
   }
 }

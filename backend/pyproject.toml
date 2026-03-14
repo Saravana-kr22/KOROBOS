@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "cortexos-backend"
+name = "korobos-backend"
 version = "0.1.0"
-description = "Backend microservices for CortexOS."
-authors = ["CortexOS Devs <devs@cortexos.local>"]
+description = "Backend microservices for KOROBOS."
+authors = ["KOROBOS Devs <devs@korobos.local>"]
 
 [tool.poetry.dependencies]
 python = "^3.11"

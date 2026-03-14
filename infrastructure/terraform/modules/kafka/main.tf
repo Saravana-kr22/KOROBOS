@@ -1,5 +1,5 @@
 # Terraform Module: Kafka
-# CortexOS Event Streaming via Amazon MSK
+# KOROBOS Event Streaming via Amazon MSK
 
 terraform {
   required_providers {
@@ -11,7 +11,7 @@ terraform {
 }
 
 resource "aws_security_group" "kafka" {
-  name_prefix = "cortexos-${var.environment}-kafka-"
+  name_prefix = "korobos-${var.environment}-kafka-"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -36,13 +36,13 @@ resource "aws_security_group" "kafka" {
   }
 
   tags = {
-    Name        = "cortexos-${var.environment}-kafka-sg"
+    Name        = "korobos-${var.environment}-kafka-sg"
     Environment = var.environment
   }
 }
 
 resource "aws_msk_cluster" "main" {
-  cluster_name           = "cortexos-${var.environment}-kafka"
+  cluster_name           = "korobos-${var.environment}-kafka"
   kafka_version          = "3.5.1"
   number_of_broker_nodes = var.environment == "production" ? 3 : 2
 
@@ -69,14 +69,14 @@ resource "aws_msk_cluster" "main" {
     broker_logs {
       cloudwatch_logs {
         enabled   = true
-        log_group = "/aws/msk/cortexos-${var.environment}"
+        log_group = "/aws/msk/korobos-${var.environment}"
       }
     }
   }
 
   tags = {
-    Name        = "cortexos-${var.environment}-kafka"
+    Name        = "korobos-${var.environment}-kafka"
     Environment = var.environment
-    Project     = "cortexos"
+    Project     = "korobos"
   }
 }

@@ -1,4 +1,4 @@
-# CortexOS --- Sprint 1 Execution Plan
+# KOROBOS --- Sprint 1 Execution Plan
 
 ## Repository & Development Environment Setup
 
@@ -12,7 +12,7 @@ Owner: Saravana Perumal K
 ## Sprint Goal
 
 Establish the **complete engineering foundation required to begin
-CortexOS development**.
+KOROBOS development**.
 
 This sprint focuses on creating:
 
@@ -51,7 +51,7 @@ At the end of this sprint the system must support:
 
 Create the main project repository.
 
-    cortexos/
+    korobos/
     │
     ├── frontend/
     ├── backend/
@@ -475,7 +475,7 @@ Sprint 1 is complete when:
 
 # Final Sprint Outcome
 
-This sprint establishes the **engineering foundation for CortexOS**.
+This sprint establishes the **engineering foundation for KOROBOS**.
 
 After this sprint:
 

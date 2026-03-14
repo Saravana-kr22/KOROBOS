@@ -6,7 +6,7 @@ variable "environment" {
 variable "vault_address" {
   description = "Vault server address"
   type        = string
-  default     = "https://vault.cortexos.internal:8200"
+  default     = "https://vault.korobos.internal:8200"
 }
 
 variable "vault_token" {

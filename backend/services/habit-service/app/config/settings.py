@@ -1,15 +1,15 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 """
 
-from backend.shared.config.settings import CortexOSSettings
+from backend.shared.config.settings import KOROBOSSettings
 
 
-class HabitSettings(CortexOSSettings):
+class HabitSettings(KOROBOSSettings):
     """Service-specific settings for Habit Service."""
 
     model_config = {

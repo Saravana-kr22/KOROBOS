@@ -1,6 +1,6 @@
-# CortexOS – Enterprise LLD Template
+# KOROBOS – Enterprise LLD Template
 Document Name: Auth Service Low Level Design
-Project: CortexOS – Second Brain Operating System
+Project: KOROBOS – Second Brain Operating System
 Version: 1.0
 Author: Saravana Perumal K
 Date: 2026-03-07
@@ -8,7 +8,7 @@ Status: Draft
 
 ## 1. Overview
 ### 1.1 Purpose
-The Auth Service handles user authentication, registration, session management, and token issuance for the CortexOS platform.
+The Auth Service handles user authentication, registration, session management, and token issuance for the KOROBOS platform.
 
 ### 1.2 Scope
 **In Scope**

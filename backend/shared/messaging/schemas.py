@@ -1,5 +1,5 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -15,7 +15,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 
 class BaseEvent(BaseModel):
-    """Base schema for all CortexOS Kafka events."""
+    """Base schema for all KOROBOS Kafka events."""
 
     model_config = ConfigDict(populate_by_name=True)
 

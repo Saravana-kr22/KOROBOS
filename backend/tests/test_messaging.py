@@ -1,5 +1,5 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -100,7 +100,7 @@ def test_kafka_client_options_build_sasl_ssl_context(monkeypatch):
         kafka_broker="kafka:29093",
         kafka_security_protocol="SASL_SSL",
         kafka_sasl_mechanism="PLAIN",
-        kafka_sasl_username="cortexos",
+        kafka_sasl_username="korobos",
         kafka_sasl_password="secret",
         kafka_ssl_ca_file="/tmp/ca.crt",
         kafka_ssl_cert_file="/tmp/client.crt",
@@ -113,7 +113,7 @@ def test_kafka_client_options_build_sasl_ssl_context(monkeypatch):
     assert created["cafile"] == "/tmp/ca.crt"
     assert options["security_protocol"] == "SASL_SSL"
     assert options["sasl_mechanism"] == "PLAIN"
-    assert options["sasl_plain_username"] == "cortexos"
+    assert options["sasl_plain_username"] == "korobos"
     assert options["sasl_plain_password"] == "secret"
     assert options["ssl_context"] is created["context"]
     assert created["context"].check_hostname is False

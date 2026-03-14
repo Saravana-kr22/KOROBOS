@@ -1,5 +1,5 @@
 /*
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -16,7 +16,7 @@ export default function Home() {
         <div className={styles.brand}>
           <Image src="/next.svg" alt="Next.js logo" width={100} height={20} priority />
           <div className={styles.brandText}>
-            <span className={styles.eyebrow}>CortexOS Frontend</span>
+            <span className={styles.eyebrow}>KOROBOS Frontend</span>
             <h1 className={styles.heading}>Frontend runtime is live.</h1>
           </div>
         </div>

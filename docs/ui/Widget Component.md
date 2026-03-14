@@ -1,4 +1,4 @@
-# **CortexOS**
+# **KOROBOS**
 
 # **Widget Component Library**
 
@@ -9,7 +9,7 @@ Owner: Saravana Perumal K
 
 # **1\. Widget System Overview**
 
-Widgets are **self-contained UI components** that display real-time insights and allow quick interaction with CortexOS modules.
+Widgets are **self-contained UI components** that display real-time insights and allow quick interaction with KOROBOS modules.
 
 Characteristics
 
@@ -572,7 +572,7 @@ Example structure
 
 # **Final Widget System Vision**
 
-The CortexOS dashboard becomes a **modular productivity cockpit** where:
+The KOROBOS dashboard becomes a **modular productivity cockpit** where:
 
  - each widget is a data instrument  
  - insights are always visible  

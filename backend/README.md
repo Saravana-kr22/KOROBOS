@@ -1,4 +1,4 @@
-# CortexOS Backend
+# KOROBOS Backend
 
 Microservices monorepo.
 

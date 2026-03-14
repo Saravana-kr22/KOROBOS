@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
             "Commit blocked: " + _PROP.capitalize() + " or " + _CONF + " text detected."
         )
         msg2 = (
-            "CortexOS relies on open source licensing. Please remove "
+            "KOROBOS relies on open source licensing. Please remove "
             + _PROP
             + " claims."
         )

@@ -1,15 +1,15 @@
-# CortexOS Dev Kubernetes Overlay
+# KOROBOS Dev Kubernetes Overlay
 # §3 Environment Strategy — Development
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cortexos-env-config
-  namespace: cortexos-dev
+  name: korobos-env-config
+  namespace: korobos-dev
 data:
   ENVIRONMENT: "development"
   LOG_LEVEL: "DEBUG"
-  DATABASE_URL: "postgresql+asyncpg://cortexos:password@postgres:5432/cortexos"
+  DATABASE_URL: "postgresql+asyncpg://korobos:password@postgres:5432/korobos"
   REDIS_URL: "redis://redis:6379/0"
   KAFKA_BROKER: "kafka:9092"
   SEARCH_URL: "http://meilisearch:7700"

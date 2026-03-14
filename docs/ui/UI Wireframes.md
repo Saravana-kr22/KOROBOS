@@ -1,4 +1,4 @@
-# **CortexOS**
+# **KOROBOS**
 
 # **Complete UI Wireframes Document**
 
@@ -38,7 +38,7 @@
 **Purpose: product introduction.**
 
     +--------------------------------------------------------+
-    | CortexOS Logo                                          |
+    | KOROBOS Logo                                          |
     | Your Second Brain Operating System                     |
     |                                                        |
     | [Start Free]  [Login]                                  |
@@ -56,7 +56,7 @@
 ## **Login**
 
     +------------------------------+
-    | CortexOS                     |
+    | KOROBOS                     |
     |                              |
     | Email                        |
     | [____________________]       |
@@ -449,7 +449,7 @@
 # **28\. Global Search**
 
     +--------------------------------------------------------+
-    | Search CortexOS                                        |
+    | Search KOROBOS                                        |
     +--------------------------------------------------------+
 
     Search Results
@@ -480,7 +480,7 @@
 
 # **Final UI System Overview**
 
-**CortexOS UI consists of:**
+**KOROBOS UI consists of:**
 
 **• 29 layouts**  
 **• Widget-based dashboard architecture**  

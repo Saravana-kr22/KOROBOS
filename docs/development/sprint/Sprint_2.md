@@ -1,4 +1,4 @@
-# CortexOS --- Sprint 2 Execution Plan
+# KOROBOS --- Sprint 2 Execution Plan
 
 ## Infrastructure & DevOps Pipeline
 
@@ -10,7 +10,7 @@ Owner: Saravana Perumal
 # 1. Sprint Objective
 
 The goal of Sprint 2 is to establish the **complete infrastructure and
-DevOps automation** required to deploy and operate CortexOS.
+DevOps automation** required to deploy and operate KOROBOS.
 
 After this sprint the system should support:
 
@@ -31,7 +31,7 @@ gateway and communicate through an event bus.
 
 # 2. Infrastructure Overview
 
-CortexOS infrastructure follows a **cloud‑native microservice
+KOROBOS infrastructure follows a **cloud‑native microservice
 architecture**.
 
 System flow:
@@ -130,7 +130,7 @@ Each environment configuration defines:
 
 # 5. Kubernetes Cluster Setup
 
-The Kubernetes cluster hosts all CortexOS services.
+The Kubernetes cluster hosts all KOROBOS services.
 
 Cluster components:
 
@@ -142,9 +142,9 @@ Cluster components:
 
 Namespaces:
 
-    cortexos-dev
-    cortexos-staging
-    cortexos-prod
+    korobos-dev
+    korobos-staging
+    korobos-prod
 
 Core services deployed in cluster:
 
@@ -180,11 +180,11 @@ Example Dockerfile template:
 
 Image versioning format:
 
-    cortexos/<service-name>:<version>
+    korobos/<service-name>:<version>
 
 Example:
 
-    cortexos/notes-service:1.0.0
+    korobos/notes-service:1.0.0
 
 ------------------------------------------------------------------------
 
@@ -406,10 +406,10 @@ Secrets securely managed
 
 After Sprint 2:
 
-The CortexOS platform will have a **fully automated DevOps platform**.
+The KOROBOS platform will have a **fully automated DevOps platform**.
 
 Every code commit will automatically:
 
 build → test → containerize → deploy
 
-This enables reliable delivery of the CortexOS microservice platform.
+This enables reliable delivery of the KOROBOS microservice platform.

@@ -1,5 +1,5 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Analytics Service",
-    description="CortexOS Productivity Insights Microservice",
+    description="KOROBOS Productivity Insights Microservice",
     version="1.0.0",
     lifespan=lifespan,
 )

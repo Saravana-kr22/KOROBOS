@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "Resetting CortexOS database..."
+echo "Resetting KOROBOS database..."
 
 # Assumes postgres is running locally via docker
-docker exec -i cortexos-postgres-1 psql -U cortexos -d cortexos -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+docker exec -i korobos-postgres-1 psql -U korobos -d korobos -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 
 echo "Database reset complete."

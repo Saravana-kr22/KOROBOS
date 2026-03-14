@@ -1,4 +1,4 @@
-# **CortexOS Design System**
+# **KOROBOS Design System**
 
 **Version: 1.0**  
 **Owner: Saravana Perumal K**
@@ -9,7 +9,7 @@
 
 ## **Purpose**
 
-**The CortexOS Design System provides a consistent UI framework for building the entire platform.**
+**The KOROBOS Design System provides a consistent UI framework for building the entire platform.**
 
 **It ensures:**
 
@@ -515,7 +515,7 @@
 
 **Recommended Figma structure**
 
-**CortexOS Design System**
+**KOROBOS Design System**
 
 **Foundations**
 
@@ -603,7 +603,7 @@
 
 # **Final Vision**
 
-**The CortexOS Design System enables building a cyberpunk intelligence interface where:**
+**The KOROBOS Design System enables building a cyberpunk intelligence interface where:**
 
 **• widgets become productivity instruments**  
 **• dashboards become command centers**  

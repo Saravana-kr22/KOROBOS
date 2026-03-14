@@ -1,11 +1,11 @@
 """
-CortexOS — Second Brain Operating System
+KOROBOS — Second Brain Operating System
 
 Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 
-Initial migration - creates all tables for CortexOS microservices.
+Initial migration - creates all tables for KOROBOS microservices.
 
 Revision ID: 001_initial
 Revises: None

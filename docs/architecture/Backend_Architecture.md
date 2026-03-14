@@ -1,4 +1,4 @@
-# CortexOS Backend Architecture & Engineering Design
+# KOROBOS Backend Architecture & Engineering Design
 
 Version: 1.0\
 Owner: Saravana Perumal K
@@ -7,7 +7,7 @@ Owner: Saravana Perumal K
 
 # 1. Backend Architecture Overview
 
-CortexOS backend follows a **microservice + event‑driven architecture**
+KOROBOS backend follows a **microservice + event‑driven architecture**
 designed for scalability, modularity, and AI‑driven analytics.
 
     Client (Web / Mobile)
@@ -394,7 +394,7 @@ Planned improvements:
 
 # Final Backend Vision
 
-CortexOS backend functions as a **scalable intelligence engine**
+KOROBOS backend functions as a **scalable intelligence engine**
 powering the Second Brain platform.
 
 Core architecture characteristics:
@@ -404,6 +404,6 @@ Core architecture characteristics:
 -   AI powered recommendations
 -   scalable cloud infrastructure
 
-The system enables CortexOS to operate as a **personal productivity
+The system enables KOROBOS to operate as a **personal productivity
 operating system** capable of managing knowledge, habits, learning, and
 life analytics in a unified platform.
