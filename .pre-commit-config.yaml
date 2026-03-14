@@ -12,7 +12,6 @@ repos:
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
-      - id: ruff-format
 
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
@@ -31,7 +30,7 @@ repos:
     rev: v3.0.3
     hooks:
       - id: prettier
-        types_or: [javascript, jsx, ts, tsx, css, scss, json, md]
+        types_or: [javascript, jsx, ts, tsx, css, scss, json, markdown]
 
   - repo: local
     hooks:
@@ -41,4 +40,3 @@ repos:
         language: python
         types: [text]
         exclude: ^(\.git|node_modules|\.next|venv|env)/
-

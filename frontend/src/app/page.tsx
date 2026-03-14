@@ -14,7 +14,14 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.panel}>
         <div className={styles.brand}>
-          <Image src="/next.svg" alt="Next.js logo" width={100} height={20} priority />
+          <Image
+            src="/KOROBOS-logo.svg"
+            alt="KOROBOS logo"
+            className={styles.logo}
+            width={220}
+            height={220}
+            priority
+          />
           <div className={styles.brandText}>
             <span className={styles.eyebrow}>KOROBOS Frontend</span>
             <h1 className={styles.heading}>Frontend runtime is live.</h1>
@@ -23,16 +30,13 @@ export default function Home() {
 
         <p className={styles.description}>
           The Docker stack is serving the Next.js app, the API gateway, and the
-          Kafka-backed backend services together. This page was switched to plain
-          CSS so the frontend no longer depends on a missing Tailwind PostCSS
-          adapter at runtime.
+          Kafka-backed backend services together. This page was switched to
+          plain CSS so the frontend no longer depends on a missing Tailwind
+          PostCSS adapter at runtime.
         </p>
 
         <div className={styles.actions}>
-          <a
-            className={styles.primaryAction}
-            href="http://localhost:8080/docs"
-          >
+          <a className={styles.primaryAction} href="http://localhost:8080/docs">
             Open API Gateway Docs
           </a>
           <a
@@ -52,11 +56,15 @@ export default function Home() {
           </div>
           <div className={styles.metaCard}>
             <span className={styles.metaLabel}>Gateway</span>
-            <p className={styles.metaValue}>FastAPI + Redis-backed rate limiting</p>
+            <p className={styles.metaValue}>
+              FastAPI + Redis-backed rate limiting
+            </p>
           </div>
           <div className={styles.metaCard}>
             <span className={styles.metaLabel}>Event Backbone</span>
-            <p className={styles.metaValue}>Kafka TLS/SASL broker, exporter, and topic init</p>
+            <p className={styles.metaValue}>
+              Kafka TLS/SASL broker, exporter, and topic init
+            </p>
           </div>
         </div>
       </main>
