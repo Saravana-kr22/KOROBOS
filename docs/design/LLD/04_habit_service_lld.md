@@ -1,4 +1,5 @@
 # KOROBOS – Enterprise LLD Template
+
 Document Name: Habit Service Low Level Design
 Project: KOROBOS – Second Brain Operating System
 Version: 1.0
@@ -7,26 +8,34 @@ Date: 2026-03-07
 Status: Draft
 
 ## 1. Overview
+
 ### 1.1 Purpose
+
 The Habit Service manages daily habit tracking, streak calculations, and completion analytics.
 
 ### 1.2 Scope
+
 **In Scope**
-* Creating and managing habit definitions.
-* Logging daily habit completions.
-* Calculating streaks and consistency scores.
+
+- Creating and managing habit definitions.
+- Logging daily habit completions.
+- Calculating streaks and consistency scores.
 
 ### 1.3 Dependencies
-| Dependency | Purpose |
-| :--- | :--- |
-| PostgreSQL | Persistence for habit definitions and logs. |
-| EventBus | Publishing habit completion events for analytics. |
+
+| Dependency | Purpose                                           |
+| :--------- | :------------------------------------------------ |
+| PostgreSQL | Persistence for habit definitions and logs.       |
+| EventBus   | Publishing habit completion events for analytics. |
 
 ## 2. Architecture
+
 ### 2.1 Component Overview
+
 Habit API → Logging Engine → Streak Calculator → Event Publisher.
 
 ### 2.2 Component Diagram
+
 ```mermaid
 flowchart TB
     API[Habit API]
@@ -45,19 +54,19 @@ flowchart TB
 
 ### **3.1 Tables**
 
-**Habits Table**  
-| Column | Type | Description |  
-| :--- | :--- | :--- |  
-| habit\_id | UUID | Unique ID (PK) |  
-| user\_id | UUID | Owner ID |  
-| habit\_name | String | Name of the habit |  
-| frequency | String | Daily/Weekly/Monthly |  
-**Habit Logs**  
-| Column | Type | Description |  
-| :--- | :--- | :--- |  
-| log\_id | UUID | PK |  
-| habit\_id | UUID | FK |  
-| log\_date | Date | Date of entry |  
+**Habits Table**
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| habit_id | UUID | Unique ID (PK) |
+| user_id | UUID | Owner ID |
+| habit_name | String | Name of the habit |
+| frequency | String | Daily/Weekly/Monthly |
+**Habit Logs**
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| log_id | UUID | PK |
+| habit_id | UUID | FK |
+| log_date | Date | Date of entry |
 | completed | Boolean | Status |
 
 ## **4\. API Design**
@@ -74,6 +83,6 @@ GET /habits/analytics
 
 ### **5.1 Events Published**
 
-| Event | Description |
-| :---- | :---- |
+| Event           | Description                                   |
+| :-------------- | :-------------------------------------------- |
 | habit.completed | Triggered when a habit is logged as complete. |

@@ -1,9 +1,9 @@
-# KOROBOS Backend Detailed Design 
+# KOROBOS Backend Detailed Design
 
 Version: 1.0 \
 Owner: Saravana Perumal K
 
-------------------------------------------------------------------------
+---
 
 # 1. System Overview
 
@@ -12,36 +12,36 @@ designed to power a Second Brain productivity platform.
 
 Core capabilities:
 
--   Knowledge management
--   Habit tracking
--   Learning analytics
--   Health tracking
--   AI insights
--   Productivity analytics
+- Knowledge management
+- Habit tracking
+- Learning analytics
+- Health tracking
+- AI insights
+- Productivity analytics
 
 Architecture pattern:
 
 Client → API Gateway → Microservices → Event Bus → Analytics / AI /
 Notifications → Databases
 
-------------------------------------------------------------------------
+---
 
 # 2. Core Microservices
 
--   Auth Service
--   Notes Service
--   Habit Service
--   Learning Service
--   Health Service
--   Analytics Service
--   Notification Service
--   AI Service
+- Auth Service
+- Notes Service
+- Habit Service
+- Learning Service
+- Health Service
+- Analytics Service
+- Notification Service
+- AI Service
 
-------------------------------------------------------------------------
+---
 
 # 3. Entity Relationship Diagram (ERD)
 
-``` mermaid
+```mermaid
 erDiagram
 
 USERS {
@@ -102,11 +102,11 @@ HABITS ||--o{ HABIT_LOGS : records
 NOTES ||--o{ NOTE_LINKS : links
 ```
 
-------------------------------------------------------------------------
+---
 
 # 4. System Data Flow (FD)
 
-``` mermaid
+```mermaid
 flowchart LR
 
 User --> API
@@ -129,7 +129,7 @@ AnalyticsService --> Dashboard
 AIService --> Dashboard
 ```
 
-------------------------------------------------------------------------
+---
 
 # 5. API Request / Response Schemas
 
@@ -139,7 +139,7 @@ POST /api/v1/notes
 
 Request
 
-``` json
+```json
 {
   "title": "Machine Learning",
   "content_md": "Introduction to ML"
@@ -148,7 +148,7 @@ Request
 
 Response
 
-``` json
+```json
 {
   "id": "note_uuid",
   "title": "Machine Learning",
@@ -156,7 +156,7 @@ Response
 }
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Mark Habit Complete
 
@@ -164,7 +164,7 @@ POST /api/v1/habits/{id}/complete
 
 Response
 
-``` json
+```json
 {
   "habit_id": "uuid",
   "completed": true,
@@ -172,7 +172,7 @@ Response
 }
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Log Learning Session
 
@@ -180,73 +180,83 @@ POST /api/v1/learning-session
 
 Request
 
-``` json
+```json
 {
   "topic": "AI",
   "duration": 120
 }
 ```
 
-------------------------------------------------------------------------
+---
 
 # 6. Database Table Schemas
 
 ## Users
 
-  Column          Type
-  --------------- -----------
-  id              UUID
-  email           TEXT
-  password_hash   TEXT
-  created_at      TIMESTAMP
+Column Type
 
-------------------------------------------------------------------------
+---
+
+id UUID
+email TEXT
+password_hash TEXT
+created_at TIMESTAMP
+
+---
 
 ## Notes
 
-  Column       Type
-  ------------ -----------
-  id           UUID
-  user_id      UUID
-  title        TEXT
-  content_md   TEXT
-  created_at   TIMESTAMP
+Column Type
 
-------------------------------------------------------------------------
+---
+
+id UUID
+user_id UUID
+title TEXT
+content_md TEXT
+created_at TIMESTAMP
+
+---
 
 ## Habits
 
-  Column      Type
-  ----------- ------
-  id          UUID
-  user_id     UUID
-  name        TEXT
-  frequency   TEXT
+Column Type
 
-------------------------------------------------------------------------
+---
+
+id UUID
+user_id UUID
+name TEXT
+frequency TEXT
+
+---
 
 ## Habit Logs
 
-  Column      Type
-  ----------- ---------
-  id          UUID
-  habit_id    UUID
-  log_date    DATE
-  completed   BOOLEAN
+Column Type
 
-------------------------------------------------------------------------
+---
+
+id UUID
+habit_id UUID
+log_date DATE
+completed BOOLEAN
+
+---
 
 ## Learning Sessions
 
-  Column       Type
-  ------------ -----------
-  id           UUID
-  user_id      UUID
-  topic        TEXT
-  duration     INTEGER
-  created_at   TIMESTAMP
+Column Type
 
-------------------------------------------------------------------------
+---
+
+id UUID
+user_id UUID
+topic TEXT
+duration INTEGER
+created_at TIMESTAMP
+
+---
 
 # 7. Service Layer Logic
 
@@ -269,7 +279,7 @@ Example: Habit Completion
     4. Emit habit.completed event
     5. Update analytics
 
-------------------------------------------------------------------------
+---
 
 # 8. Background Workers
 
@@ -277,14 +287,14 @@ Background workers process asynchronous tasks.
 
 Worker responsibilities:
 
--   analytics aggregation
--   search indexing
--   AI insight generation
--   notification scheduling
+- analytics aggregation
+- search indexing
+- AI insight generation
+- notification scheduling
 
 Example Worker Flow
 
-``` mermaid
+```mermaid
 flowchart TD
 
 EventBus --> WorkerQueue
@@ -296,30 +306,32 @@ WorkerQueue --> NotificationWorker
 
 Example technologies:
 
--   Celery
--   Redis Queue
--   Temporal
+- Celery
+- Redis Queue
+- Temporal
 
-------------------------------------------------------------------------
+---
 
 # 9. Event Topics
 
 Event topics used for inter-service communication.
 
-  Event                     Trigger
-  ------------------------- ------------------
-  note.created              note saved
-  note.link.created         note linking
-  habit.completed           habit finished
-  learning.session.logged   learning session
-  meal.logged               food logged
-  workout.logged            workout logged
+Event Trigger
 
-------------------------------------------------------------------------
+---
+
+note.created note saved
+note.link.created note linking
+habit.completed habit finished
+learning.session.logged learning session
+meal.logged food logged
+workout.logged workout logged
+
+---
 
 # 10. Event Processing Flow
 
-``` mermaid
+```mermaid
 sequenceDiagram
 
 participant User
@@ -336,11 +348,11 @@ EventBus->>Analytics: update metrics
 EventBus->>Notification: schedule reminder
 ```
 
-------------------------------------------------------------------------
+---
 
 # 11. Background AI Pipeline
 
-``` mermaid
+```mermaid
 flowchart TB
 
 UserData --> Embedding
@@ -352,11 +364,11 @@ Insight --> Dashboard
 
 Capabilities
 
--   note summarization
--   productivity insights
--   study recommendations
+- note summarization
+- productivity insights
+- study recommendations
 
-------------------------------------------------------------------------
+---
 
 # 12. Notification Worker
 
@@ -367,7 +379,7 @@ Workflow
     3. Schedule reminder
     4. Send push/email
 
-------------------------------------------------------------------------
+---
 
 # 13. Example Microservice Folder Structure
 
@@ -394,38 +406,38 @@ Workflow
     workers/
       indexing_worker.py
 
-------------------------------------------------------------------------
+---
 
 # 14. Scalability Strategy
 
--   horizontal microservice scaling
--   Redis caching
--   async event processing
--   read replicas
+- horizontal microservice scaling
+- Redis caching
+- async event processing
+- read replicas
 
 Target capacity
 
 100k concurrent users
 
-------------------------------------------------------------------------
+---
 
 # 15. Observability
 
 Monitoring
 
--   Prometheus
--   Grafana
+- Prometheus
+- Grafana
 
 Tracing
 
--   OpenTelemetry
--   Jaeger
+- OpenTelemetry
+- Jaeger
 
 Logging
 
--   ELK Stack
+- ELK Stack
 
-------------------------------------------------------------------------
+---
 
 # Final Architecture Vision
 
@@ -433,10 +445,10 @@ KOROBOS backend acts as a **distributed intelligence engine**.
 
 Key characteristics
 
--   microservice architecture
--   event-driven communication
--   AI-powered insights
--   scalable cloud infrastructure
+- microservice architecture
+- event-driven communication
+- AI-powered insights
+- scalable cloud infrastructure
 
 The system enables KOROBOS to function as a **Second Brain Operating
 System**.

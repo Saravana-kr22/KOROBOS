@@ -4,7 +4,7 @@ Version: 1.0 \
 Owner: Saravana Perumal K \
 Project: KOROBOS -- Second Brain Operating System
 
-------------------------------------------------------------------------
+---
 
 # Architecture Overview
 
@@ -25,7 +25,7 @@ EventBus --> GraphEngine
 EventBus --> Dashboard
 ```
 
-------------------------------------------------------------------------
+---
 
 # C4 Architecture diagrams
 
@@ -58,11 +58,11 @@ PKM --> AI
 PKM --> Storage
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Container Diagram
 
-```mermaid 
+```mermaid
 flowchart TB
 
 subgraph Client
@@ -109,11 +109,11 @@ NotesService --> Search
 NotesService --> ObjectStore
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Component Diagram (Notes Service)
 
-```mermaid 
+```mermaid
 flowchart TB
 
 API[Notes API]
@@ -139,7 +139,7 @@ API --> IndexEngine
 IndexEngine --> Search
 ```
 
-------------------------------------------------------------------------
+---
 
 # Complete Database ER Diagram
 
@@ -222,7 +222,7 @@ NOTES ||--o{ NOTE_TAGS : tagged
 HABITS ||--o{ HABIT_LOGS : records
 ```
 
-------------------------------------------------------------------------
+---
 
 # Microservice Architecture Map
 
@@ -255,7 +255,7 @@ Learning --> Analytics
 Health --> Analytics
 ```
 
-------------------------------------------------------------------------
+---
 
 # Realtime Collaboration Architecture
 
@@ -283,7 +283,7 @@ WebSocket --> CRDT
 CRDT --> DB
 ```
 
-------------------------------------------------------------------------
+---
 
 # Event Flow Architecture
 
@@ -312,7 +312,7 @@ EventBus --> AIService
 EventBus --> DashboardService
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Knowledge Vault Event Flow
 
@@ -338,7 +338,7 @@ EventBus->>AIService: generate_summary
 EventBus->>Dashboard: refresh_widgets
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Note Linking Event Flow
 
@@ -358,7 +358,7 @@ EventBus->>GraphEngine: update_edges
 EventBus->>Search: update_index
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Habit Tracking Event Flow
 
@@ -383,7 +383,7 @@ EventBus->>Dashboard: refresh_habit_widget
 EventBus->>Notification: schedule_next_reminder
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Learning Tracker Event Flow
 
@@ -408,7 +408,7 @@ EventBus->>AI: analyze_skill_progress
 EventBus->>Dashboard: update_learning_widget
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Health Tracking Event Flow
 
@@ -431,7 +431,7 @@ EventBus->>Analytics: update_calorie_stats
 EventBus->>Dashboard: update_health_widget
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Exercise Tracking Event Flow
 
@@ -454,7 +454,7 @@ EventBus->>Analytics: update_exercise_stats
 EventBus->>Dashboard: refresh_widget
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Dashboard Widget Update Flow
 
@@ -471,7 +471,7 @@ DashboardService->>Cache: update_widget_data
 DashboardService->>UI: push_update
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Notification Event Flow
 
@@ -491,7 +491,7 @@ Scheduler->>Push: send_notification
 Scheduler->>Email: send_email
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Analytics Engine Event Flow
 
@@ -508,7 +508,7 @@ AnalyticsService->>DataWarehouse: store_metrics
 AnalyticsService->>Dashboard: update_insights
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Search Indexing Pipeline
 
@@ -523,7 +523,7 @@ EventBus->>SearchIndexer: note_created
 SearchIndexer->>SearchEngine: update_index
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Knowledge Graph Update Flow
 
@@ -540,7 +540,7 @@ GraphService->>GraphDB: update_relationship
 GraphService->>UI: refresh_graph
 ```
 
-------------------------------------------------------------------------
+---
 
 ## AI Insight Pipeline
 
@@ -559,7 +559,7 @@ AIService->>LLM: generate_insight
 AIService->>Dashboard: show_recommendation
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Daily Insight Generation Flow
 
@@ -576,7 +576,7 @@ Analytics->>AI: send_behavior_data
 AI->>Dashboard: generate_daily_insights
 ```
 
-------------------------------------------------------------------------
+---
 
 # AI Pipeline Architecture
 

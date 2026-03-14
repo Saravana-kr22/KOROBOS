@@ -21,8 +21,9 @@ FORBIDDEN_PATTERNS = [
     re.compile(rf"\b{_CONF}\b", re.IGNORECASE),
 ]
 
-# Standard Copyright format expected in some files, though not strictly required everywhere.
-# We are mainly looking for FORBIDDEN text here.
+# Standard Copyright format expected in some files, though not
+# strictly required everywhere. We are mainly looking for FORBIDDEN
+# text here.
 
 
 def check_file(filepath):

@@ -3,7 +3,7 @@
 Version: 1.0\
 Owner: Saravana Perumal K
 
-------------------------------------------------------------------------
+---
 
 # 1. Backend Architecture Overview
 
@@ -24,29 +24,31 @@ designed for scalability, modularity, and AI‑driven analytics.
 
 Core goals:
 
--   Scalable
--   Modular
--   Event‑driven
--   AI‑ready
+- Scalable
+- Modular
+- Event‑driven
+- AI‑ready
 
-------------------------------------------------------------------------
+---
 
 # 2. Backend Technology Stack
 
-  Layer              Technology
-  ------------------ -----------------------
-  API Framework      FastAPI
-  Language           Python
-  Database           PostgreSQL
-  Cache              Redis
-  Search             Meilisearch
-  Event Bus          Kafka / NATS
-  Task Queue         Celery
-  AI Pipeline        LangChain + Vector DB
-  Containerization   Docker
-  Orchestration      Kubernetes
+Layer Technology
 
-------------------------------------------------------------------------
+---
+
+API Framework FastAPI
+Language Python
+Database PostgreSQL
+Cache Redis
+Search Meilisearch
+Event Bus Kafka / NATS
+Task Queue Celery
+AI Pipeline LangChain + Vector DB
+Containerization Docker
+Orchestration Kubernetes
+
+---
 
 # 3. Microservices
 
@@ -54,84 +56,84 @@ Core goals:
 
 Handles:
 
--   signup
--   login
--   JWT token generation
--   session validation
+- signup
+- login
+- JWT token generation
+- session validation
 
-------------------------------------------------------------------------
+---
 
 ## Notes Service
 
 Handles:
 
--   markdown notes
--   note linking
--   backlinks
--   tags
+- markdown notes
+- note linking
+- backlinks
+- tags
 
-------------------------------------------------------------------------
+---
 
 ## Habit Service
 
 Handles:
 
--   habit creation
--   streak tracking
--   completion logging
--   habit analytics
+- habit creation
+- streak tracking
+- completion logging
+- habit analytics
 
-------------------------------------------------------------------------
+---
 
 ## Learning Service
 
 Handles:
 
--   learning session tracking
--   topics
--   learning progress
+- learning session tracking
+- topics
+- learning progress
 
-------------------------------------------------------------------------
+---
 
 ## Health Service
 
 Handles:
 
--   meal logging
--   workout tracking
--   calorie analytics
+- meal logging
+- workout tracking
+- calorie analytics
 
-------------------------------------------------------------------------
+---
 
 ## Analytics Service
 
 Responsible for:
 
--   productivity score
--   behavioral insights
--   trend analytics
+- productivity score
+- behavioral insights
+- trend analytics
 
-------------------------------------------------------------------------
+---
 
 ## Notification Service
 
 Handles:
 
--   reminders
--   push notifications
--   email alerts
+- reminders
+- push notifications
+- email alerts
 
-------------------------------------------------------------------------
+---
 
 ## AI Service
 
 Responsible for:
 
--   note summarization
--   productivity insights
--   recommendations
+- note summarization
+- productivity insights
+- recommendations
 
-------------------------------------------------------------------------
+---
 
 # 4. Backend Monorepo Structure
 
@@ -161,7 +163,7 @@ Responsible for:
       kubernetes
       terraform
 
-------------------------------------------------------------------------
+---
 
 # 5. Example Service Structure (FastAPI)
 
@@ -191,7 +193,7 @@ Responsible for:
       utils/
         markdown_parser.py
 
-------------------------------------------------------------------------
+---
 
 # 6. Database Architecture
 
@@ -205,7 +207,7 @@ Supporting infrastructure:
     Vector DB → AI embeddings
     Search Engine → full‑text search
 
-------------------------------------------------------------------------
+---
 
 # 7. Core Database Tables
 
@@ -221,7 +223,7 @@ Key entities:
     learning_sessions
     health_logs
 
-------------------------------------------------------------------------
+---
 
 # 8. Event‑Driven Architecture
 
@@ -243,7 +245,7 @@ Events trigger:
     notifications
     search indexing
 
-------------------------------------------------------------------------
+---
 
 # 9. API Design
 
@@ -259,7 +261,7 @@ Examples:
     POST /api/v1/learning-session
     GET /api/v1/dashboard
 
-------------------------------------------------------------------------
+---
 
 # 10. AI Backend Architecture
 
@@ -279,11 +281,11 @@ AI pipeline:
 
 Capabilities:
 
--   note summaries
--   productivity insights
--   study recommendations
+- note summaries
+- productivity insights
+- study recommendations
 
-------------------------------------------------------------------------
+---
 
 # 11. Analytics Pipeline
 
@@ -297,11 +299,11 @@ Capabilities:
 
 Example metrics:
 
--   productivity score
--   habit consistency
--   learning hours
+- productivity score
+- habit consistency
+- learning hours
 
-------------------------------------------------------------------------
+---
 
 # 12. Notification System
 
@@ -313,11 +315,11 @@ Example metrics:
 
 Examples:
 
--   habit reminder
--   workout reminder
--   learning reminder
+- habit reminder
+- workout reminder
+- learning reminder
 
-------------------------------------------------------------------------
+---
 
 # 13. Security Architecture
 
@@ -328,11 +330,11 @@ Authentication:
 
 Security layers:
 
--   API gateway authentication
--   RBAC authorization
--   encrypted data storage
+- API gateway authentication
+- RBAC authorization
+- encrypted data storage
 
-------------------------------------------------------------------------
+---
 
 # 14. Observability Architecture
 
@@ -347,7 +349,7 @@ Log system:
 
     ELK Stack
 
-------------------------------------------------------------------------
+---
 
 # 15. DevOps Architecture
 
@@ -363,7 +365,7 @@ Deployment pipeline:
      ↓
     Cloud Deployment
 
-------------------------------------------------------------------------
+---
 
 # 16. Backend Scaling Strategy
 
@@ -377,20 +379,19 @@ Target capacity:
 
     100k concurrent users
 
-
-------------------------------------------------------------------------
+---
 
 # 17. Future Backend Enhancements
 
 Planned improvements:
 
--   distributed search
--   knowledge graph database
--   AI recommendation engine
--   real‑time analytics streaming
--   collaborative editing
+- distributed search
+- knowledge graph database
+- AI recommendation engine
+- real‑time analytics streaming
+- collaborative editing
 
-------------------------------------------------------------------------
+---
 
 # Final Backend Vision
 
@@ -399,10 +400,10 @@ powering the Second Brain platform.
 
 Core architecture characteristics:
 
--   event‑driven microservices
--   analytics‑driven insights
--   AI powered recommendations
--   scalable cloud infrastructure
+- event‑driven microservices
+- analytics‑driven insights
+- AI powered recommendations
+- scalable cloud infrastructure
 
 The system enables KOROBOS to operate as a **personal productivity
 operating system** capable of managing knowledge, habits, learning, and

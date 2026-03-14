@@ -2,7 +2,7 @@
 
 # **Complete UI Wireframes Document**
 
-**Version: 1.0**  
+**Version: 1.0**
 **Owner: Saravana Perumal K**
 
 ---
@@ -10,7 +10,6 @@
 # **1\. Screen Inventory**
 
 **Total layouts: 29**
-
 
 # **2\. Global Layout**
 
@@ -159,8 +158,8 @@
 
 **Features**
 
-**Zoom**  
-**Drag**  
+**Zoom**
+**Drag**
 **Filter tags**
 
 ---
@@ -248,6 +247,7 @@
     Reminder
 
     [ Save Habit ]
+
 ---
 
 # **15\. Habit Analytics**
@@ -322,7 +322,7 @@
 
     Notes
 
-    [ Save ]    
+    [ Save ]
 
 ---
 
@@ -482,10 +482,9 @@
 
 **KOROBOS UI consists of:**
 
-**• 29 layouts**  
-**• Widget-based dashboard architecture**  
-**• Graph knowledge interface**  
+**• 29 layouts**
+**• Widget-based dashboard architecture**
+**• Graph knowledge interface**
 **• Analytics-driven UX**
 
 **All screens connect to backend services described in the architecture document.**
-

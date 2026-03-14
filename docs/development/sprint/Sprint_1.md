@@ -5,7 +5,7 @@
 Version: 1.0\
 Owner: Saravana Perumal K
 
-------------------------------------------------------------------------
+---
 
 # 1. Sprint Overview
 
@@ -16,19 +16,19 @@ KOROBOS development**.
 
 This sprint focuses on creating:
 
--   The complete repository structure
--   Development environment setup
--   Local infrastructure stack
--   Development standards
--   Code conventions
--   Base project scaffolding
--   Developer tooling
--   Documentation baseline
+- The complete repository structure
+- Development environment setup
+- Local infrastructure stack
+- Development standards
+- Code conventions
+- Base project scaffolding
+- Developer tooling
+- Documentation baseline
 
 This sprint ensures that **every developer can clone the repository and
 run the full platform locally**.
 
-------------------------------------------------------------------------
+---
 
 # 2. Sprint Deliverables
 
@@ -43,7 +43,7 @@ At the end of this sprint the system must support:
 ✔ Development documentation written\
 ✔ Developer onboarding guide available
 
-------------------------------------------------------------------------
+---
 
 # 3. Repository Architecture
 
@@ -68,7 +68,7 @@ Create the main project repository.
     ├── .editorconfig
     ├── LICENSE
 
-------------------------------------------------------------------------
+---
 
 # 4. Backend Monorepo Setup
 
@@ -103,7 +103,7 @@ The backend will follow a **microservice monorepo architecture**.
     │
     └── tests/
 
-------------------------------------------------------------------------
+---
 
 # 5. Backend Service Template
 
@@ -141,7 +141,7 @@ Example service template:
     ├── requirements.txt
     └── README.md
 
-------------------------------------------------------------------------
+---
 
 # 6. Frontend Project Setup
 
@@ -169,7 +169,7 @@ The frontend is a **React / Next.js application**.
     ├── tsconfig.json
     └── next.config.js
 
-------------------------------------------------------------------------
+---
 
 # 7. Infrastructure Directory
 
@@ -195,7 +195,7 @@ Infrastructure code will be defined in:
     │
     └── helm/
 
-------------------------------------------------------------------------
+---
 
 # 8. Local Development Environment
 
@@ -205,14 +205,14 @@ The platform must run locally using **Docker Compose**.
 
 Local stack must include:
 
--   PostgreSQL
--   Redis
--   Kafka
--   Zookeeper
--   Meilisearch
--   MinIO
+- PostgreSQL
+- Redis
+- Kafka
+- Zookeeper
+- Meilisearch
+- MinIO
 
-------------------------------------------------------------------------
+---
 
 ## docker compose.yml Example
 
@@ -240,7 +240,7 @@ Local stack must include:
       minio:
         image: minio/minio
 
-------------------------------------------------------------------------
+---
 
 # 9. Environment Configuration
 
@@ -261,7 +261,7 @@ Environment variables include:
     OBJECT_STORAGE_URL
     JWT_SECRET
 
-------------------------------------------------------------------------
+---
 
 # 10. Developer Tooling
 
@@ -276,7 +276,7 @@ Developer tools must be installed.
     Git
     Make
 
-------------------------------------------------------------------------
+---
 
 ## Python Tooling
 
@@ -287,7 +287,7 @@ Developer tools must be installed.
     mypy
     pre-commit
 
-------------------------------------------------------------------------
+---
 
 ## Node Tooling
 
@@ -295,7 +295,7 @@ Developer tools must be installed.
     prettier
     typescript
 
-------------------------------------------------------------------------
+---
 
 # 11. Code Quality Setup
 
@@ -305,10 +305,10 @@ Install pre-commit checks.
 
 Checks include:
 
--   formatting
--   linting
--   import sorting
--   type checking
+- formatting
+- linting
+- import sorting
+- type checking
 
 Example configuration:
 
@@ -316,7 +316,7 @@ Example configuration:
     .ruff
     .pre-commit-config.yaml
 
-------------------------------------------------------------------------
+---
 
 # 12. Logging System
 
@@ -326,12 +326,12 @@ Shared logging library must be created.
 
 Capabilities:
 
--   structured logging
--   JSON logs
--   correlation IDs
--   request tracing
+- structured logging
+- JSON logs
+- correlation IDs
+- request tracing
 
-------------------------------------------------------------------------
+---
 
 # 13. Configuration Library
 
@@ -341,12 +341,12 @@ Create centralized configuration system.
 
 Features:
 
--   environment variable parsing
--   typed configuration
--   secret loading
--   runtime validation
+- environment variable parsing
+- typed configuration
+- secret loading
+- runtime validation
 
-------------------------------------------------------------------------
+---
 
 # 14. Database Layer
 
@@ -356,12 +356,12 @@ Shared database module.
 
 Includes:
 
--   database connection
--   migration system
--   ORM models
--   query helpers
+- database connection
+- migration system
+- ORM models
+- query helpers
 
-------------------------------------------------------------------------
+---
 
 # 15. Messaging Layer
 
@@ -371,12 +371,12 @@ Shared messaging library.
 
 Features:
 
--   Kafka producer
--   Kafka consumer
--   event schemas
--   retry handling
+- Kafka producer
+- Kafka consumer
+- event schemas
+- retry handling
 
-------------------------------------------------------------------------
+---
 
 # 16. Development Scripts
 
@@ -389,7 +389,7 @@ Create helper scripts.
     ├── reset_db.sh
     └── seed_data.sh
 
-------------------------------------------------------------------------
+---
 
 # 17. Makefile Commands
 
@@ -401,7 +401,7 @@ Example Makefile:
     make format
     make run
 
-------------------------------------------------------------------------
+---
 
 # 18. Git Configuration
 
@@ -413,7 +413,7 @@ Example Makefile:
     bugfix/*
     release/*
 
-------------------------------------------------------------------------
+---
 
 # 19. Documentation Setup
 
@@ -426,7 +426,7 @@ Create documentation directory.
     ├── development
     └── deployment
 
-------------------------------------------------------------------------
+---
 
 # 20. Developer Onboarding Guide
 
@@ -444,7 +444,7 @@ Steps include:
 4.  Run backend services
 5.  Start frontend server
 
-------------------------------------------------------------------------
+---
 
 # 21. Validation Checklist
 
@@ -459,19 +459,19 @@ Kafka cluster operational\
 Search engine running\
 Object storage running
 
-------------------------------------------------------------------------
+---
 
 # 22. Sprint Completion Criteria
 
 Sprint 1 is complete when:
 
--   A developer can clone the repo
--   Run `docker compose up`
--   Start backend services
--   Start frontend application
--   Access the platform locally
+- A developer can clone the repo
+- Run `docker compose up`
+- Start backend services
+- Start frontend application
+- Access the platform locally
 
-------------------------------------------------------------------------
+---
 
 # Final Sprint Outcome
 
@@ -481,10 +481,10 @@ After this sprint:
 
 The platform will have:
 
--   stable repository structure
--   consistent service architecture
--   complete local development environment
--   standardized development workflow
+- stable repository structure
+- consistent service architecture
+- complete local development environment
+- standardized development workflow
 
 This ensures all future sprints can focus purely on **feature
 implementation** rather than environment setup.

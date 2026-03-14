@@ -12,6 +12,7 @@ import asyncio
 from uuid import uuid4
 
 import pytest
+
 from backend.shared.messaging.consumer import BaseEventConsumer
 from backend.shared.messaging.producer import close_producer, publish_event
 from backend.shared.messaging.schemas import BaseEvent
@@ -21,7 +22,7 @@ class _IntegrationConsumer(BaseEventConsumer):
     def __init__(self, group_id: str):
         super().__init__(topics=["note.created"], group_id=group_id)
         self.received = asyncio.Event()
-        self.payload = None
+        self.payload: dict | None = None
 
     async def handle_event(self, topic: str, payload: dict):
         self.payload = {"topic": topic, "payload": payload}

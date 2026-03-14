@@ -10,10 +10,11 @@ ORM models for the Learning Service.
 
 import uuid
 
-from backend.shared.database.base_model import Base, TimestampMixin
 from sqlalchemy import Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
+
+from backend.shared.database.base_model import Base, TimestampMixin
 
 
 class LearningSession(Base, TimestampMixin):

@@ -15,6 +15,7 @@ from typing import Any, Callable, Coroutine, Optional
 
 from aiokafka import AIOKafkaConsumer
 from aiokafka.structs import OffsetAndMetadata, TopicPartition
+
 from backend.shared.config.settings import get_settings
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.kafka_config import build_kafka_client_options
@@ -108,10 +109,11 @@ class BaseEventConsumer(ABC):
         After all attempts fail the message is forwarded to a '*.dlq' topic.
         """
         try:
-            async for msg in self.consumer:
-                if not self._running:
-                    break
-                await self._handle_record(msg)
+            if self.consumer is not None:
+                async for msg in self.consumer:
+                    if not self._running:
+                        break
+                    await self._handle_record(msg)
         finally:
             await self.stop()
 
@@ -124,14 +126,15 @@ class BaseEventConsumer(ABC):
                 f"{msg.topic}@{msg.partition}:{msg.offset}"
             )
 
-        await self.consumer.commit(
-            {
-                TopicPartition(msg.topic, msg.partition): OffsetAndMetadata(
-                    msg.offset + 1,
-                    "",
-                )
-            }
-        )
+        if self.consumer is not None:
+            await self.consumer.commit(
+                {
+                    TopicPartition(msg.topic, msg.partition): OffsetAndMetadata(
+                        msg.offset + 1,
+                        "",
+                    )
+                }
+            )
 
     async def _process_message(self, topic: str, payload: dict[str, Any]) -> bool:
         """Apply retry strategy before delegating to handle_event."""

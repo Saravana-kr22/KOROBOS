@@ -2,7 +2,7 @@
 
 # **UX Flow Diagrams**
 
-**Version: 1.0**  
+**Version: 1.0**
 **Owner: Saravana Perumal K**
 
 ---
@@ -13,15 +13,15 @@
 
 **Primary flows:**
 
-**1️⃣ User Onboarding Flow**  
-**2️⃣ Login Flow**  
-**3️⃣ Dashboard Interaction Flow**  
-**4️⃣ Note Creation Flow**  
-**5️⃣ Knowledge Linking Flow**  
-**6️⃣ Habit Tracking Flow**  
-**7️⃣ Learning Tracking Flow**  
-**8️⃣ Health Tracking Flow**  
-**9️⃣ Analytics Insight Flow**  
+**1️⃣ User Onboarding Flow**
+**2️⃣ Login Flow**
+**3️⃣ Dashboard Interaction Flow**
+**4️⃣ Note Creation Flow**
+**5️⃣ Knowledge Linking Flow**
+**6️⃣ Habit Tracking Flow**
+**7️⃣ Learning Tracking Flow**
+**8️⃣ Health Tracking Flow**
+**9️⃣ Analytics Insight Flow**
 **🔟 AI Insight Flow**
 
 ---
@@ -50,13 +50,13 @@ DashboardIntro --> Dashboard
 
 ## **Step Breakdown**
 
-| Step | Description |
-| ----- | ----- |
-| **Landing Page** | **User visits product website** |
-| **Signup** | **User creates account** |
-| **Preferences** | **User configures dashboard widgets** |
-| **Intro** | **Product walkthrough** |
-| **Dashboard** | **First interaction with system** |
+| Step             | Description                           |
+| ---------------- | ------------------------------------- |
+| **Landing Page** | **User visits product website**       |
+| **Signup**       | **User creates account**              |
+| **Preferences**  | **User configures dashboard widgets** |
+| **Intro**        | **Product walkthrough**               |
+| **Dashboard**    | **First interaction with system**     |
 
 ---
 
@@ -117,8 +117,8 @@ ViewWidgets --> AIInsights
 
 **User can:**
 
-**• open widgets**  
-**• mark habit complete**  
+**• open widgets**
+**• mark habit complete**
 **• navigate to detailed pages**
 
 ---
@@ -156,8 +156,8 @@ UpdateGraph --> DashboardUpdate
 
 **Event bus triggers:**
 
-**• search indexing**  
-**• graph updates**  
+**• search indexing**
+**• graph updates**
 **• AI insights**
 
 **This matches the event architecture described in the system design.**
@@ -225,8 +225,8 @@ UpdateAnalytics --> RefreshDashboard
 
 **Triggers**
 
-**• analytics update**  
-**• notification scheduling**  
+**• analytics update**
+**• notification scheduling**
 **• widget refresh**
 
 ---
@@ -258,8 +258,8 @@ UpdateLearningAnalytics --> DashboardRefresh
 
 **System updates:**
 
- - **weekly learning hours**  
- - **topic progress**
+- **weekly learning hours**
+- **topic progress**
 
 ---
 
@@ -323,8 +323,8 @@ GenerateMetrics --> DashboardWidgets
 
 ## **Example Metrics**
 
-**• productivity score**  
-**• habit consistency**  
+**• productivity score**
+**• habit consistency**
 **• learning growth**
 
 ---
@@ -356,9 +356,9 @@ InsightGeneration --> DashboardDisplay
 
 **AI may suggest:**
 
- - **study topics**  
- - **productivity improvements**  
- - **habit adjustments**
+- **study topics**
+- **productivity improvements**
+- **habit adjustments**
 
 **This aligns with the AI pipeline architecture in KOROBOS.**
 
@@ -491,4 +491,3 @@ AIInsights --> Dashboard
        Continuous Improvement
 
 **This creates a self-improving productivity ecosystem consistent with the Second Brain concept.**
-

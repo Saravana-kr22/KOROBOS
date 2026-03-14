@@ -5,38 +5,40 @@
 Version: 1.0\
 Owner: Saravana Perumal K
 
-------------------------------------------------------------------------
+---
 
 ## 1. Frontend Architecture Overview
 
 The KOROBOS frontend is a modular React application designed around:
 
--   Reusable UI components
--   Widget-driven dashboards
--   Microservice API integration
--   Scalable state management
+- Reusable UI components
+- Widget-driven dashboards
+- Microservice API integration
+- Scalable state management
 
 Architecture Layers:
 
 UI Layer → Component Layer → Widget Layer → Page Layer → State
 Management → API Service Layer → Backend Microservices
 
-------------------------------------------------------------------------
+---
 
 ## 2. Technology Stack
 
-  Layer                 Technology
-  --------------------- -------------------------
-  Frontend Framework    React / Next.js
-  Language              TypeScript
-  State Management      Zustand / Redux Toolkit
-  Styling               Tailwind CSS
-  Charts                Recharts
-  Graph Visualization   D3.js / Sigma.js
-  Markdown Editor       TipTap / CodeMirror
-  Build Tool            Vite / Next Build
+Layer Technology
 
-------------------------------------------------------------------------
+---
+
+Frontend Framework React / Next.js
+Language TypeScript
+State Management Zustand / Redux Toolkit
+Styling Tailwind CSS
+Charts Recharts
+Graph Visualization D3.js / Sigma.js
+Markdown Editor TipTap / CodeMirror
+Build Tool Vite / Next Build
+
+---
 
 ## 3. Frontend Folder Structure
 
@@ -111,7 +113,7 @@ Management → API Service Layer → Backend Microservices
       widgetTypes
       userTypes
 
-------------------------------------------------------------------------
+---
 
 ## 4. Component Hierarchy
 
@@ -136,7 +138,7 @@ Management → API Service Layer → Backend Microservices
          ├── HealthWidget
          ├── AIInsightWidget
 
-------------------------------------------------------------------------
+---
 
 ## 5. Layout Architecture
 
@@ -161,7 +163,7 @@ Layout Structure
     | Analytics         |                                |
     +-------------------+--------------------------------+
 
-------------------------------------------------------------------------
+---
 
 ## 6. UI Component Library
 
@@ -171,14 +173,14 @@ Reusable UI primitives:
 
 Core Components:
 
--   Button.tsx
--   Card.tsx
--   Input.tsx
--   Modal.tsx
--   Dropdown.tsx
--   Tabs.tsx
+- Button.tsx
+- Card.tsx
+- Input.tsx
+- Modal.tsx
+- Dropdown.tsx
+- Tabs.tsx
 
-------------------------------------------------------------------------
+---
 
 ## 7. Navigation Components
 
@@ -188,18 +190,18 @@ Navigation elements:
 
 Sidebar:
 
--   Sidebar.tsx
--   SidebarItem.tsx
--   SidebarGroup.tsx
+- Sidebar.tsx
+- SidebarItem.tsx
+- SidebarGroup.tsx
 
 Top Navigation:
 
--   Topbar.tsx
--   SearchBar.tsx
--   NotificationMenu.tsx
--   ProfileMenu.tsx
+- Topbar.tsx
+- SearchBar.tsx
+- NotificationMenu.tsx
+- ProfileMenu.tsx
 
-------------------------------------------------------------------------
+---
 
 ## 8. Dashboard Widget Engine
 
@@ -209,9 +211,9 @@ Widget Container:
 
 Responsibilities:
 
--   Drag & drop
--   Layout grid
--   Resize widgets
+- Drag & drop
+- Layout grid
+- Resize widgets
 
 Widget Renderer:
 
@@ -219,16 +221,16 @@ Widget Renderer:
 
 Example:
 
-``` typescript
+```typescript
 const widgetMap = {
   habit: HabitWidget,
   learning: LearningWidget,
   health: HealthWidget,
-  ai: AIInsightWidget
-}
+  ai: AIInsightWidget,
+};
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 9. Widget Structure
 
@@ -238,7 +240,7 @@ const widgetMap = {
       HabitWidgetBody.tsx
       HabitWidgetFooter.tsx
 
-------------------------------------------------------------------------
+---
 
 ## 10. Page Architecture
 
@@ -269,14 +271,14 @@ Habit Page:
     ├── HabitAnalytics
     └── HabitCreationModal
 
-------------------------------------------------------------------------
+---
 
 ## 11. State Management
 
 Recommended:
 
--   Zustand
--   Redux Toolkit
+- Zustand
+- Redux Toolkit
 
 Store Structure:
 
@@ -291,14 +293,14 @@ Store Structure:
 
 Example:
 
-``` typescript
+```typescript
 const useWidgetStore = create((set) => ({
   widgets: [],
   addWidget: (widget) => set(...)
 }))
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 12. API Service Layer
 
@@ -308,56 +310,56 @@ API Client:
 
 Example:
 
-``` typescript
+```typescript
 export const api = axios.create({
-  baseURL: "/api/v1"
-})
+  baseURL: "/api/v1",
+});
 ```
 
 Services:
 
--   notesService.ts
--   habitService.ts
--   learningService.ts
--   healthService.ts
--   analyticsService.ts
+- notesService.ts
+- habitService.ts
+- learningService.ts
+- healthService.ts
+- analyticsService.ts
 
-------------------------------------------------------------------------
+---
 
 ## 13. Data Fetching Strategy
 
 Recommended library:
 
--   TanStack Query (React Query)
+- TanStack Query (React Query)
 
 Example:
 
-``` typescript
-useQuery(["habits"], getHabits)
+```typescript
+useQuery(["habits"], getHabits);
 ```
 
 Benefits:
 
--   caching
--   background updates
--   loading states
+- caching
+- background updates
+- loading states
 
-------------------------------------------------------------------------
+---
 
 ## 14. Event Driven Updates
 
 Real-time updates using:
 
--   WebSocket
--   Server Sent Events (SSE)
+- WebSocket
+- Server Sent Events (SSE)
 
 Use cases:
 
--   dashboard refresh
--   notifications
--   analytics updates
+- dashboard refresh
+- notifications
+- analytics updates
 
-------------------------------------------------------------------------
+---
 
 ## 15. Knowledge Graph Components
 
@@ -365,17 +367,17 @@ Use cases:
 
 Files:
 
--   KnowledgeGraph.tsx
--   GraphNode.tsx
--   GraphEdge.tsx
--   GraphControls.tsx
+- KnowledgeGraph.tsx
+- GraphNode.tsx
+- GraphEdge.tsx
+- GraphControls.tsx
 
 Libraries:
 
--   D3.js
--   Sigma.js
+- D3.js
+- Sigma.js
 
-------------------------------------------------------------------------
+---
 
 ## 16. Markdown Editor Architecture
 
@@ -383,16 +385,16 @@ Libraries:
 
 Files:
 
--   MarkdownEditor.tsx
--   Toolbar.tsx
--   BacklinksPanel.tsx
+- MarkdownEditor.tsx
+- Toolbar.tsx
+- BacklinksPanel.tsx
 
 Libraries:
 
--   TipTap
--   CodeMirror
+- TipTap
+- CodeMirror
 
-------------------------------------------------------------------------
+---
 
 ## 17. Authentication Flow
 
@@ -400,10 +402,10 @@ Libraries:
 
 Components:
 
--   authService
--   useAuth hook
+- authService
+- useAuth hook
 
-------------------------------------------------------------------------
+---
 
 ## 18. Routing Architecture
 
@@ -418,79 +420,79 @@ Example routes:
     /graph
     /settings
 
-------------------------------------------------------------------------
+---
 
 ## 19. Error Handling System
 
 Components:
 
--   ErrorBoundary.tsx
--   apiInterceptor.ts
+- ErrorBoundary.tsx
+- apiInterceptor.ts
 
-------------------------------------------------------------------------
+---
 
 ## 20. Performance Optimization
 
 Techniques:
 
--   React.memo
--   Lazy loading
--   Virtualized lists
+- React.memo
+- Lazy loading
+- Virtualized lists
 
 Example:
 
     React.lazy()
 
-------------------------------------------------------------------------
+---
 
 ## 21. Theming System
 
 ThemeProvider controls:
 
--   Dark Mode (Cyberpunk)
--   Light Mode
+- Dark Mode (Cyberpunk)
+- Light Mode
 
-------------------------------------------------------------------------
+---
 
 ## 22. Testing Strategy
 
 Tools:
 
--   Jest
--   React Testing Library
--   Cypress
+- Jest
+- React Testing Library
+- Cypress
 
 Test Types:
 
--   Unit tests
--   Integration tests
--   UI tests
+- Unit tests
+- Integration tests
+- UI tests
 
-------------------------------------------------------------------------
+---
 
 ## 23. Build & Deployment
 
 Build tools:
 
--   Vite
--   Next Build
+- Vite
+- Next Build
 
 Deployment:
 
--   Docker
--   CDN
--   Cloud Hosting
+- Docker
+- CDN
+- Cloud Hosting
 
-------------------------------------------------------------------------
+---
 
 # Final Vision
 
 The KOROBOS UI architecture enables:
 
--   scalable component design
--   modular widget dashboards
--   microservice-driven APIs
--   real-time productivity insights
+- scalable component design
+- modular widget dashboards
+- microservice-driven APIs
+- real-time productivity insights
 
 This architecture allows KOROBOS to function as a **personal
 productivity operating system interface**.

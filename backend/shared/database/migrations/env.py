@@ -9,6 +9,8 @@ Alembic environment configuration for async PostgreSQL migrations.
 """
 
 import asyncio
+import importlib
+import importlib.util
 import os
 import sys
 from logging.config import fileConfig
@@ -43,8 +45,6 @@ _model_imports = [
     "backend.services.ai-service.app.models.model",
 ]
 
-import importlib  # noqa: E402
-
 for _mod_path in _model_imports:
     # Convert hyphenated paths to filesystem-style imports
     # Since Python doesn't allow hyphens, we use importlib to load by path
@@ -57,7 +57,7 @@ for _mod_path in _model_imports:
         spec = importlib.util.spec_from_file_location(
             f"{_service_dir}.models", _fs_path
         )
-        if spec and spec.loader:
+        if spec and spec.loader is not None:
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
 

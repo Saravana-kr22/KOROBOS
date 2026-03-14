@@ -87,7 +87,9 @@ async def test_valid_token_on_protected_route():
     """
     from backend.shared.auth.jwt_handler import create_access_token
 
-    token = create_access_token(user_id="test-user-id", roles=["user"])
+    token = create_access_token(
+        user_id="test-user-id", email="test@example.com", roles=["user"]
+    )
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -119,7 +121,9 @@ async def test_unknown_service_returns_404():
     """Requests to unregistered services should return 404."""
     from backend.shared.auth.jwt_handler import create_access_token
 
-    token = create_access_token(user_id="test-user-id")
+    token = create_access_token(
+        user_id="test-user-id", email="test@example.com"
+    )
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"

@@ -7,33 +7,42 @@ Tests: create_access_token, verify_token — valid, expired, and invalid tokens.
 from datetime import timedelta
 
 import pytest
-from backend.shared.auth.jwt_handler import (
-    create_access_token,
-    verify_token,
-)
+
+from backend.shared.auth.jwt_handler import create_access_token, verify_token
 
 
 class TestCreateAccessToken:
     """Tests for create_access_token."""
 
     def test_creates_valid_token(self):
-        token = create_access_token(user_id="user-123", roles=["admin", "user"])
+        token = create_access_token(
+            user_id="user-123",
+            email="test@example.com",
+            roles=["admin", "user"],
+        )
         assert isinstance(token, str)
         assert len(token) > 0
 
     def test_default_roles(self):
-        token = create_access_token(user_id="user-456")
+        token = create_access_token(
+            user_id="user-456", email="test@example.com"
+        )
         payload = verify_token(token)
         assert payload["roles"] == ["user"]
 
     def test_custom_roles(self):
-        token = create_access_token(user_id="user-789", roles=["admin"])
+        token = create_access_token(
+            user_id="user-789",
+            email="test@example.com",
+            roles=["admin"],
+        )
         payload = verify_token(token)
         assert payload["roles"] == ["admin"]
 
     def test_custom_expiration(self):
         token = create_access_token(
             user_id="user-abc",
+            email="test@example.com",
             expires_delta=timedelta(minutes=5),
         )
         payload = verify_token(token)
@@ -44,7 +53,11 @@ class TestVerifyToken:
     """Tests for verify_token."""
 
     def test_valid_token(self):
-        token = create_access_token(user_id="user-valid", roles=["user"])
+        token = create_access_token(
+            user_id="user-valid",
+            email="test@example.com",
+            roles=["user"],
+        )
         payload = verify_token(token)
         assert payload["sub"] == "user-valid"
         assert payload["roles"] == ["user"]
@@ -54,6 +67,7 @@ class TestVerifyToken:
     def test_expired_token(self):
         token = create_access_token(
             user_id="user-expired",
+            email="test@example.com",
             expires_delta=timedelta(seconds=-1),
         )
         with pytest.raises(ValueError, match="Invalid token"):
@@ -68,7 +82,9 @@ class TestVerifyToken:
             verify_token("")
 
     def test_tampered_token(self):
-        token = create_access_token(user_id="user-tamper")
+        token = create_access_token(
+            user_id="user-tamper", email="test@example.com"
+        )
         # Tamper with the token by flipping a character
         tampered = token[:-1] + ("A" if token[-1] != "A" else "B")
         with pytest.raises(ValueError, match="Invalid token"):

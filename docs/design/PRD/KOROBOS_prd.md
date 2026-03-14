@@ -6,7 +6,7 @@ Version: 1.0\
 Owner: Saravana Perumal K\
 Status: Draft
 
-------------------------------------------------------------------------
+---
 
 # 1. Executive Summary
 
@@ -39,12 +39,12 @@ environment.
 
 ## Business Impact
 
--   Increase productivity by consolidating multiple tools into one
-    platform
--   Create a scalable SaaS product with recurring revenue potential
--   Build a differentiated AI-powered productivity ecosystem
+- Increase productivity by consolidating multiple tools into one
+  platform
+- Create a scalable SaaS product with recurring revenue potential
+- Build a differentiated AI-powered productivity ecosystem
 
-------------------------------------------------------------------------
+---
 
 # 2. Problem Definition
 
@@ -52,12 +52,12 @@ environment.
 
 ### Who
 
-Primary users: 
+Primary users:
 
-- Knowledge Workers 
-- Developers 
-- Researchers 
-- Students 
+- Knowledge Workers
+- Developers
+- Researchers
+- Students
 - Self-improvement enthusiasts
 
 ### What
@@ -81,22 +81,20 @@ The productivity ecosystem is fragmented.
 
 Example:
 
-| Tool | Function |
-|-----|------|
-| Notion | Structured databases |
-| Obsidian | Knowledge graph |
-| Todoist | Tasks |
-| Habitica | Habits |
-| MyFitnessPal | Health tracking |
-
-
+| Tool         | Function             |
+| ------------ | -------------------- |
+| Notion       | Structured databases |
+| Obsidian     | Knowledge graph      |
+| Todoist      | Tasks                |
+| Habitica     | Habits               |
+| MyFitnessPal | Health tracking      |
 
 ### Impact
 
 Users lose productivity due to tool switching and fragmented insights.
 Estimated productivity loss: **2--3 hours per week**.
 
-------------------------------------------------------------------------
+---
 
 # 3. Solution Overview
 
@@ -104,60 +102,60 @@ Estimated productivity loss: **2--3 hours per week**.
 
 A unified productivity OS integrating:
 
--   Knowledge Vault
--   Structured Databases
--   Habit Tracking
--   Learning Tracking
--   Health Tracking
--   Analytics Dashboard
--   Notification System
+- Knowledge Vault
+- Structured Databases
+- Habit Tracking
+- Learning Tracking
+- Health Tracking
+- Analytics Dashboard
+- Notification System
 
 ### Differentiation
 
--   Knowledge graph + life analytics
--   AI recommendations
--   Customizable dashboard
--   unified productivity platform
+- Knowledge graph + life analytics
+- AI recommendations
+- Customizable dashboard
+- unified productivity platform
 
-------------------------------------------------------------------------
+---
 
 ## 3.2 In Scope
 
-| Feature | Description | Priority |
-|------|------|------|
-| Knowledge Vault | Markdown notes | P0 |
-| Habit Tracking | Habit analytics | P0 |
-| Dashboard | Life analytics widgets | P0 |
-| Database Views | Table/Kanban/Calendar | P1 |
-| Knowledge Graph | Note relationships | P1 |
-| AI Insights | Recommendations | P2 |
+| Feature         | Description            | Priority |
+| --------------- | ---------------------- | -------- |
+| Knowledge Vault | Markdown notes         | P0       |
+| Habit Tracking  | Habit analytics        | P0       |
+| Dashboard       | Life analytics widgets | P0       |
+| Database Views  | Table/Kanban/Calendar  | P1       |
+| Knowledge Graph | Note relationships     | P1       |
+| AI Insights     | Recommendations        | P2       |
 
-
-------------------------------------------------------------------------
+---
 
 ## 3.3 Out of Scope
 
-Not included in MVP: 
-- Team collaboration 
+Not included in MVP:
+
+- Team collaboration
 - Plugin marketplace
 
-------------------------------------------------------------------------
+---
 
 ## 3.4 MVP Definition
 
-MVP Features: 
+MVP Features:
 
-- Markdown note editor 
-- Habit tracker 
-- Dashboard analytics 
-- Structured databases 
+- Markdown note editor
+- Habit tracker
+- Dashboard analytics
+- Structured databases
 - Notifications
-- Mobile apps 
-- Voice capture 
+- Mobile apps
+- Voice capture
 
 Timeline: **12 weeks**
 
-------------------------------------------------------------------------
+---
 
 # 4. User Stories & Requirements
 
@@ -169,27 +167,25 @@ So that I can build a knowledge graph.
 
 Acceptance Criteria:
 
--   Create markdown note
--   Link notes
--   View backlinks
+- Create markdown note
+- Link notes
+- View backlinks
 
-------------------------------------------------------------------------
+---
 
 # Functional Requirements
 
+| ID  | Requirement           | Priority |
+| --- | --------------------- | -------- |
+| FR1 | Create markdown notes | P0       |
+| FR2 | Link notes            | P0       |
+| FR3 | Track habits          | P0       |
+| FR4 | Dashboard analytics   | P0       |
+| FR5 | Database views        | P1       |
+| FR6 | Notifications         | P1       |
+| FR7 | AI insights           | P2       |
 
-
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR1 | Create markdown notes | P0 |
-| FR2 | Link notes | P0 |
-| FR3 | Track habits | P0 |
-| FR4 | Dashboard analytics | P0 |
-| FR5 | Database views | P1 |
-| FR6 | Notifications | P1 |
-| FR7 | AI insights | P2 |
-
-------------------------------------------------------------------------
+---
 
 # Non Functional Requirements
 
@@ -199,15 +195,15 @@ Security: OAuth2 + JWT\
 Reliability: 99.9% uptime\
 Usability: Desktop + Mobile responsive
 
-------------------------------------------------------------------------
+---
 
 # 5. Design & User Experience
 
 ## Design Principles
 
--   Clarity
--   Speed
--   Insight-driven UX
+- Clarity
+- Speed
+- Insight-driven UX
 
 ## Information Architecture
 
@@ -220,7 +216,7 @@ Health\
 Analytics\
 Settings
 
-------------------------------------------------------------------------
+---
 
 # 6. Technical Specifications
 
@@ -236,18 +232,17 @@ API Gateway
 
 Backend Services
 
--   Auth Service
--   Notes Service
--   Habit Service
--   Analytics Service
--   Notification Service
+- Auth Service
+- Notes Service
+- Habit Service
+- Analytics Service
+- Notification Service
 
 ↓
 
 Databases
 
--   PostgreSQL
--   Redis
--   Search Engine
--   Object Storage
-
+- PostgreSQL
+- Redis
+- Search Engine
+- Object Storage

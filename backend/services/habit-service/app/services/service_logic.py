@@ -16,8 +16,9 @@ from app.events.events import HabitCompletedEvent, HabitCreatedEvent
 from app.models.model import Habit
 from app.repositories.repository import HabitRepository
 from app.schemas.schema import HabitCreate, HabitUpdate
-from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.shared.messaging.producer import publish_event
 
 
 class HabitService:

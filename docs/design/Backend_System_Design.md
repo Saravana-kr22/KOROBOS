@@ -3,7 +3,7 @@
 Version: 1.0 \
 Owner: Saravana Perumal K
 
-------------------------------------------------------------------------
+---
 
 # 1. System Overview
 
@@ -11,21 +11,21 @@ KOROBOS backend powers the **Second Brain Operating System**.\
 The system is designed as a **microservice, event-driven architecture**
 that supports:
 
--   Knowledge management
--   Habit tracking
--   Learning analytics
--   Health tracking
--   AI insights
--   Productivity analytics
+- Knowledge management
+- Habit tracking
+- Learning analytics
+- Health tracking
+- AI insights
+- Productivity analytics
 
 Core design principles:
 
--   Scalable architecture
--   Event-driven communication
--   Modular microservices
--   Cloud-native deployment
+- Scalable architecture
+- Event-driven communication
+- Modular microservices
+- Cloud-native deployment
 
-------------------------------------------------------------------------
+---
 
 # 2. Backend Architecture
 
@@ -43,24 +43,26 @@ High Level Architecture
             ↓
     Databases & Storage
 
-------------------------------------------------------------------------
+---
 
 # 3. Technology Stack
 
-  Layer             Technology
-  ----------------- -----------------------
-  API Framework     FastAPI
-  Language          Python
-  Database          PostgreSQL
-  Cache             Redis
-  Search            Meilisearch
-  Messaging         Kafka / NATS
-  Background Jobs   Celery
-  AI Stack          LangChain + Vector DB
-  Containers        Docker
-  Orchestration     Kubernetes
+Layer Technology
 
-------------------------------------------------------------------------
+---
+
+API Framework FastAPI
+Language Python
+Database PostgreSQL
+Cache Redis
+Search Meilisearch
+Messaging Kafka / NATS
+Background Jobs Celery
+AI Stack LangChain + Vector DB
+Containers Docker
+Orchestration Kubernetes
+
+---
 
 # 4. Backend Monorepo Structure
 
@@ -90,17 +92,17 @@ High Level Architecture
       kubernetes
       terraform
 
-------------------------------------------------------------------------
+---
 
 # 5. API Gateway
 
 Responsibilities:
 
--   Request routing
--   Authentication
--   Rate limiting
--   API versioning
--   Logging
+- Request routing
+- Authentication
+- Rate limiting
+- API versioning
+- Logging
 
 Example routes:
 
@@ -111,7 +113,7 @@ Example routes:
     /api/v1/health
     /api/v1/analytics
 
-------------------------------------------------------------------------
+---
 
 # 6. Database Layer
 
@@ -126,7 +128,7 @@ Supporting systems
     Vector DB → AI embeddings
     Object Storage → files
 
-------------------------------------------------------------------------
+---
 
 # 7. Core Database Entities
 
@@ -142,7 +144,7 @@ Supporting systems
     analytics_metrics
     notifications
 
-------------------------------------------------------------------------
+---
 
 # 8. Event Driven Architecture
 
@@ -164,16 +166,16 @@ Example event topics:
 
 Event consumers:
 
--   analytics service
--   AI service
--   notification service
--   search indexing
+- analytics service
+- AI service
+- notification service
+- search indexing
 
-------------------------------------------------------------------------
+---
 
 # 9. Microservices
 
-------------------------------------------------------------------------
+---
 
 # Auth Service
 
@@ -183,10 +185,10 @@ Handles authentication and user identity.
 
 Responsibilities:
 
--   user registration
--   login
--   token generation
--   session validation
+- user registration
+- login
+- token generation
+- session validation
 
 APIs
 
@@ -205,7 +207,7 @@ Events
     user.created
     user.logged_in
 
-------------------------------------------------------------------------
+---
 
 # Notes Service
 
@@ -215,10 +217,10 @@ Manages knowledge notes.
 
 Responsibilities:
 
--   markdown notes
--   note linking
--   tags
--   backlinks
+- markdown notes
+- note linking
+- tags
+- backlinks
 
 APIs
 
@@ -240,7 +242,7 @@ Events
     note.updated
     note.link.created
 
-------------------------------------------------------------------------
+---
 
 # Habit Service
 
@@ -250,9 +252,9 @@ Track habits and streaks.
 
 Responsibilities:
 
--   habit creation
--   completion logging
--   streak calculation
+- habit creation
+- completion logging
+- streak calculation
 
 APIs
 
@@ -271,7 +273,7 @@ Events
     habit.created
     habit.completed
 
-------------------------------------------------------------------------
+---
 
 # Learning Service
 
@@ -281,9 +283,9 @@ Track learning sessions.
 
 Responsibilities:
 
--   learning session logging
--   topic tracking
--   learning statistics
+- learning session logging
+- topic tracking
+- learning statistics
 
 APIs
 
@@ -299,7 +301,7 @@ Events
 
     learning.session.logged
 
-------------------------------------------------------------------------
+---
 
 # Health Service
 
@@ -309,9 +311,9 @@ Track health metrics.
 
 Responsibilities:
 
--   meal logging
--   workout logging
--   calorie analytics
+- meal logging
+- workout logging
+- calorie analytics
 
 APIs
 
@@ -328,7 +330,7 @@ Events
     meal.logged
     workout.logged
 
-------------------------------------------------------------------------
+---
 
 # Analytics Service
 
@@ -338,9 +340,9 @@ Generate productivity insights.
 
 Responsibilities:
 
--   habit consistency score
--   productivity metrics
--   trend analysis
+- habit consistency score
+- productivity metrics
+- trend analysis
 
 Inputs:
 
@@ -356,7 +358,7 @@ Database
 
     analytics_metrics
 
-------------------------------------------------------------------------
+---
 
 # Notification Service
 
@@ -366,9 +368,9 @@ Send reminders and alerts.
 
 Responsibilities:
 
--   habit reminders
--   workout reminders
--   learning reminders
+- habit reminders
+- workout reminders
+- learning reminders
 
 APIs
 
@@ -385,7 +387,7 @@ Delivery channels
     email
     push notifications
 
-------------------------------------------------------------------------
+---
 
 # AI Service
 
@@ -395,9 +397,9 @@ Generate intelligent recommendations.
 
 Responsibilities:
 
--   note summarization
--   productivity insights
--   learning recommendations
+- note summarization
+- productivity insights
+- learning recommendations
 
 AI pipeline
 
@@ -418,7 +420,7 @@ APIs
     POST /ai/summarize-note
     GET /ai/insights
 
-------------------------------------------------------------------------
+---
 
 # 10. Analytics Pipeline
 
@@ -432,12 +434,12 @@ APIs
 
 Example metrics:
 
--   productivity score
--   habit completion rate
--   learning hours
--   health activity
+- productivity score
+- habit completion rate
+- learning hours
+- health activity
 
-------------------------------------------------------------------------
+---
 
 # 11. Notification Pipeline
 
@@ -449,7 +451,7 @@ Example metrics:
        ↓
     Push / Email
 
-------------------------------------------------------------------------
+---
 
 # 12. AI Pipeline
 
@@ -469,11 +471,11 @@ Example metrics:
 
 Capabilities
 
--   daily insights
--   knowledge summarization
--   habit recommendations
+- daily insights
+- knowledge summarization
+- habit recommendations
 
-------------------------------------------------------------------------
+---
 
 # 13. Security Architecture
 
@@ -484,11 +486,11 @@ Authentication
 
 Security layers
 
--   API Gateway authentication
--   Role based access control
--   encrypted sensitive data
+- API Gateway authentication
+- Role based access control
+- encrypted sensitive data
 
-------------------------------------------------------------------------
+---
 
 # 14. Observability
 
@@ -505,7 +507,7 @@ Logging stack
     Logstash
     Kibana
 
-------------------------------------------------------------------------
+---
 
 # 15. DevOps & Deployment
 
@@ -530,22 +532,22 @@ Infrastructure
     Microservices
     Database Cluster
 
-------------------------------------------------------------------------
+---
 
 # 16. Scalability Strategy
 
 Strategies:
 
--   horizontal service scaling
--   Redis caching
--   asynchronous event processing
--   database read replicas
+- horizontal service scaling
+- Redis caching
+- asynchronous event processing
+- database read replicas
 
 Target
 
     100k concurrent users
 
-------------------------------------------------------------------------
+---
 
 # Final Backend Vision
 
@@ -554,10 +556,10 @@ Second Brain system.
 
 Key characteristics
 
--   microservice architecture
--   event-driven communication
--   AI-powered insights
--   scalable cloud infrastructure
+- microservice architecture
+- event-driven communication
+- AI-powered insights
+- scalable cloud infrastructure
 
 The backend enables KOROBOS to function as a **personal productivity
 operating system** integrating knowledge, habits, learning, health, and

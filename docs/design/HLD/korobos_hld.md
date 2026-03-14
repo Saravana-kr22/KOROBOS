@@ -6,7 +6,7 @@ Version: 1.0 \
 Owner: Saravana Perumal K \
 Project: KOROBOS -- Second Brain Operating System
 
-------------------------------------------------------------------------
+---
 
 # 1. High Level Design (HLD)
 
@@ -19,24 +19,24 @@ and notifications.
 The system follows a microservice-oriented architecture with scalable
 backend services and a reactive frontend dashboard.
 
-------------------------------------------------------------------------
+---
 
 ## 1.2 Core Modules
 
-| Module | Purpose |
-|------|------|
-Auth Service | user authentication & sessions |
-Knowledge Service | note creation & linking |
-Database Service | structured data tables |
-Habit Service | habit tracking |
-Health Service | food & workout tracking |
-Learning Service | learning sessions |
-Analytics Service | productivity analytics |
-Notification Service | reminders |
-Search Service | knowledge search |
-Dashboard Service | aggregated widgets |
+| Module               | Purpose                        |
+| -------------------- | ------------------------------ |
+| Auth Service         | user authentication & sessions |
+| Knowledge Service    | note creation & linking        |
+| Database Service     | structured data tables         |
+| Habit Service        | habit tracking                 |
+| Health Service       | food & workout tracking        |
+| Learning Service     | learning sessions              |
+| Analytics Service    | productivity analytics         |
+| Notification Service | reminders                      |
+| Search Service       | knowledge search               |
+| Dashboard Service    | aggregated widgets             |
 
-------------------------------------------------------------------------
+---
 
 ## 1.3 High Level Architecture
 
@@ -67,8 +67,7 @@ Dashboard Service | aggregated widgets |
     -   Object Storage
     -   Search Index
 
-
-------------------------------------------------------------------------
+---
 
 ## 1.4 Component Responsibilities
 
@@ -76,99 +75,99 @@ Dashboard Service | aggregated widgets |
 
 Handles:
 
--   user login
--   signup
--   token management
--   session management
+- user login
+- signup
+- token management
+- session management
 
 Technologies:
 
 OAuth2 + JWT
 
-------------------------------------------------------------------------
+---
 
 ### Knowledge Service
 
 Responsible for:
 
--   markdown notes
--   note linking
--   backlinks
--   tags
--   knowledge graph
+- markdown notes
+- note linking
+- backlinks
+- tags
+- knowledge graph
 
-------------------------------------------------------------------------
+---
 
 ### Database Service
 
 Handles structured records like:
 
--   habit database
--   learning database
--   project database
+- habit database
+- learning database
+- project database
 
 Views:
 
--   table
--   kanban
--   calendar
+- table
+- kanban
+- calendar
 
-------------------------------------------------------------------------
+---
 
 ### Habit Service
 
 Handles:
 
--   daily habits
--   streaks
--   completion tracking
+- daily habits
+- streaks
+- completion tracking
 
-------------------------------------------------------------------------
+---
 
 ### Health Service
 
 Tracks:
 
--   food logs
--   calorie intake
--   workouts
+- food logs
+- calorie intake
+- workouts
 
-------------------------------------------------------------------------
+---
 
 ### Learning Service
 
 Tracks:
 
--   learning sessions
--   topics
--   time spent learning
+- learning sessions
+- topics
+- time spent learning
 
-------------------------------------------------------------------------
+---
 
 ### Analytics Service
 
 Aggregates system data to generate insights:
 
--   productivity score
--   learning growth
--   habit consistency
+- productivity score
+- learning growth
+- habit consistency
 
-------------------------------------------------------------------------
+---
 
 ### Notification Service
 
 Handles reminders:
 
--   habit reminder
--   workout reminder
--   learning reminder
+- habit reminder
+- workout reminder
+- learning reminder
 
 Supports:
 
--   push notifications
--   email notifications
+- push notifications
+- email notifications
 
-------------------------------------------------------------------------
+---
 
 # 1.5 Data Flow Example (Habit Tracking)
 
@@ -186,7 +185,7 @@ Supports:
     ↓
     Dashboard widget refreshes
 
-------------------------------------------------------------------------
+---
 
 # 1.6 Infrastructure Architecture
 
@@ -202,21 +201,21 @@ Supports:
     ↓
     Database Cluster
 
-------------------------------------------------------------------------
+---
 
 ## Technology Stack
 
-| Layer | Technology |
-|------|------|
-Frontend | React / React Native |
-Backend | FastAPI |
-Database | PostgreSQL |
-Cache | Redis |
-Search | Meilisearch |
-Containers | Docker |
-Orchestration | Kubernetes |
+| Layer         | Technology           |
+| ------------- | -------------------- |
+| Frontend      | React / React Native |
+| Backend       | FastAPI              |
+| Database      | PostgreSQL           |
+| Cache         | Redis                |
+| Search        | Meilisearch          |
+| Containers    | Docker               |
+| Orchestration | Kubernetes           |
 
-------------------------------------------------------------------------
+---
 
 # 1.7 Scalability Strategy
 
@@ -224,12 +223,12 @@ Target: 100k concurrent users
 
 Strategies:
 
--   Horizontal scaling with containers
--   Redis caching for dashboard queries
--   Search indexing for knowledge graph
--   Background workers for analytics
+- Horizontal scaling with containers
+- Redis caching for dashboard queries
+- Search indexing for knowledge graph
+- Background workers for analytics
 
-------------------------------------------------------------------------
+---
 
 # 1.8 Security Architecture
 
@@ -238,11 +237,11 @@ Authorization: Role-based access control
 
 Security Measures:
 
--   TLS encryption
--   encrypted sensitive fields
--   secure API gateway
+- TLS encryption
+- encrypted sensitive fields
+- secure API gateway
 
-------------------------------------------------------------------------
+---
 
 # 2. Design & Schema
 
@@ -317,7 +316,7 @@ Security Measures:
     duration
     date
 
-------------------------------------------------------------------------
+---
 
 # 2.2 API Design
 
@@ -352,7 +351,7 @@ Security Measures:
     GET /dashboard/weekly
     GET /dashboard/monthly
 
-------------------------------------------------------------------------
+---
 
 # 2.3 Knowledge Graph Algorithm
 
@@ -370,35 +369,35 @@ edges = note_links
 
 Visualization:
 
--   D3.js
--   WebGL graph
+- D3.js
+- WebGL graph
 
-------------------------------------------------------------------------
+---
 
 # 2.4 Notification Scheduler
 
 Background worker monitors:
 
--   habit reminders
--   learning reminders
--   workout reminders
+- habit reminders
+- learning reminders
+- workout reminders
 
 Daily cron job triggers notification checks.
 
-------------------------------------------------------------------------
+---
 
 # 2.5 Dashboard Aggregation
 
 Dashboard service aggregates data from:
 
--   habit service
--   learning service
--   health service
--   notes activity
+- habit service
+- learning service
+- health service
+- notes activity
 
 Returns unified API response for widgets.
 
-------------------------------------------------------------------------
+---
 
 # 2.6 Frontend Architecture
 
@@ -412,13 +411,13 @@ Returns unified API response for widgets.
 
 Widgets:
 
--   HabitWidget
--   LearningWidget
--   HealthWidget
--   KnowledgeWidget
--   InsightsWidget
+- HabitWidget
+- LearningWidget
+- HealthWidget
+- KnowledgeWidget
+- InsightsWidget
 
-------------------------------------------------------------------------
+---
 
 # 3. Architecture Improvements
 
@@ -430,12 +429,11 @@ a distributed messaging or event streaming system.
 
 ### Recommended Technologies
 
-| Technology | Use Case |
-|------------|-----------|
-| Apache Kafka | High-throughput event streaming |
-| NATS | Lightweight real-time messaging |
-| RabbitMQ | Message queue with reliable delivery |
-
+| Technology   | Use Case                             |
+| ------------ | ------------------------------------ |
+| Apache Kafka | High-throughput event streaming      |
+| NATS         | Lightweight real-time messaging      |
+| RabbitMQ     | Message queue with reliable delivery |
 
 ### Event Architecture
 
@@ -449,17 +447,15 @@ a distributed messaging or event streaming system.
 
 ### Example Event Topics
 
+| Event Topic             | Description                      |
+| ----------------------- | -------------------------------- |
+| note.created            | Triggered when a note is created |
+| note.link.created       | Triggered when notes are linked  |
+| habit.completed         | Habit marked complete            |
+| learning.session.logged | Learning activity recorded       |
+| health.meal.logged      | Meal logged                      |
 
-
-| Event Topic | Description |
-|-------------|-------------|
-| note.created | Triggered when a note is created |
-| note.link.created | Triggered when notes are linked |
-| habit.completed | Habit marked complete |
-| learning.session.logged | Learning activity recorded |
-| health.meal.logged | Meal logged |
-
-------------------------------------------------------------------------
+---
 
 ## 3.2 Observability Architecture
 
@@ -468,14 +464,12 @@ performance analysis across services.
 
 ### Observability Stack
 
-
-| Component | Technology |
-|-----------|------------|
-| Logging | Elasticsearch + Logstash + Kibana |
-| Metrics | Prometheus |
-| Monitoring Dashboards | Grafana |
-| Tracing | OpenTelemetry + Jaeger |
-
+| Component             | Technology                        |
+| --------------------- | --------------------------------- |
+| Logging               | Elasticsearch + Logstash + Kibana |
+| Metrics               | Prometheus                        |
+| Monitoring Dashboards | Grafana                           |
+| Tracing               | OpenTelemetry + Jaeger            |
 
 ### Observability Flow
 
@@ -489,7 +483,7 @@ performance analysis across services.
     ↓
     Grafana Dashboards
 
-------------------------------------------------------------------------
+---
 
 ## 3.3 Infrastructure & Deployment Architecture
 
@@ -507,7 +501,7 @@ performance analysis across services.
     ↓
     Databases & Storage
 
-------------------------------------------------------------------------
+---
 
 # 4. Engineering Improvements
 
@@ -526,25 +520,25 @@ GET /api/v1/notes/{{note_id}}\
 GET /api/v1/notes?tag=ai\
 DELETE /api/v1/notes/{{note_id}}
 
-------------------------------------------------------------------------
+---
 
 ## 4.2 API Gateway Layer
 
 Responsibilities:
 
--   Authentication and authorization
--   Request routing
--   Rate limiting
--   Logging
--   API version management
+- Authentication and authorization
+- Request routing
+- Rate limiting
+- Logging
+- API version management
 
 Technologies:
 
--   Kong
--   NGINX
--   AWS API Gateway
+- Kong
+- NGINX
+- AWS API Gateway
 
-------------------------------------------------------------------------
+---
 
 ## 4.3 Rate Limiting
 
@@ -553,7 +547,7 @@ Example configuration
 100 requests/min per user\
 1000 requests/min per IP
 
-------------------------------------------------------------------------
+---
 
 ## 4.4 Caching Strategy
 
@@ -568,24 +562,24 @@ Example cache TTL:
 Dashboard Cache: 5 minutes\
 Analytics Cache: 30 minutes
 
-------------------------------------------------------------------------
+---
 
 ## 4.5 Search Infrastructure
 
 Possible search engines:
 
--   Meilisearch
--   Elasticsearch
--   OpenSearch
+- Meilisearch
+- Elasticsearch
+- OpenSearch
 
 Supported capabilities:
 
--   Full-text search
--   Tag filtering
--   Semantic search
--   Knowledge graph queries
+- Full-text search
+- Tag filtering
+- Semantic search
+- Knowledge graph queries
 
-------------------------------------------------------------------------
+---
 
 ## 4.6 Background Worker System
 
@@ -597,11 +591,11 @@ Supported capabilities:
 
 Possible tools:
 
--   Celery
--   BullMQ
--   Temporal
+- Celery
+- BullMQ
+- Temporal
 
-------------------------------------------------------------------------
+---
 
 ## 4.7 Data Warehouse for Analytics
 
@@ -613,11 +607,11 @@ Possible tools:
 
 Possible technologies:
 
--   BigQuery
--   Snowflake
--   ClickHouse
+- BigQuery
+- Snowflake
+- ClickHouse
 
-------------------------------------------------------------------------
+---
 
 ## 4.8 Feature Flag System
 
@@ -628,11 +622,11 @@ Knowledge graph → gradual rollout
 
 Tools:
 
--   LaunchDarkly
--   Unleash
--   Flagsmith
+- LaunchDarkly
+- Unleash
+- Flagsmith
 
-------------------------------------------------------------------------
+---
 
 # 5. DevOps Improvements
 
@@ -654,28 +648,28 @@ Tools:
 
 Tools:
 
--   GitHub
--   GitHub Actions
--   Docker
--   ArgoCD
+- GitHub
+- GitHub Actions
+- Docker
+- ArgoCD
 
-------------------------------------------------------------------------
+---
 
 ## 5.2 Infrastructure as Code
 
 Tools:
 
--   Terraform
--   Pulumi
--   CloudFormation
+- Terraform
+- Pulumi
+- CloudFormation
 
-------------------------------------------------------------------------
+---
 
 ## 5.3 Environment Strategy
 
 Development → Staging → Production
 
-------------------------------------------------------------------------
+---
 
 ## 5.4 Containerization
 
@@ -685,12 +679,12 @@ Docker
 
 Example services:
 
--   notes-service
--   habit-service
--   analytics-service
--   ai-service
+- notes-service
+- habit-service
+- analytics-service
+- ai-service
 
-------------------------------------------------------------------------
+---
 
 ## 5.5 Kubernetes Orchestration
 
@@ -698,17 +692,17 @@ Example scaling rule:
 
 CPU usage \> 70% → scale pods
 
-------------------------------------------------------------------------
+---
 
 ## 5.6 Secret Management
 
 Tools:
 
--   Hashicorp Vault
--   AWS Secrets Manager
--   Kubernetes Secrets
+- Hashicorp Vault
+- AWS Secrets Manager
+- Kubernetes Secrets
 
-------------------------------------------------------------------------
+---
 
 ## 5.7 Backup & Disaster Recovery
 
@@ -719,7 +713,7 @@ Configuration backup --- Daily
 RPO: 15 minutes\
 RTO: 30 minutes
 
-------------------------------------------------------------------------
+---
 
 ## 5.8 Auto Scaling
 
@@ -727,7 +721,7 @@ API services --- horizontal scaling\
 Worker nodes --- queue based scaling\
 Databases --- read replicas
 
-------------------------------------------------------------------------
+---
 
 # Final System Architecture
 

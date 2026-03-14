@@ -57,6 +57,7 @@ class TestPydanticModels:
         detail = ErrorDetail(code="ERR_CODE", message="Something went wrong")
         resp = APIResponse(status="error", error=detail)
         assert resp.status == "error"
+        assert resp.error is not None
         assert resp.error.code == "ERR_CODE"
         assert resp.error.message == "Something went wrong"
         assert resp.data is None

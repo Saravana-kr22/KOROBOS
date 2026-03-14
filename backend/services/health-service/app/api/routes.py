@@ -17,9 +17,10 @@ from app.schemas.schema import (
     WorkoutLogCreate,
 )
 from app.services.service_logic import HealthService
-from backend.shared.database.connection import get_db_session
 from fastapi import APIRouter, Depends, Header, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.shared.database.connection import get_db_session
 
 router = APIRouter()
 

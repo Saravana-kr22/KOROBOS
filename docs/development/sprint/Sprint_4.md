@@ -5,7 +5,7 @@
 Version: 1.0 \
 Owner: Saravana Perumal
 
-------------------------------------------------------------------------
+---
 
 # 1. Sprint Objective
 
@@ -17,11 +17,11 @@ services to communicate through events instead of direct calls.
 
 Benefits:
 
--   loose coupling between services
--   scalable background processing
--   analytics pipeline triggers
--   AI insight generation
--   notification workflows
+- loose coupling between services
+- scalable background processing
+- analytics pipeline triggers
+- AI insight generation
+- notification workflows
 
 After Sprint 4 completion the platform will support:
 
@@ -31,7 +31,7 @@ After Sprint 4 completion the platform will support:
 ✔ notification processing pipeline\
 ✔ AI insight triggers
 
-------------------------------------------------------------------------
+---
 
 # 2. Event Driven Architecture Overview
 
@@ -52,14 +52,14 @@ Consumers
 
 Consumers include:
 
--   Analytics Service
--   Notification Service
--   AI Service
--   Search Indexer
--   Knowledge Graph Engine
--   Dashboard Aggregator
+- Analytics Service
+- Notification Service
+- AI Service
+- Search Indexer
+- Knowledge Graph Engine
+- Dashboard Aggregator
 
-------------------------------------------------------------------------
+---
 
 # 3. Event Bus Technology
 
@@ -69,32 +69,32 @@ Recommended Event Streaming Platform:
 
 Alternatives:
 
--   NATS
--   RabbitMQ
+- NATS
+- RabbitMQ
 
 Kafka advantages:
 
--   high throughput
--   horizontal scalability
--   event persistence
--   partitioning
--   consumer replay capability
+- high throughput
+- horizontal scalability
+- event persistence
+- partitioning
+- consumer replay capability
 
-------------------------------------------------------------------------
+---
 
 # 4. Event Bus Infrastructure Components
 
 Core components:
 
--   Kafka Brokers
--   Zookeeper (or KRaft mode)
--   Kafka Topics
--   Producer Clients
--   Consumer Groups
--   Schema Registry
--   Event Workers
+- Kafka Brokers
+- Zookeeper (or KRaft mode)
+- Kafka Topics
+- Producer Clients
+- Consumer Groups
+- Schema Registry
+- Event Workers
 
-------------------------------------------------------------------------
+---
 
 # 5. Kafka Cluster Architecture
 
@@ -107,15 +107,15 @@ Production cluster:
 
 Recommended configuration:
 
--   replication factor = 3
--   multiple partitions per topic
--   persistent storage
+- replication factor = 3
+- multiple partitions per topic
+- persistent storage
 
 Development cluster:
 
 Single broker using Docker.
 
-------------------------------------------------------------------------
+---
 
 # 6. Local Development Setup
 
@@ -133,7 +133,7 @@ Environment variable:
 
 KAFKA_BROKER=localhost:9092
 
-------------------------------------------------------------------------
+---
 
 # 7. Topic Design
 
@@ -141,18 +141,20 @@ Topics follow **domain-driven design**.
 
 Core topics:
 
-  Topic                     Description
-  ------------------------- -------------------
-  note.created              new note created
-  note.updated              note edited
-  note.link.created         note linking
-  habit.created             new habit
-  habit.completed           habit completed
-  learning.session.logged   learning activity
-  meal.logged               food logged
-  workout.logged            workout logged
+Topic Description
 
-------------------------------------------------------------------------
+---
+
+note.created new note created
+note.updated note edited
+note.link.created note linking
+habit.created new habit
+habit.completed habit completed
+learning.session.logged learning activity
+meal.logged food logged
+workout.logged workout logged
+
+---
 
 # 8. Event Naming Convention
 
@@ -167,7 +169,7 @@ habit.completed\
 learning.session.logged\
 health.meal.logged
 
-------------------------------------------------------------------------
+---
 
 # 9. Event Schema Standard
 
@@ -186,7 +188,7 @@ timestamp → event time\
 producer → source service\
 payload → event data
 
-------------------------------------------------------------------------
+---
 
 # 10. Schema Registry
 
@@ -194,9 +196,9 @@ Schema registry manages event definitions.
 
 Responsibilities:
 
--   store event schemas
--   enforce compatibility
--   validate payloads
+- store event schemas
+- enforce compatibility
+- validate payloads
 
 Schema location:
 
@@ -206,7 +208,7 @@ Example:
 
 note_created.json
 
-------------------------------------------------------------------------
+---
 
 # 11. Producer Library
 
@@ -218,16 +220,16 @@ backend/shared/messaging/
 
 Features:
 
--   event publishing
--   retry mechanism
--   idempotency
--   schema validation
+- event publishing
+- retry mechanism
+- idempotency
+- schema validation
 
 Example usage:
 
 publish_event("note.created", payload)
 
-------------------------------------------------------------------------
+---
 
 # 12. Consumer Framework
 
@@ -239,12 +241,12 @@ backend/workers/
 
 Example workers:
 
--   analytics_worker
--   notification_worker
--   search_worker
--   ai_worker
+- analytics_worker
+- notification_worker
+- search_worker
+- ai_worker
 
-------------------------------------------------------------------------
+---
 
 # 13. Consumer Groups
 
@@ -258,7 +260,7 @@ ai-group
 
 Each group processes events independently.
 
-------------------------------------------------------------------------
+---
 
 # 14. Event Processing Example
 
@@ -281,7 +283,7 @@ Search Worker → update search index\
 Graph Worker → update graph\
 AI Worker → generate summary
 
-------------------------------------------------------------------------
+---
 
 # 15. Event Replay
 
@@ -289,13 +291,13 @@ Kafka supports replaying historical events.
 
 Use cases:
 
--   rebuild analytics
--   rebuild search index
--   regenerate AI insights
+- rebuild analytics
+- rebuild search index
+- regenerate AI insights
 
 Replay implemented via consumer offsets.
 
-------------------------------------------------------------------------
+---
 
 # 16. Partition Strategy
 
@@ -309,7 +311,7 @@ habit_id
 
 Ensures ordering per entity.
 
-------------------------------------------------------------------------
+---
 
 # 17. Dead Letter Queue
 
@@ -322,7 +324,7 @@ habit.completed.dlq
 
 Used for debugging and recovery.
 
-------------------------------------------------------------------------
+---
 
 # 18. Retry Strategy
 
@@ -334,7 +336,7 @@ Attempt 3 → 30 seconds
 
 After failure → send to DLQ.
 
-------------------------------------------------------------------------
+---
 
 # 19. Background Workers
 
@@ -349,7 +351,7 @@ AI Worker
 
 Workers consume Kafka topics.
 
-------------------------------------------------------------------------
+---
 
 # 20. Analytics Pipeline
 
@@ -367,11 +369,11 @@ Dashboard APIs
 
 Generated metrics:
 
--   productivity score
--   habit consistency
--   learning growth
+- productivity score
+- habit consistency
+- learning growth
 
-------------------------------------------------------------------------
+---
 
 # 21. Notification Pipeline
 
@@ -389,7 +391,7 @@ Example:
 
 habit.completed → schedule reminder
 
-------------------------------------------------------------------------
+---
 
 # 22. AI Insight Pipeline
 
@@ -407,7 +409,7 @@ LLM Insight Engine
 
 Insights displayed in dashboard.
 
-------------------------------------------------------------------------
+---
 
 # 23. Search Index Pipeline
 
@@ -419,7 +421,7 @@ Search Worker\
 ↓\
 Meilisearch Index Update
 
-------------------------------------------------------------------------
+---
 
 # 24. Knowledge Graph Pipeline
 
@@ -433,7 +435,7 @@ Graph Database Update
 
 Used for knowledge graph visualization.
 
-------------------------------------------------------------------------
+---
 
 # 25. Monitoring
 
@@ -441,28 +443,28 @@ Kafka must be monitored.
 
 Metrics:
 
--   topic throughput
--   consumer lag
--   failed messages
+- topic throughput
+- consumer lag
+- failed messages
 
 Tools:
 
 Prometheus\
 Grafana
 
-------------------------------------------------------------------------
+---
 
 # 26. Security
 
 Security controls:
 
--   TLS encryption
--   SASL authentication
--   Kafka ACL rules
+- TLS encryption
+- SASL authentication
+- Kafka ACL rules
 
 Only authorized services can produce/consume events.
 
-------------------------------------------------------------------------
+---
 
 # 27. Event Versioning
 
@@ -475,16 +477,16 @@ note.created.v2
 
 Consumers must remain backward compatible.
 
-------------------------------------------------------------------------
+---
 
 # 28. Testing Strategy
 
 Required tests:
 
--   producer tests
--   consumer tests
--   integration tests
--   contract tests
+- producer tests
+- consumer tests
+- integration tests
+- contract tests
 
 Tools:
 
@@ -496,7 +498,7 @@ environment with Docker available, for example:
 
 `poetry run pytest tests/test_messaging_integration.py`
 
-------------------------------------------------------------------------
+---
 
 # 29. Sprint Validation Checklist
 
@@ -512,7 +514,7 @@ Before sprint completion verify:
 ✔ Schema validation working\
 ✔ Monitoring dashboards available
 
-------------------------------------------------------------------------
+---
 
 # Final Sprint Outcome
 
@@ -523,10 +525,10 @@ All services will communicate through events.
 
 This enables:
 
--   scalable analytics pipelines
--   AI insight generation
--   asynchronous workflows
--   reliable background processing
+- scalable analytics pipelines
+- AI insight generation
+- asynchronous workflows
+- reliable background processing
 
 The platform is now ready for **core domain service implementation and
 real data processing**.

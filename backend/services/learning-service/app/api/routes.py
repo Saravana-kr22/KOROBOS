@@ -15,9 +15,10 @@ from app.schemas.schema import (
     LearningStatsResponse,
 )
 from app.services.service_logic import LearningService
-from backend.shared.database.connection import get_db_session
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.shared.database.connection import get_db_session
 
 router = APIRouter()
 

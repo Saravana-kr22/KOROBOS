@@ -9,7 +9,7 @@ Authentication: JWT Bearer Token
 
 Authorization Header: Authorization: Bearer `<token>`{=html}
 
-------------------------------------------------------------------------
+---
 
 # 1. Authentication APIs
 
@@ -26,7 +26,7 @@ Response
         { "user_id": "uuid", "email": "user@example.com", "created_at":
         "timestamp" }
 
-------------------------------------------------------------------------
+---
 
 ## Login
 
@@ -41,7 +41,7 @@ Response
         { "access_token": "jwt", "refresh_token": "jwt", "token_type": "bearer"
         }
 
-------------------------------------------------------------------------
+---
 
 ## Refresh Token
 
@@ -55,7 +55,7 @@ Response
 
         { "access_token": "new_jwt" }
 
-------------------------------------------------------------------------
+---
 
 # 2. Notes APIs
 
@@ -72,7 +72,7 @@ Response
         { "id": "uuid", "title": "Machine Learning", "content_md": "Introduction
         to ML", "created_at": "timestamp" }
 
-------------------------------------------------------------------------
+---
 
 ## Get Note
 
@@ -83,7 +83,7 @@ Response
         { "id": "uuid", "title": "Machine Learning", "content_md": "...",
         "created_at": "timestamp" }
 
-------------------------------------------------------------------------
+---
 
 ## List Notes
 
@@ -93,7 +93,7 @@ Response
 
     [ { "id": "uuid", "title": "ML", "created_at": "timestamp" }]
 
-------------------------------------------------------------------------
+---
 
 ## Delete Note
 
@@ -103,7 +103,7 @@ Response
 
     { "status": "deleted" }
 
-------------------------------------------------------------------------
+---
 
 # 3. Habit APIs
 
@@ -119,7 +119,7 @@ Response
 
     { "id": "uuid", "name": "Workout", "frequency": "daily" }
 
-------------------------------------------------------------------------
+---
 
 ## List Habits
 
@@ -129,7 +129,7 @@ Response
 
     [ { "id": "uuid", "name": "Workout", "frequency": "daily" }]
 
-------------------------------------------------------------------------
+---
 
 ## Complete Habit
 
@@ -139,7 +139,7 @@ Response
 
     { "habit_id": "uuid", "completed": true, "streak": 14 }
 
-------------------------------------------------------------------------
+---
 
 ## Habit Analytics
 
@@ -149,7 +149,7 @@ Response
 
     { "completion_rate": 82, "current_streak": 14 }
 
-------------------------------------------------------------------------
+---
 
 # 4. Learning APIs
 
@@ -165,7 +165,7 @@ Response
 
     { "session_id": "uuid", "topic": "System Design", "duration": 120 }
 
-------------------------------------------------------------------------
+---
 
 ## Get Learning Stats
 
@@ -175,7 +175,7 @@ Response
 
     { "total_hours": 120, "topics": \["AI","System Design"\] }
 
-------------------------------------------------------------------------
+---
 
 # 5. Health APIs
 
@@ -191,7 +191,7 @@ Response
 
     { "meal_id": "uuid", "calories": 500 }
 
-------------------------------------------------------------------------
+---
 
 ## Log Workout
 
@@ -205,7 +205,7 @@ Response
 
     { "workout_id": "uuid", "duration": 30 }
 
-------------------------------------------------------------------------
+---
 
 ## Health Stats
 
@@ -215,7 +215,7 @@ Response
 
     { "daily_calories": 2000, "workout_minutes": 45 }
 
-------------------------------------------------------------------------
+---
 
 # 6. Analytics APIs
 
@@ -227,7 +227,7 @@ Response
 
     { "score": 82 }
 
-------------------------------------------------------------------------
+---
 
 ## Habit Trends
 
@@ -237,7 +237,7 @@ Response
 
     { "weekly_consistency": 75 }
 
-------------------------------------------------------------------------
+---
 
 ## Learning Growth
 
@@ -247,7 +247,7 @@ Response
 
     { "weekly_hours": 12 }
 
-------------------------------------------------------------------------
+---
 
 # 7. Notifications APIs
 
@@ -259,7 +259,7 @@ Response
 
     [ { "id": "uuid", "message": "Workout reminder" }]
 
-------------------------------------------------------------------------
+---
 
 ## Mark Notification Read
 
@@ -273,7 +273,7 @@ Response
 
     { "status": "read" }
 
-------------------------------------------------------------------------
+---
 
 # 8. AI APIs
 
@@ -289,7 +289,7 @@ Response
 
     { "summary": "Short AI generated summary" }
 
-------------------------------------------------------------------------
+---
 
 ## Get AI Insights
 
@@ -300,7 +300,7 @@ Response
 { "insights": \[ "You studied more this week", "Maintain habit streak"
 \] }
 
-------------------------------------------------------------------------
+---
 
 # 9. Dashboard APIs
 
@@ -312,7 +312,7 @@ Response
 
     { "habit_completion": 80, "learning_hours": 3, "calories": 2000 }
 
-------------------------------------------------------------------------
+---
 
 ## Weekly Dashboard
 
@@ -322,7 +322,7 @@ Response
 
     { "habit_consistency": 75, "learning_hours": 12 }
 
-------------------------------------------------------------------------
+---
 
 # 10. Error Response Format
 
@@ -331,7 +331,7 @@ All APIs return standard errors
     { "error": { "code": "RESOURCE_NOT_FOUND", "message": "Note not found" }
     }
 
-------------------------------------------------------------------------
+---
 
 # Final API Vision
 
@@ -340,7 +340,7 @@ unified REST interface.
 
 Key characteristics
 
--   RESTful endpoints
--   JWT authentication
--   Event driven backend
--   Microservice modular design
+- RESTful endpoints
+- JWT authentication
+- Event driven backend
+- Microservice modular design

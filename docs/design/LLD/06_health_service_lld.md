@@ -1,4 +1,5 @@
 # KOROBOS – Enterprise LLD Template
+
 Document Name: Health Service Low Level Design
 Project: KOROBOS – Second Brain Operating System
 Version: 1.0
@@ -7,28 +8,37 @@ Date: 2026-03-07
 Status: Draft
 
 ## 1. Overview
+
 ### 1.1 Purpose
+
 Manages physical health tracking, including meal logging (nutrition) and exercise logs (workouts).
 
 ### 1.2 Scope
+
 **In Scope**
-* Calorie and nutrition pattern tracking.
-* Workout duration and calorie burn logging.
-**Out of Scope**
-* Integration with wearable hardware (Oura, Apple Watch).
+
+- Calorie and nutrition pattern tracking.
+- Workout duration and calorie burn logging.
+  **Out of Scope**
+- Integration with wearable hardware (Oura, Apple Watch).
 
 ### 1.3 Dependencies
-| Dependency | Purpose |
-| :--- | :--- |
+
+| Dependency | Purpose                             |
+| :--------- | :---------------------------------- |
 | PostgreSQL | Storage for meal and exercise logs. |
-| EventBus | Triggering dashboard updates. |
+| EventBus   | Triggering dashboard updates.       |
 
 ## 2. Architecture
+
 ### 2.1 Component Overview
+
 Health API → Nutrition Engine → Workout Tracker → Event Bus.
 
 ## 3. Data Model
+
 ### 3.1 Tables
+
 **Exercises Table**
 | Column | Type | Description |
 | :--- | :--- | :--- |
@@ -43,11 +53,14 @@ Health API → Nutrition Engine → Workout Tracker → Event Bus.
 | calories | Int | Caloric count |
 
 ## 4. Event Architecture
+
 ### 4.1 Events Published
-| Event | Description |
-| :--- | :--- |
-| meal_logged | Triggered on food entry. |
+
+| Event          | Description                  |
+| :------------- | :--------------------------- |
+| meal_logged    | Triggered on food entry.     |
 | workout_logged | Triggered on exercise entry. |
 
 ## 5. Performance Considerations
-* **Caching**: Daily calorie totals cached in Redis for dashboard speed.
+
+- **Caching**: Daily calorie totals cached in Redis for dashboard speed.
