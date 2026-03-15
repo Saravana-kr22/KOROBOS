@@ -11,8 +11,9 @@ from uuid import UUID
 from app.events.events import LearningSessionLoggedEvent
 from app.repositories.repository import LearningRepository
 from app.schemas.schema import LearningSessionCreate
-from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.shared.messaging.producer import publish_event
 
 
 class LearningService:

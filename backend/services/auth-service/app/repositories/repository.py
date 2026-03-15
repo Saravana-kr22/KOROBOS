@@ -28,6 +28,7 @@ class UserRepository:
         username: str,
         hashed_password: str,
         full_name: str = "",
+        email_verified: bool = False,
     ) -> User:
         """Create a new user."""
         user = User(
@@ -35,6 +36,7 @@ class UserRepository:
             username=username,
             hashed_password=hashed_password,
             full_name=full_name,
+            email_verified=email_verified,
         )
         self.session.add(user)
         await self.session.flush()

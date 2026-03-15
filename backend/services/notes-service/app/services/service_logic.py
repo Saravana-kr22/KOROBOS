@@ -11,16 +11,13 @@ Business logic layer for the Notes Service.
 from typing import Optional
 from uuid import UUID
 
-from app.events.events import (
-    NoteCreatedEvent,
-    NoteLinkCreatedEvent,
-    NoteUpdatedEvent,
-)
+from app.events.events import NoteCreatedEvent, NoteLinkCreatedEvent, NoteUpdatedEvent
 from app.models.model import Note
 from app.repositories.repository import NotesRepository
 from app.schemas.schema import NoteCreate, NoteUpdate
-from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.shared.messaging.producer import publish_event
 
 
 class NotesService:

@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 
 import pytest
+
 from backend.shared.messaging.schema_registry import validate_event
 from backend.shared.messaging.schemas import BaseEvent
 

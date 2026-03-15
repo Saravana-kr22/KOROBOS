@@ -2,7 +2,13 @@
   "event_type": "learning.session.logged",
   "schema_version": 1,
   "partition_key": "user_id",
-  "required_payload_fields": ["session_id", "user_id", "topic", "duration", "notes"],
+  "required_payload_fields": [
+    "session_id",
+    "user_id",
+    "topic",
+    "duration",
+    "notes"
+  ],
   "payload_properties": {
     "session_id": { "type": "string" },
     "user_id": { "type": "string" },

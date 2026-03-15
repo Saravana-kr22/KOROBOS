@@ -98,9 +98,20 @@ def generate_service(service_name: str):
 
 
             @app.exception_handler(Exception)
-            async def global_exception_handler(request: Request, exc: Exception):
+            async def global_exception_handler(
+                request: Request, exc: Exception
+            ):
                 logger.error(f"Unhandled exception: {{exc}}", exc_info=True)
-                return JSONResponse(status_code=500, content={{"status": "error", "error": {{"code": "INTERNAL_ERROR", "message": "An unexpected error occurred"}}}})
+                return JSONResponse(
+                    status_code=500,
+                    content={{
+                        "status": "error",
+                        "error": {{
+                            "code": "INTERNAL_ERROR",
+                            "message": "An unexpected error occurred",
+                        }},
+                    }},
+                )
 
 
             @app.get("/health")
@@ -110,7 +121,10 @@ def generate_service(service_name: str):
 
             @app.get("/metrics")
             async def metrics():
-                return {{"status": "success", "data": {{"service": "{service_name}", "version": "1.0.0"}}}}
+                return {{
+                    "status": "success",
+                    "data": {{"service": "{service_name}", "version": "1.0.0"}},
+                }}
         """))
 
     # routes.py
@@ -131,31 +145,38 @@ def generate_service(service_name: str):
     # model.py
     with open(os.path.join(base_dir, "models", "model.py"), "w") as f:
         f.write(
-            f"{HEADER}\n\n# ORM models for {label}\n# from backend.shared.database.base_model import Base, TimestampMixin\n"
+            f"{HEADER}\n\n# ORM models for {label}\n"
+            "# from backend.shared.database.base_model import Base, "
+            "TimestampMixin\n"
         )
 
     # schema.py
     with open(os.path.join(base_dir, "schemas", "schema.py"), "w") as f:
         f.write(
-            f'{HEADER}\n\nfrom pydantic import BaseModel\n\n\nclass {class_name}Base(BaseModel):\n    """Base schema for {label}."""\n    pass\n'
+            f"{HEADER}\n\nfrom pydantic import BaseModel\n\n\n"
+            f"class {class_name}Base(BaseModel):\n"
+            f'    """Base schema for {label}."""\n    pass\n'
         )
 
     # repository.py
     with open(os.path.join(base_dir, "repositories", "repository.py"), "w") as f:
         f.write(
-            f'{HEADER}\n\n\nclass {class_name}Repository:\n    """Data access layer for {label}."""\n    pass\n'
+            f"{HEADER}\n\n\nclass {class_name}Repository:\n"
+            f'    """Data access layer for {label}."""\n    pass\n'
         )
 
     # service_logic.py
     with open(os.path.join(base_dir, "services", "service_logic.py"), "w") as f:
         f.write(
-            f'{HEADER}\n\n\nclass {class_name}Service:\n    """Core business logic for {label}."""\n    pass\n'
+            f"{HEADER}\n\n\nclass {class_name}Service:\n"
+            f'    """Core business logic for {label}."""\n    pass\n'
         )
 
     # events.py
     with open(os.path.join(base_dir, "events", "events.py"), "w") as f:
         f.write(
-            f"{HEADER}\n\nfrom backend.shared.messaging.schemas import BaseEvent\n\n# Define event classes for {label} here\n"
+            f"{HEADER}\n\nfrom backend.shared.messaging.schemas import "
+            f"BaseEvent\n\n# Define event classes for {label} here\n"
         )
 
     # config/settings.py
@@ -193,11 +214,14 @@ def generate_service(service_name: str):
 
             WORKDIR /app
 
-            RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev && rm -rf /var/lib/apt/lists/*
+            RUN apt-get update && apt-get install -y \
+                --no-install-recommends gcc libpq-dev && \
+                rm -rf /var/lib/apt/lists/*
             RUN pip install poetry
 
             COPY pyproject.toml /app/
-            RUN poetry config virtualenvs.create false && poetry install --only main --no-root
+            RUN poetry config virtualenvs.create false && \
+                poetry install --only main --no-root
 
             COPY shared /app/shared
             COPY services/{service_name}/app /app/app

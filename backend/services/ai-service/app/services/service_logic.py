@@ -11,8 +11,9 @@ from uuid import UUID
 from app.events.events import AIInteractionCompletedEvent
 from app.repositories.repository import AIRepository
 from app.schemas.schema import AIPromptRequest
-from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.shared.messaging.producer import publish_event
 
 
 class AIService:

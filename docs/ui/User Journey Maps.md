@@ -2,7 +2,7 @@
 
 # **User Journey Maps**
 
-**Version: 1.0**  
+**Version: 1.0**
 **Owner: Saravana Perumal K**
 
 ---
@@ -11,16 +11,16 @@
 
 **User Journey Maps describe:**
 
-**• how users interact with KOROBOS**  
-**• what goals they try to achieve**  
-**• where friction may occur**  
+**• how users interact with KOROBOS**
+**• what goals they try to achieve**
+**• where friction may occur**
 **• where AI and analytics improve experience**
 
 **These journeys guide:**
 
-**• UX design decisions**  
-**• feature prioritization**  
-**• interaction design**  
+**• UX design decisions**
+**• feature prioritization**
+**• interaction design**
 **• product improvements**
 
 ---
@@ -33,14 +33,14 @@
 
 **Examples**
 
-**• developers**  
-**• researchers**  
+**• developers**
+**• researchers**
 **• product managers**
 
 **Goals**
 
-**• capture ideas**  
-**• organize knowledge**  
+**• capture ideas**
+**• organize knowledge**
 **• visualize learning**
 
 ---
@@ -49,14 +49,14 @@
 
 **Examples**
 
-**• students**  
-**• entrepreneurs**  
+**• students**
+**• entrepreneurs**
 **• fitness enthusiasts**
 
 **Goals**
 
-**• track habits**  
-**• monitor progress**  
+**• track habits**
+**• monitor progress**
 **• improve productivity**
 
 ---
@@ -65,14 +65,14 @@
 
 **Examples**
 
-**• AI learners**  
-**• engineers**  
+**• AI learners**
+**• engineers**
 **• researchers**
 
 **Goals**
 
-**• track study sessions**  
-**• build knowledge graph**  
+**• track study sessions**
+**• build knowledge graph**
 **• analyze skill growth**
 
 ---
@@ -81,12 +81,12 @@
 
 **Core journeys in KOROBOS:**
 
-**1️⃣ Onboarding Journey**  
-**2️⃣ Daily Productivity Journey**  
-**3️⃣ Knowledge Management Journey**  
-**4️⃣ Habit Tracking Journey**  
-**5️⃣ Learning Tracking Journey**  
-**6️⃣ Health Tracking Journey**  
+**1️⃣ Onboarding Journey**
+**2️⃣ Daily Productivity Journey**
+**3️⃣ Knowledge Management Journey**
+**4️⃣ Habit Tracking Journey**
+**5️⃣ Learning Tracking Journey**
+**6️⃣ Health Tracking Journey**
 **7️⃣ Insight & Analytics Journey**
 
 ---
@@ -115,12 +115,12 @@
 
 ## **Journey Map**
 
-| Stage | User Action | System Response | Emotion |
-| ----- | ----- | ----- | ----- |
-| **Discover** | **Visits landing page** | **Product introduction** | **Curious** |
-| **Signup** | **Creates account** | **User profile created** | **Hopeful** |
-| **Setup** | **Configures preferences** | **Default dashboard created** | **Engaged** |
-| **Explore** | **Opens dashboard** | **Widgets show insights** | **Excited** |
+| Stage        | User Action                | System Response               | Emotion     |
+| ------------ | -------------------------- | ----------------------------- | ----------- |
+| **Discover** | **Visits landing page**    | **Product introduction**      | **Curious** |
+| **Signup**   | **Creates account**        | **User profile created**      | **Hopeful** |
+| **Setup**    | **Configures preferences** | **Default dashboard created** | **Engaged** |
+| **Explore**  | **Opens dashboard**        | **Widgets show insights**     | **Excited** |
 
 ---
 
@@ -128,8 +128,8 @@
 
 **Improve onboarding with:**
 
-**• interactive product tour**  
-**• demo dashboard data**  
+**• interactive product tour**
+**• demo dashboard data**
 **• AI assistant introduction**
 
 ---
@@ -160,13 +160,13 @@
 
 ## **Journey Map**
 
-| Stage | User Action | System |
-| ----- | ----- | ----- |
-| **Login** | **Opens KOROBOS** | **Dashboard loads** |
-| **Review** | **Checks widgets** | **Analytics displayed** |
-| **Update** | **Marks habit complete** | **Habit logs stored** |
-| **Log** | **Adds learning session** | **Learning stats updated** |
-| **Capture** | **Creates note** | **Knowledge graph updated** |
+| Stage       | User Action               | System                      |
+| ----------- | ------------------------- | --------------------------- |
+| **Login**   | **Opens KOROBOS**         | **Dashboard loads**         |
+| **Review**  | **Checks widgets**        | **Analytics displayed**     |
+| **Update**  | **Marks habit complete**  | **Habit logs stored**       |
+| **Log**     | **Adds learning session** | **Learning stats updated**  |
+| **Capture** | **Creates note**          | **Knowledge graph updated** |
 
 ---
 
@@ -200,12 +200,12 @@
 
 ## **Journey Map**
 
-| Stage | Action | System |
-| ----- | ----- | ----- |
-| **Capture** | **Quick capture idea** | **Temporary note created** |
-| **Organize** | **Edit markdown** | **Note saved** |
-| **Connect** | **Add \[\[links\]\]** | **Graph updated** |
-| **Explore** | **Open graph** | **Related topics shown** |
+| Stage        | Action                 | System                     |
+| ------------ | ---------------------- | -------------------------- |
+| **Capture**  | **Quick capture idea** | **Temporary note created** |
+| **Organize** | **Edit markdown**      | **Note saved**             |
+| **Connect**  | **Add \[\[links\]\]**  | **Graph updated**          |
+| **Explore**  | **Open graph**         | **Related topics shown**   |
 
 ---
 
@@ -213,8 +213,8 @@
 
 **Improve with:**
 
-**• AI note summarization**  
-**• auto tag suggestions**  
+**• AI note summarization**
+**• auto tag suggestions**
 **• semantic linking**
 
 ---
@@ -241,12 +241,12 @@
 
 ## **Journey Map**
 
-| Stage | User Action | System |
-| ----- | ----- | ----- |
-| **Check** | **Opens dashboard** | **Habit status displayed** |
-| **Update** | **Marks habit done** | **Habit log created** |
-| **Analyze** | **Opens analytics** | **Streak updated** |
-| **Improve** | **Receives suggestions** | **AI insight generated** |
+| Stage       | User Action              | System                     |
+| ----------- | ------------------------ | -------------------------- |
+| **Check**   | **Opens dashboard**      | **Habit status displayed** |
+| **Update**  | **Marks habit done**     | **Habit log created**      |
+| **Analyze** | **Opens analytics**      | **Streak updated**         |
+| **Improve** | **Receives suggestions** | **AI insight generated**   |
 
 ---
 
@@ -272,12 +272,12 @@
 
 ## **Journey Map**
 
-| Stage | User Action | System |
-| ----- | ----- | ----- |
-| **Open** | **Opens learning page** | **Stats displayed** |
-| **Log** | **Adds session** | **Learning record saved** |
-| **Analyze** | **View progress chart** | **Analytics updated** |
-| **Improve** | **AI recommendations** | **Study insights generated** |
+| Stage       | User Action             | System                       |
+| ----------- | ----------------------- | ---------------------------- |
+| **Open**    | **Opens learning page** | **Stats displayed**          |
+| **Log**     | **Adds session**        | **Learning record saved**    |
+| **Analyze** | **View progress chart** | **Analytics updated**        |
+| **Improve** | **AI recommendations**  | **Study insights generated** |
 
 ---
 
@@ -303,11 +303,11 @@
 
 ## **Journey Map**
 
-| Stage | Action | System |
-| ----- | ----- | ----- |
-| **Open** | **Health page** | **Stats loaded** |
-| **Log** | **Add meal** | **Calories updated** |
-| **Track** | **Add workout** | **Activity recorded** |
+| Stage       | Action                 | System                |
+| ----------- | ---------------------- | --------------------- |
+| **Open**    | **Health page**        | **Stats loaded**      |
+| **Log**     | **Add meal**           | **Calories updated**  |
+| **Track**   | **Add workout**        | **Activity recorded** |
 | **Analyze** | **View health trends** | **Analytics updated** |
 
 ---
@@ -334,12 +334,12 @@
 
 ## **Journey Map**
 
-| Stage | Action | System |
-| ----- | ----- | ----- |
-| **Open** | **Analytics page** | **Data aggregated** |
-| **Explore** | **View charts** | **Visual insights** |
-| **Understand** | **Identify patterns** | **Trends displayed** |
-| **Improve** | **Receive AI advice** | **Recommendations shown** |
+| Stage          | Action                | System                    |
+| -------------- | --------------------- | ------------------------- |
+| **Open**       | **Analytics page**    | **Data aggregated**       |
+| **Explore**    | **View charts**       | **Visual insights**       |
+| **Understand** | **Identify patterns** | **Trends displayed**      |
+| **Improve**    | **Receive AI advice** | **Recommendations shown** |
 
 ---
 
@@ -415,11 +415,11 @@
 
 **Possible UX issues:**
 
-| Problem | Impact |
-| ----- | ----- |
-| **Too many features** | **Cognitive overload** |
-| **Slow dashboard** | **Poor engagement** |
-| **Complex graph** | **Difficult exploration** |
+| Problem               | Impact                    |
+| --------------------- | ------------------------- |
+| **Too many features** | **Cognitive overload**    |
+| **Slow dashboard**    | **Poor engagement**       |
+| **Complex graph**     | **Difficult exploration** |
 
 ---
 
@@ -427,9 +427,9 @@
 
 **Solutions**
 
-**• progressive disclosure**  
-**• smart defaults**  
-**• AI guidance**  
+**• progressive disclosure**
+**• smart defaults**
+**• AI guidance**
 **• widget personalization**
 
 ---
@@ -438,12 +438,12 @@
 
 **Measure user experience with:**
 
-| Metric | Target |
-| ----- | ----- |
-| **Daily active users** | **High** |
-| **Habit completion** | **\>70%** |
-| **Notes created** | **increasing** |
-| **Session duration** | **10+ min** |
+| Metric                 | Target         |
+| ---------------------- | -------------- |
+| **Daily active users** | **High**       |
+| **Habit completion**   | **\>70%**      |
+| **Notes created**      | **increasing** |
+| **Session duration**   | **10+ min**    |
 
 ---
 
@@ -462,4 +462,3 @@
       Improve
 
 **This loop defines the Second Brain lifecycle of the platform.**
-

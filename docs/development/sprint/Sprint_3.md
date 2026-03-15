@@ -5,7 +5,7 @@
 Version: 1.0 \
 Owner: Saravana Perumal
 
-------------------------------------------------------------------------
+---
 
 # 1. Sprint Objective
 
@@ -14,21 +14,21 @@ foundation** that all future features will depend on.
 
 This sprint establishes:
 
- -  API Gateway
- -  Service communication standards
- -  Microservice templates
- -  Authentication middleware
- -  Shared backend libraries
- -  Database migration system
- -  Event bus integration
- -  Service health monitoring
- -  API versioning framework
+- API Gateway
+- Service communication standards
+- Microservice templates
+- Authentication middleware
+- Shared backend libraries
+- Database migration system
+- Event bus integration
+- Service health monitoring
+- API versioning framework
 
 After this sprint all backend services will follow a **standardized
 architecture and communication model**, enabling scalable microservice
 development.
 
-------------------------------------------------------------------------
+---
 
 # 2. Platform Context
 
@@ -41,19 +41,19 @@ Notifications → Databases
 
 Core services:
 
--   Auth Service
--   Notes Service
--   Habit Service
--   Learning Service
--   Health Service
--   Analytics Service
--   Notification Service
--   AI Service
+- Auth Service
+- Notes Service
+- Habit Service
+- Learning Service
+- Health Service
+- Analytics Service
+- Notification Service
+- AI Service
 
 Sprint 3 builds the **gateway and reusable service framework** for these
 services.
 
-------------------------------------------------------------------------
+---
 
 # 3. Sprint Deliverables
 
@@ -70,7 +70,7 @@ By the end of Sprint 3 the system must include:
 ✔ API versioning structure\
 ✔ Standardized error handling
 
-------------------------------------------------------------------------
+---
 
 # 4. API Gateway Implementation
 
@@ -79,16 +79,16 @@ requests**.
 
 Responsibilities:
 
--   Request routing
--   Authentication verification
--   Rate limiting
--   Request logging
--   API versioning
--   Response standardization
+- Request routing
+- Authentication verification
+- Rate limiting
+- Request logging
+- API versioning
+- Response standardization
 
 Technology: **FastAPI**
 
-------------------------------------------------------------------------
+---
 
 ## Gateway Directory Structure
 
@@ -110,7 +110,7 @@ backend/gateway/api-gateway/
         config/
             gateway_settings.py
 
-------------------------------------------------------------------------
+---
 
 # 5. API Versioning Strategy
 
@@ -127,31 +127,33 @@ Example:
 
 Rules:
 
--   Major version change → breaking change
--   Minor change → backward compatible
+- Major version change → breaking change
+- Minor change → backward compatible
 
-------------------------------------------------------------------------
+---
 
 # 6. Service Routing
 
 Gateway routes requests to backend services.
 
-  Endpoint            Target Service
-  ------------------- -------------------
-  /api/v1/auth        auth-service
-  /api/v1/notes       notes-service
-  /api/v1/habits      habit-service
-  /api/v1/learning    learning-service
-  /api/v1/health      health-service
-  /api/v1/analytics   analytics-service
+Endpoint Target Service
+
+---
+
+/api/v1/auth auth-service
+/api/v1/notes notes-service
+/api/v1/habits habit-service
+/api/v1/learning learning-service
+/api/v1/health health-service
+/api/v1/analytics analytics-service
 
 Routing methods:
 
--   HTTP service calls
--   Service mesh routing
--   Kubernetes DNS discovery
+- HTTP service calls
+- Service mesh routing
+- Kubernetes DNS discovery
 
-------------------------------------------------------------------------
+---
 
 # 7. Authentication Middleware
 
@@ -163,11 +165,11 @@ Client → API Gateway → Validate JWT → Forward Request
 
 Token payload:
 
--   user_id
--   roles
--   expiration
+- user_id
+- roles
+- expiration
 
-------------------------------------------------------------------------
+---
 
 # 8. Request Logging Middleware
 
@@ -175,10 +177,10 @@ All requests must be logged.
 
 Captured fields:
 
--   request_id
--   endpoint
--   status_code
--   response_time
+- request_id
+- endpoint
+- status_code
+- response_time
 
 Example log:
 
@@ -187,7 +189,7 @@ Example log:
 
 Logs must be structured JSON.
 
-------------------------------------------------------------------------
+---
 
 # 9. Rate Limiting
 
@@ -195,12 +197,12 @@ API Gateway enforces rate limits.
 
 Example policy:
 
--   100 requests/min per user
--   1000 requests/min per IP
+- 100 requests/min per user
+- 1000 requests/min per IP
 
 Implementation uses Redis counters.
 
-------------------------------------------------------------------------
+---
 
 # 10. Standard API Response Format
 
@@ -213,7 +215,7 @@ Error:
 { "status": "error", "error": { "code": "RESOURCE_NOT_FOUND", "message":
 "Note not found" } }
 
-------------------------------------------------------------------------
+---
 
 # 11. Service Template Framework
 
@@ -241,22 +243,22 @@ service-name/
     Dockerfile
     requirements.txt
 
-------------------------------------------------------------------------
+---
 
 # 12. Service Bootstrapping
 
 Each service must initialize:
 
--   FastAPI app
--   database connection
--   event producer
--   health endpoint
+- FastAPI app
+- database connection
+- event producer
+- health endpoint
 
 Example:
 
 @app.get("/health") def health(): return {"status": "healthy"}
 
-------------------------------------------------------------------------
+---
 
 # 13. Shared Backend Libraries
 
@@ -271,21 +273,21 @@ backend/shared/
     logging/
     utils/
 
-------------------------------------------------------------------------
+---
 
 # 14. Database Library
 
 Responsibilities:
 
--   connection pooling
--   ORM models
--   migrations
+- connection pooling
+- ORM models
+- migrations
 
 Technology:
 
 SQLAlchemy + Alembic
 
-------------------------------------------------------------------------
+---
 
 # 15. Migration System
 
@@ -298,7 +300,7 @@ Commands:
 alembic revision --autogenerate\
 alembic upgrade head
 
-------------------------------------------------------------------------
+---
 
 # 16. Messaging Library
 
@@ -306,9 +308,9 @@ Shared Kafka client for event streaming.
 
 Functions:
 
--   publish events
--   consume events
--   retry logic
+- publish events
+- consume events
+- retry logic
 
 Example events:
 
@@ -316,7 +318,7 @@ note.created\
 habit.completed\
 learning.session.logged
 
-------------------------------------------------------------------------
+---
 
 # 17. Event Schema
 
@@ -324,7 +326,7 @@ Standard event format:
 
 { "event": "note.created", "timestamp": "ISO8601", "payload": {} }
 
-------------------------------------------------------------------------
+---
 
 # 18. Service Health Monitoring
 
@@ -335,7 +337,7 @@ Each service exposes:
 
 Used by Kubernetes probes.
 
-------------------------------------------------------------------------
+---
 
 # 19. Configuration Management
 
@@ -346,7 +348,7 @@ REDIS_URL\
 KAFKA_BROKER\
 JWT_SECRET
 
-------------------------------------------------------------------------
+---
 
 # 20. Service Discovery
 
@@ -356,7 +358,7 @@ Example:
 
 notes-service.default.svc.cluster.local
 
-------------------------------------------------------------------------
+---
 
 # 21. API Documentation
 
@@ -366,15 +368,15 @@ Accessible via:
 
 /docs
 
-------------------------------------------------------------------------
+---
 
 # 22. Testing Strategy
 
 Required tests:
 
--   Unit tests
--   Integration tests
--   API tests
+- Unit tests
+- Integration tests
+- API tests
 
 Tools:
 
@@ -382,19 +384,19 @@ pytest\
 pytest-asyncio\
 httpx
 
-------------------------------------------------------------------------
+---
 
 # 23. Security Best Practices
 
 Security layers:
 
--   TLS encryption
--   JWT authentication
--   input validation
--   rate limiting
--   audit logging
+- TLS encryption
+- JWT authentication
+- input validation
+- rate limiting
+- audit logging
 
-------------------------------------------------------------------------
+---
 
 # 24. Sprint Validation Checklist
 
@@ -408,7 +410,7 @@ Security layers:
 ✔ Health endpoints accessible\
 ✔ OpenAPI documentation generated
 
-------------------------------------------------------------------------
+---
 
 # Final Sprint Outcome
 
@@ -417,10 +419,10 @@ service framework**.
 
 Developers can:
 
--   rapidly create microservices
--   expose APIs via gateway
--   publish events to the event bus
--   maintain standardized architecture
+- rapidly create microservices
+- expose APIs via gateway
+- publish events to the event bus
+- maintain standardized architecture
 
 This enables rapid implementation of KOROBOS domain services in future
 sprints.

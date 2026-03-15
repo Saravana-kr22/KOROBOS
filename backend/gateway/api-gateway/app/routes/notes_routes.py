@@ -11,10 +11,9 @@ Notes route proxy — forwards /api/v1/notes/* to the notes-service.
 import logging
 
 import httpx
+from app.services.service_registry import ServiceRegistry
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-
-from app.services.service_registry import ServiceRegistry
 
 router = APIRouter(prefix="/api/v1/notes", tags=["Notes"])
 logger = logging.getLogger("api-gateway.routes.notes")

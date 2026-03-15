@@ -10,10 +10,11 @@ ORM models for the Notes Service.
 
 import uuid
 
-from backend.shared.database.base_model import Base, TimestampMixin
 from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from backend.shared.database.base_model import Base, TimestampMixin
 
 
 class Note(Base, TimestampMixin):

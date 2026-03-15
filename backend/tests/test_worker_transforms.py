@@ -71,10 +71,12 @@ def test_analytics_transform_covers_new_activity_topics():
 
 
 def test_notification_transform_formats_habit_completion():
-    title, body = notification_content_for_event(
+    result = notification_content_for_event(
         "habit.completed",
         {"streak": 9},
     )
+    assert result is not None
+    title, body = result
 
     assert title == "Habit completed 🎯"
     assert "9 days" in body

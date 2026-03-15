@@ -20,17 +20,18 @@ Responsibilities:
 import time
 from contextlib import asynccontextmanager
 
-from backend.shared.logging.logger import get_logger
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse
-
 from app.config.gateway_settings import get_gateway_settings
 from app.middleware.auth_middleware import AuthMiddleware
 from app.middleware.logging_middleware import LoggingMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
+from app.middleware.service_auth_middleware import ServiceAuthMiddleware
 from app.router import api_router
 from app.services.service_registry import ServiceRegistry
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
+
+from backend.shared.logging.logger import get_logger
 
 # -- Logging setup --
 
@@ -102,9 +103,10 @@ app.add_middleware(
 )
 
 # -- Middleware Stack (order matters: outermost runs first) --
-# 1. Logging -> 2. Rate Limit -> 3. Auth
+# 1. Logging -> 2. Rate Limit -> 3. Service Auth -> 4. User Auth
 
 app.add_middleware(AuthMiddleware)
+app.add_middleware(ServiceAuthMiddleware)
 app.add_middleware(RateLimitMiddleware, redis_client=_redis_client)
 app.add_middleware(LoggingMiddleware)
 

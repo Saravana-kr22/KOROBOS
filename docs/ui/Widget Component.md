@@ -2,7 +2,7 @@
 
 # **Widget Component Library**
 
-Version: 1.0  
+Version: 1.0
 Owner: Saravana Perumal K
 
 ---
@@ -13,11 +13,11 @@ Widgets are **self-contained UI components** that display real-time insights and
 
 Characteristics
 
- - modular  
- - draggable  
- - resizable  
- - data-driven  
- - real-time updates
+- modular
+- draggable
+- resizable
+- data-driven
+- real-time updates
 
 Each widget communicates with backend services via the **Dashboard Service aggregation layer**.
 
@@ -38,7 +38,6 @@ All widgets follow a standardized structure.
     | Navigation / Quick Actions     |
     +--------------------------------+
 
-
 ---
 
 # **3\. Widget Layout System**
@@ -51,12 +50,12 @@ Desktop dashboard
 
 Widget sizes
 
-| Size | Columns |
-| ----- | ----- |
-| Small | 3 |
-| Medium | 6 |
-| Large | 9 |
-| Full | 12 |
+| Size   | Columns |
+| ------ | ------- |
+| Small  | 3       |
+| Medium | 6       |
+| Large  | 9       |
+| Full   | 12      |
 
 ---
 
@@ -66,29 +65,29 @@ The system consists of **15 primary widgets**.
 
 ### **Productivity Widgets**
 
-1. Habit Widget  
-2. Learning Widget  
-3. Health Widget  
-4. Knowledge Activity Widget  
+1. Habit Widget
+2. Learning Widget
+3. Health Widget
+4. Knowledge Activity Widget
 5. Productivity Score Widget
 
 ### **Insight Widgets**
 
-6. AI Insight Widget  
-7. Weekly Progress Widget  
+6. AI Insight Widget
+7. Weekly Progress Widget
 8. Goal Tracker Widget
 
 ### **Visualization Widgets**
 
-9. Trend Chart Widget  
-10. Progress Ring Widget  
+9. Trend Chart Widget
+10. Progress Ring Widget
 11. Activity Timeline Widget
 
 ### **Utility Widgets**
 
-12. Quick Capture Widget  
-13. Task Widget  
-14. Notification Widget  
+12. Quick Capture Widget
+13. Task Widget
+14. Notification Widget
 15. Focus Mode Widget
 
 ---
@@ -101,10 +100,10 @@ Example React interface
 
 ```typescript
 interface WidgetProps {
-  id: string
-  title: string
-  size: "small" | "medium" | "large" | "full"
-  refreshInterval?: number
+  id: string;
+  title: string;
+  size: "small" | "medium" | "large" | "full";
+  refreshInterval?: number;
 }
 ```
 
@@ -135,9 +134,9 @@ Display daily habit progress.
 
 ## **Features**
 
- - mark habit complete  
- - view streak  
- - quick navigation
+- mark habit complete
+- view streak
+- quick navigation
 
 ---
 
@@ -174,12 +173,11 @@ Track learning progress.
 
     [ Log Session ]
 
-
 ## **Metrics**
 
- - learning hours today  
- - weekly learning time  
- - active topics
+- learning hours today
+- weekly learning time
+- active topics
 
 ---
 
@@ -240,8 +238,8 @@ Display knowledge activity.
 
 ## **Features**
 
- - open note editor  
- - explore graph
+- open note editor
+- explore graph
 
 ---
 
@@ -269,9 +267,9 @@ Show productivity performance.
 
 ## **Calculation Inputs**
 
- - habits  
- - learning sessions  
- - activity logs
+- habits
+- learning sessions
+- activity logs
 
 Computed by **Analytics Service**.
 
@@ -358,7 +356,6 @@ Display trends.
 
 ## **Layout**
 
-
     +----------------------------+
     | Productivity Trend         |
     +----------------------------+
@@ -367,9 +364,9 @@ Display trends.
 
 Types
 
- - line chart  
- - bar chart  
- - area chart
+- line chart
+- bar chart
+- area chart
 
 ---
 
@@ -523,8 +520,8 @@ Example state
 {
   widgets: [
     { id: "habit", size: "small", position: 1 },
-    { id: "learning", size: "medium", position: 2 }
-  ]
+    { id: "learning", size: "medium", position: 2 },
+  ];
 }
 ```
 
@@ -544,9 +541,9 @@ Default interval
 
 Techniques
 
- - lazy loading  
- - virtualization  
- - caching
+- lazy loading
+- virtualization
+- caching
 
 ---
 
@@ -574,7 +571,6 @@ Example structure
 
 The KOROBOS dashboard becomes a **modular productivity cockpit** where:
 
- - each widget is a data instrument  
- - insights are always visible  
- - users customize their control center
-
+- each widget is a data instrument
+- insights are always visible
+- users customize their control center

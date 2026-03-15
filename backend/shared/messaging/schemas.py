@@ -10,8 +10,9 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 from uuid import uuid4
 
-from backend.shared.logging.logger import get_correlation_id
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field
+
+from backend.shared.logging.logger import get_correlation_id
 
 
 class BaseEvent(BaseModel):

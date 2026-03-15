@@ -96,7 +96,19 @@ class KOROBOSSettings(BaseSettings):
     # ── Secrets ──
     jwt_secret: str = Field(
         default="change-me-in-production",
-        description="Secret key for JWT signing",
+        description="Secret key for JWT signing (HS256)",
+    )
+    jwt_algorithm: str = Field(
+        default="HS256",
+        description="JWT algorithm (HS256 for symmetric, RS256 for asymmetric)",
+    )
+    jwt_private_key: str = Field(
+        default="",
+        description="Private key for RS256 signing (PEM format)",
+    )
+    jwt_public_key: str = Field(
+        default="",
+        description="Public key for RS256 verification (PEM format)",
     )
 
     # ── Service ──
@@ -139,7 +151,7 @@ class KOROBOSSettings(BaseSettings):
         v_upper = v.upper()
         if v_upper not in allowed:
             raise ValueError(
-                "kafka_security_protocol must be one of " f"{allowed}, got '{v}'"
+                f"kafka_security_protocol must be one of {allowed}, got '{v}'"
             )
         return v_upper
 
@@ -152,6 +164,15 @@ class KOROBOSSettings(BaseSettings):
             raise ValueError(
                 f"kafka_sasl_mechanism must be one of {allowed}, got '{v}'"
             )
+        return v_upper
+
+    @field_validator("jwt_algorithm")
+    @classmethod
+    def validate_jwt_algorithm(cls, v: str) -> str:
+        allowed = {"HS256", "RS256"}
+        v_upper = v.upper()
+        if v_upper not in allowed:
+            raise ValueError(f"jwt_algorithm must be one of {allowed}, got '{v}'")
         return v_upper
 
     model_config = {

@@ -12,6 +12,7 @@ from types import SimpleNamespace
 
 import pytest
 from aiokafka.structs import TopicPartition
+
 from backend.shared.messaging.consumer import BaseEventConsumer
 from backend.shared.messaging.kafka_config import build_kafka_client_options
 from backend.shared.messaging.producer import publish_event

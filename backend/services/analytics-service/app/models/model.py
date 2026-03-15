@@ -10,10 +10,11 @@ ORM model for the Analytics Service.
 
 import uuid
 
-from backend.shared.database.base_model import Base, TimestampMixin
 from sqlalchemy import Float, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
+
+from backend.shared.database.base_model import Base, TimestampMixin
 
 
 class AnalyticsMetric(Base, TimestampMixin):

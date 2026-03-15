@@ -1,6 +1,6 @@
 # KOROBOS Kafka Event Streaming Architecture
 
-Version: 1.1  
+Version: 1.1
 Owner: Saravana Perumal K
 
 ## 1. Overview
@@ -52,19 +52,19 @@ Notes:
 
 ## 4. Produced Topics
 
-| Topic | Producer | Current Consumers | Partition Key |
-| --- | --- | --- | --- |
-| `note.created` | Notes Service | `analytics-group`, `search-group`, `ai-group` | `user_id` |
-| `note.updated` | Notes Service | `search-group`, `ai-group` | `user_id` |
-| `note.link.created` | Notes Service | `analytics-group` | `user_id` |
-| `habit.created` | Habit Service | `analytics-group` | `user_id` |
-| `habit.completed` | Habit Service | `analytics-group`, `notification-group` | `user_id` |
-| `learning.session.logged` | Learning Service | `analytics-group`, `ai-group` | `user_id` |
-| `meal.logged` | Health Service | `analytics-group` | `user_id` |
-| `workout.logged` | Health Service | `analytics-group` | `user_id` |
-| `user.registered` | Auth Service | `analytics-group` | `user_id` |
-| `user.login` | Auth Service | `analytics-group` | `user_id` |
-| `ai.interaction.completed` | AI Service | `analytics-group` | `user_id` |
+| Topic                      | Producer         | Current Consumers                             | Partition Key |
+| -------------------------- | ---------------- | --------------------------------------------- | ------------- |
+| `note.created`             | Notes Service    | `analytics-group`, `search-group`, `ai-group` | `user_id`     |
+| `note.updated`             | Notes Service    | `search-group`, `ai-group`                    | `user_id`     |
+| `note.link.created`        | Notes Service    | `analytics-group`                             | `user_id`     |
+| `habit.created`            | Habit Service    | `analytics-group`                             | `user_id`     |
+| `habit.completed`          | Habit Service    | `analytics-group`, `notification-group`       | `user_id`     |
+| `learning.session.logged`  | Learning Service | `analytics-group`, `ai-group`                 | `user_id`     |
+| `meal.logged`              | Health Service   | `analytics-group`                             | `user_id`     |
+| `workout.logged`           | Health Service   | `analytics-group`                             | `user_id`     |
+| `user.registered`          | Auth Service     | `analytics-group`                             | `user_id`     |
+| `user.login`               | Auth Service     | `analytics-group`                             | `user_id`     |
+| `ai.interaction.completed` | AI Service       | `analytics-group`                             | `user_id`     |
 
 The sprint document also references future graph and dashboard-style consumers.
 Those are not separate worker processes today; the existing workers above are
@@ -72,12 +72,12 @@ the current implementation of record.
 
 ## 5. Consumer Groups
 
-| Consumer Group | Worker | Subscriptions |
-| --- | --- | --- |
-| `analytics-group` | `backend.workers.analytics_worker` | `note.created`, `note.link.created`, `habit.created`, `habit.completed`, `learning.session.logged`, `meal.logged`, `workout.logged`, `user.registered`, `user.login`, `ai.interaction.completed` |
-| `notification-group` | `backend.workers.notification_worker` | `habit.completed` |
-| `search-group` | `backend.workers.search_worker` | `note.created`, `note.updated` |
-| `ai-group` | `backend.workers.ai_worker` | `note.created`, `note.updated`, `learning.session.logged` |
+| Consumer Group       | Worker                                | Subscriptions                                                                                                                                                                                    |
+| -------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `analytics-group`    | `backend.workers.analytics_worker`    | `note.created`, `note.link.created`, `habit.created`, `habit.completed`, `learning.session.logged`, `meal.logged`, `workout.logged`, `user.registered`, `user.login`, `ai.interaction.completed` |
+| `notification-group` | `backend.workers.notification_worker` | `habit.completed`                                                                                                                                                                                |
+| `search-group`       | `backend.workers.search_worker`       | `note.created`, `note.updated`                                                                                                                                                                   |
+| `ai-group`           | `backend.workers.ai_worker`           | `note.created`, `note.updated`, `learning.session.logged`                                                                                                                                        |
 
 ## 6. Retry, Commit, and DLQ Behavior
 

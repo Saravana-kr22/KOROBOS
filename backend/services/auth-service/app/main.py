@@ -11,10 +11,13 @@ Auth Service — authentication and user identity microservice.
 from contextlib import asynccontextmanager
 
 from app.api.routes import router as api_router
+from app.middleware.rate_limit import add_rate_limit_middleware
+from app.services.metrics import get_metrics_summary, get_prometheus_metrics
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, PlainTextResponse
+
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import close_producer, get_producer
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 
 logger = get_logger("auth-service")
 
@@ -38,6 +41,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+# Add rate limiting middleware
+add_rate_limit_middleware(app)
 
 # Standardized: Services listen at '/' and let the gateway
 # handle '/api/v1/{service_name}'
@@ -64,9 +70,20 @@ async def health_check():
     return {"status": "healthy", "service": "auth-service"}
 
 
-@app.get("/metrics")
+@app.get("/metrics", tags=["Monitoring"])
 async def metrics():
+    """Auth service metrics in JSON format."""
     return {
         "status": "success",
-        "data": {"service": "auth-service", "version": "1.0.0"},
+        "data": {
+            "service": "auth-service",
+            "version": "1.0.0",
+            "metrics": get_metrics_summary(),
+        },
     }
+
+
+@app.get("/metrics/prometheus", tags=["Monitoring"], response_class=PlainTextResponse)
+async def prometheus_metrics():
+    """Prometheus-compatible metrics exposition format."""
+    return get_prometheus_metrics()

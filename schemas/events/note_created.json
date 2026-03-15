@@ -2,7 +2,13 @@
   "event_type": "note.created",
   "schema_version": 1,
   "partition_key": "user_id",
-  "required_payload_fields": ["note_id", "user_id", "title", "content_md", "tags"],
+  "required_payload_fields": [
+    "note_id",
+    "user_id",
+    "title",
+    "content_md",
+    "tags"
+  ],
   "payload_properties": {
     "note_id": { "type": "string" },
     "user_id": { "type": "string" },

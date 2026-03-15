@@ -9,12 +9,24 @@ Kafka client configuration helpers shared by producers and consumers.
 """
 
 import ssl
-from typing import Any
-
-from backend.shared.config.settings import KOROBOSSettings
+from typing import Any, Protocol
 
 
-def build_kafka_client_options(settings: KOROBOSSettings) -> dict[str, Any]:
+class KafkaSettings(Protocol):
+    """Protocol for objects that provide Kafka settings."""
+
+    kafka_broker: str
+    kafka_security_protocol: str
+    kafka_sasl_mechanism: str
+    kafka_sasl_username: str
+    kafka_sasl_password: str
+    kafka_ssl_ca_file: str
+    kafka_ssl_cert_file: str
+    kafka_ssl_key_file: str
+    kafka_ssl_check_hostname: bool
+
+
+def build_kafka_client_options(settings: KafkaSettings) -> dict[str, Any]:
     """
     Build aiokafka connection options from settings.
 
@@ -44,7 +56,7 @@ def build_kafka_client_options(settings: KOROBOSSettings) -> dict[str, Any]:
     return options
 
 
-def _build_ssl_context(settings: KOROBOSSettings) -> ssl.SSLContext:
+def _build_ssl_context(settings: KafkaSettings) -> ssl.SSLContext:
     if settings.kafka_ssl_ca_file:
         ssl_context = ssl.create_default_context(cafile=settings.kafka_ssl_ca_file)
     else:

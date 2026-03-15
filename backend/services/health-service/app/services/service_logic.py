@@ -11,8 +11,9 @@ from uuid import UUID
 from app.events.events import MealLoggedEvent, WorkoutLoggedEvent
 from app.repositories.repository import HealthRepository
 from app.schemas.schema import MealLogCreate, WorkoutLogCreate
-from backend.shared.messaging.producer import publish_event
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.shared.messaging.producer import publish_event
 
 
 class HealthService:

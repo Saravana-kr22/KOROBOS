@@ -11,10 +11,11 @@ ORM models for the Habit Service.
 import uuid
 from datetime import date
 
-from backend.shared.database.base_model import Base, TimestampMixin
 from sqlalchemy import Boolean, Date, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from backend.shared.database.base_model import Base, TimestampMixin
 
 
 class Habit(Base, TimestampMixin):

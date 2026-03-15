@@ -11,10 +11,9 @@ Habit route proxy — forwards /api/v1/habits/* to the habit-service.
 import logging
 
 import httpx
+from app.services.service_registry import ServiceRegistry
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-
-from app.services.service_registry import ServiceRegistry
 
 router = APIRouter(prefix="/api/v1/habits", tags=["Habits"])
 logger = logging.getLogger("api-gateway.routes.habits")

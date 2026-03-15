@@ -12,12 +12,11 @@ Uses sliding-window counters per user and per IP.
 import logging
 import time
 
+from app.config.gateway_settings import get_gateway_settings
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import Response
-
-from app.config.gateway_settings import get_gateway_settings
 
 logger = logging.getLogger("api-gateway.ratelimit")
 

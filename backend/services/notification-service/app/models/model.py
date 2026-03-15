@@ -10,10 +10,11 @@ ORM model for the Notification Service.
 
 import uuid
 
-from backend.shared.database.base_model import Base, TimestampMixin
 from sqlalchemy import Boolean, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
+
+from backend.shared.database.base_model import Base, TimestampMixin
 
 
 class Notification(Base, TimestampMixin):

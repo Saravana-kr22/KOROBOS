@@ -11,10 +11,9 @@ Health route proxy — forwards /api/v1/health/* to the health-service.
 import logging
 
 import httpx
+from app.services.service_registry import ServiceRegistry
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-
-from app.services.service_registry import ServiceRegistry
 
 router = APIRouter(prefix="/api/v1/health", tags=["Health"])
 logger = logging.getLogger("api-gateway.routes.health")

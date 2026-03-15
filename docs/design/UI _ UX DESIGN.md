@@ -1,6 +1,6 @@
 # **KOROBOS Design System**
 
-**Version: 1.0**  
+**Version: 1.0**
 **Owner: Saravana Perumal K**
 
 ---
@@ -13,9 +13,9 @@
 
 **It ensures:**
 
-**• visual consistency**  
-**• faster UI development**  
-**• reusable components**  
+**• visual consistency**
+**• faster UI development**
+**• reusable components**
 **• scalable product design**
 
 ---
@@ -28,8 +28,8 @@
 
 **Examples**
 
-**• analytics widgets**  
-**• knowledge graph**  
+**• analytics widgets**
+**• knowledge graph**
 **• trend dashboards**
 
 ---
@@ -40,8 +40,8 @@
 
 **Characteristics**
 
-**• glowing borders**  
-**• glass panels**  
+**• glowing borders**
+**• glass panels**
 **• floating widgets**
 
 ---
@@ -52,8 +52,8 @@
 
 **Examples**
 
-**• habit widget**  
-**• learning widget**  
+**• habit widget**
+**• learning widget**
 **• analytics widget**
 
 ---
@@ -64,8 +64,8 @@
 
 **Examples**
 
-**Create note**  
-**Mark habit complete**  
+**Create note**
+**Mark habit complete**
 **Log learning**
 
 ---
@@ -80,35 +80,35 @@
 
 ## **Primary Colors**
 
-| Token | Color | Usage |
-| ----- | ----- | ----- |
-| **primary\_neon** | **\#00F5FF** | **main accent** |
-| **primary\_dark** | **\#0A0A0F** | **background** |
-| **secondary\_purple** | **\#9D4EDD** | **highlights** |
-| **accent\_pink** | **\#FF006E** | **alerts** |
+| Token                | Color        | Usage           |
+| -------------------- | ------------ | --------------- |
+| **primary_neon**     | **\#00F5FF** | **main accent** |
+| **primary_dark**     | **\#0A0A0F** | **background**  |
+| **secondary_purple** | **\#9D4EDD** | **highlights**  |
+| **accent_pink**      | **\#FF006E** | **alerts**      |
 
 ---
 
 ## **Neutral Colors**
 
-| Token | Color |
-| ----- | ----- |
-| **gray\_100** | **\#F8F9FA** |
-| **gray\_300** | **\#CED4DA** |
-| **gray\_500** | **\#6C757D** |
-| **gray\_700** | **\#343A40** |
-| **gray\_900** | **\#121212** |
+| Token        | Color        |
+| ------------ | ------------ |
+| **gray_100** | **\#F8F9FA** |
+| **gray_300** | **\#CED4DA** |
+| **gray_500** | **\#6C757D** |
+| **gray_700** | **\#343A40** |
+| **gray_900** | **\#121212** |
 
 ---
 
 ## **Semantic Colors**
 
-| Token | Usage |
-| ----- | ----- |
+| Token       | Usage        |
+| ----------- | ------------ |
 | **success** | **\#00FF9C** |
 | **warning** | **\#FFC300** |
-| **error** | **\#FF3B3B** |
-| **info** | **\#0096FF** |
+| **error**   | **\#FF3B3B** |
+| **info**    | **\#0096FF** |
 
 ---
 
@@ -126,26 +126,26 @@
 
 ## **Font Scale**
 
-| Token | Size |
-| ----- | ----- |
+| Token       | Size     |
+| ----------- | -------- |
 | **display** | **48px** |
-| **h1** | **36px** |
-| **h2** | **30px** |
-| **h3** | **24px** |
-| **h4** | **20px** |
-| **body** | **16px** |
+| **h1**      | **36px** |
+| **h2**      | **30px** |
+| **h3**      | **24px** |
+| **h4**      | **20px** |
+| **body**    | **16px** |
 | **caption** | **12px** |
 
 ---
 
 ## **Font Weights**
 
-| Weight | Value |
-| ----- | ----- |
-| **regular** | **400** |
-| **medium** | **500** |
+| Weight       | Value   |
+| ------------ | ------- |
+| **regular**  | **400** |
+| **medium**   | **500** |
 | **semibold** | **600** |
-| **bold** | **700** |
+| **bold**     | **700** |
 
 ---
 
@@ -153,22 +153,22 @@
 
 **Spacing uses 8px grid system.**
 
-| Token | Size |
-| ----- | ----- |
-| **xs** | **4px** |
-| **sm** | **8px** |
-| **md** | **16px** |
-| **lg** | **24px** |
-| **xl** | **32px** |
+| Token   | Size     |
+| ------- | -------- |
+| **xs**  | **4px**  |
+| **sm**  | **8px**  |
+| **md**  | **16px** |
+| **lg**  | **24px** |
+| **xl**  | **32px** |
 | **xxl** | **48px** |
 
 ---
 
 # **2.4 Border Radius**
 
-| Token | Radius |
-| ----- | ----- |
-| **sm** | **6px** |
+| Token  | Radius   |
+| ------ | -------- |
+| **sm** | **6px**  |
 | **md** | **12px** |
 | **lg** | **18px** |
 | **xl** | **24px** |
@@ -187,7 +187,7 @@
 
 **Used for:**
 
-**• hover effects**  
+**• hover effects**
 **• active widgets**
 
 ---
@@ -210,11 +210,11 @@
 
 ## **Column Settings**
 
-| Parameter | Value |
-| ----- | ----- |
-| **Columns** | **12** |
-| **Gutter** | **24px** |
-| **Margin** | **64px** |
+| Parameter   | Value    |
+| ----------- | -------- |
+| **Columns** | **12**   |
+| **Gutter**  | **24px** |
+| **Margin**  | **64px** |
 
 ---
 
@@ -246,13 +246,13 @@
 
 **Common icons**
 
-| Icon | Usage |
-| ----- | ----- |
-| **home** | **dashboard** |
-| **note** | **notes** |
-| **chart** | **analytics** |
-| **graph** | **knowledge graph** |
-| **settings** | **settings** |
+| Icon         | Usage               |
+| ------------ | ------------------- |
+| **home**     | **dashboard**       |
+| **note**     | **notes**           |
+| **chart**    | **analytics**       |
+| **graph**    | **knowledge graph** |
+| **settings** | **settings**        |
 
 ---
 
@@ -380,9 +380,9 @@
 
 **Contains**
 
-**Search**  
-**Quick capture**  
-**Notifications**  
+**Search**
+**Quick capture**
+**Notifications**
 **Profile**
 
 **\+----------------------------------------+**
@@ -413,8 +413,8 @@
 
 **Types**
 
-**• progress bars**  
-**• radial progress**  
+**• progress bars**
+**• radial progress**
 **• streak indicators**
 
 **Example**
@@ -431,13 +431,13 @@
 
 **Examples**
 
-| Widget | Purpose |
-| ----- | ----- |
-| **Habit Widget** | **habit progress** |
-| **Learning Widget** | **learning analytics** |
-| **Health Widget** | **calories** |
-| **Knowledge Widget** | **notes** |
-| **AI Widget** | **insights** |
+| Widget               | Purpose                |
+| -------------------- | ---------------------- |
+| **Habit Widget**     | **habit progress**     |
+| **Learning Widget**  | **learning analytics** |
+| **Health Widget**    | **calories**           |
+| **Knowledge Widget** | **notes**              |
+| **AI Widget**        | **insights**           |
 
 ---
 
@@ -465,8 +465,8 @@
 
 **Examples**
 
-**Hover glow**  
-**Graph expansion**  
+**Hover glow**
+**Graph expansion**
 **Widget loading**
 
 ---
@@ -505,8 +505,8 @@
 
 **Requirements**
 
-**• keyboard navigation**  
-**• high contrast**  
+**• keyboard navigation**
+**• high contrast**
 **• readable fonts**
 
 ---
@@ -519,43 +519,43 @@
 
 **Foundations**
 
-  - **Colors**
+- **Colors**
 
-  - **Typography**
+- **Typography**
 
-  - **Spacing**
+- **Spacing**
 
 **Components**
 
-  - **Buttons**
+- **Buttons**
 
-  - **Inputs**
+- **Inputs**
 
-  - **Cards**
+- **Cards**
 
-  - **Navigation**
+- **Navigation**
 
-  - **Widgets**
+- **Widgets**
 
 **Patterns**
 
-  - **Dashboard**
+- **Dashboard**
 
-  - **Notes**
+- **Notes**
 
-  - **Analytics**
+- **Analytics**
 
 **Screens**
 
-  - **Dashboard**
+- **Dashboard**
 
-  - **Notes**
+- **Notes**
 
-  - **Graph**
+- **Graph**
 
-  - **Habits**
+- **Habits**
 
-  - **Learning**
+- **Learning**
 
 ---
 
@@ -605,8 +605,8 @@
 
 **The KOROBOS Design System enables building a cyberpunk intelligence interface where:**
 
-**• widgets become productivity instruments**  
-**• dashboards become command centers**  
+**• widgets become productivity instruments**
+**• dashboards become command centers**
 **• knowledge becomes visualized networks**
 
 **The result is a Second Brain Operating System UI.**
