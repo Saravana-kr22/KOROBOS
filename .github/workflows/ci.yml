@@ -99,7 +99,8 @@ jobs:
           notification-service,
           ai-service,
           workers,
-          frontend
+          frontend,
+          mobile
         ]
         include:
           - service: api-gateway
@@ -135,6 +136,9 @@ jobs:
           - service: frontend
             context: frontend
             dockerfile: frontend/Dockerfile
+          - service: mobile
+            context: mobile
+            dockerfile: mobile/Dockerfile
 
     steps:
       - name: Checkout repository

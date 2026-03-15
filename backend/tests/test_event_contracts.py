@@ -79,6 +79,10 @@ EVENT_SAMPLES = {
         "user_id": "user-123",
         "type": "summary",
     },
+    "note.deleted": {
+        "note_id": "note-123",
+        "user_id": "user-123",
+    },
 }
 
 DLQ_SAMPLE = {
