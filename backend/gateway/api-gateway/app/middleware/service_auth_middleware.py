@@ -33,8 +33,8 @@ class ServiceAuthMiddleware(BaseHTTPMiddleware):
     # Paths that require service authentication
     SERVICE_PATHS = [
         "/api/v1/auth/service",  # Only internal calls to auth service
-        "/api/v1/notes/sync",    # Internal sync endpoints
-        "/api/v1/habits/sync",   # Internal sync endpoints
+        "/api/v1/notes/sync",  # Internal sync endpoints
+        "/api/v1/habits/sync",  # Internal sync endpoints
         # Add more service paths as needed
     ]
 
@@ -57,8 +57,7 @@ class ServiceAuthMiddleware(BaseHTTPMiddleware):
                     "error": {
                         "code": "MISSING_SERVICE_TOKEN",
                         "message": (
-                            "X-Service-Token header required for "
-                            "inter-service calls"
+                            "X-Service-Token header required for inter-service calls"
                         ),
                     },
                 },

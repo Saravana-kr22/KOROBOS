@@ -8,7 +8,6 @@ Licensed under the GNU Affero General Public License v3.
 Unit tests for TokenService token and session management.
 """
 
-
 import pytest
 from app.models.model import Session, User
 from app.services.token_service import TokenService

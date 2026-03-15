@@ -54,9 +54,7 @@ def upgrade() -> None:
     )
     op.add_column(
         "users",
-        sa.Column(
-            "account_locked_until", sa.DateTime(timezone=True), nullable=True
-        ),
+        sa.Column("account_locked_until", sa.DateTime(timezone=True), nullable=True),
     )
 
     # -- Auth Service: Sessions (for token refresh and device tracking) --

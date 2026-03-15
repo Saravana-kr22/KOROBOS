@@ -313,9 +313,7 @@ async def request_password_reset(
     await auth_svc.request_password_reset(data.email)
     await session.commit()
 
-    return GenericResponse(
-        message="If email exists, password reset link has been sent"
-    )
+    return GenericResponse(message="If email exists, password reset link has been sent")
 
 
 @router.post(
@@ -471,9 +469,7 @@ async def get_user_sessions(
     token_svc = TokenService(session)
     try:
         sessions = await token_svc.get_active_sessions(UUID(x_user_id))
-        return {
-            "sessions": [SessionResponse.model_validate(s) for s in sessions]
-        }
+        return {"sessions": [SessionResponse.model_validate(s) for s in sessions]}
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

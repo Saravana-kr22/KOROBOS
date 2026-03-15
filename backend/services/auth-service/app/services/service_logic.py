@@ -437,9 +437,7 @@ class AuthService:
 
         token_hash = hashlib.sha256(token.encode()).hexdigest()
 
-        stmt = select(PasswordReset).where(
-            PasswordReset.reset_token_hash == token_hash
-        )
+        stmt = select(PasswordReset).where(PasswordReset.reset_token_hash == token_hash)
         result = await self.session.execute(stmt)
         reset = result.scalar_one_or_none()
 
@@ -519,9 +517,7 @@ class AuthService:
         verification_hash = hashlib.sha256(verification_token.encode()).hexdigest()
 
         # Invalidate old verification tokens
-        stmt = delete(EmailVerification).where(
-            EmailVerification.user_id == user.id
-        )
+        stmt = delete(EmailVerification).where(EmailVerification.user_id == user.id)
         await self.session.execute(stmt)
 
         # Create new verification record
@@ -654,9 +650,7 @@ class AuthService:
         """
         token_hash = hashlib.sha256(token.encode()).hexdigest()
 
-        stmt = select(PasswordReset).where(
-            PasswordReset.reset_token_hash == token_hash
-        )
+        stmt = select(PasswordReset).where(PasswordReset.reset_token_hash == token_hash)
         result = await self.session.execute(stmt)
         unlock = result.scalar_one_or_none()
 

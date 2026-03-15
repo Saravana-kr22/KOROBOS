@@ -29,9 +29,7 @@ class UserSignup(BaseModel):
 class DeviceInfo(BaseModel):
     """Device information for login tracking."""
 
-    type: Optional[str] = Field(
-        None, description="Device type: mobile, web, tablet"
-    )
+    type: Optional[str] = Field(None, description="Device type: mobile, web, tablet")
     name: Optional[str] = Field(
         None, description="Device name: iPhone 15, Chrome Windows"
     )
@@ -124,9 +122,7 @@ class UserResponse(BaseModel):
     username: str
     full_name: Optional[str]
     is_active: bool
-    email_verified: bool = Field(
-        default=False, description="Email verification status"
-    )
+    email_verified: bool = Field(default=False, description="Email verification status")
     email_verified_at: Optional[datetime] = Field(
         None, description="When email was verified"
     )

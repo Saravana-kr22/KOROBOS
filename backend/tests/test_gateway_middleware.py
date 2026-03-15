@@ -121,9 +121,7 @@ async def test_unknown_service_returns_404():
     """Requests to unregistered services should return 404."""
     from backend.shared.auth.jwt_handler import create_access_token
 
-    token = create_access_token(
-        user_id="test-user-id", email="test@example.com"
-    )
+    token = create_access_token(user_id="test-user-id", email="test@example.com")
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"

@@ -8,7 +8,6 @@ Licensed under the GNU Affero General Public License v3.
 Unit tests for AuthService business logic.
 """
 
-
 import pytest
 from app.models.model import EmailVerification
 from app.schemas.schema import UserLogin, UserSignup

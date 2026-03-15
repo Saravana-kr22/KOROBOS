@@ -75,8 +75,7 @@ class EmailService:
         """
         if not self.enabled:
             logger.debug(
-                f"Email service disabled, "
-                f"skipping verification email to {email}"
+                f"Email service disabled, skipping verification email to {email}"
             )
             return True  # Silently succeed in development
 
@@ -143,8 +142,7 @@ class EmailService:
         """
         if not self.enabled:
             logger.debug(
-                f"Email service disabled, "
-                f"skipping password reset email to {email}"
+                f"Email service disabled, skipping password reset email to {email}"
             )
             return True  # Silently succeed in development
 

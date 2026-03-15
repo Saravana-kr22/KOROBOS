@@ -16,9 +16,7 @@ from httpx import AsyncClient
 class TestSignup:
     """Tests for user signup endpoint."""
 
-    async def test_signup_success(
-        self, client: AsyncClient, test_user_data: dict
-    ):
+    async def test_signup_success(self, client: AsyncClient, test_user_data: dict):
         """Test successful user signup."""
         response = await client.post(
             "/signup",

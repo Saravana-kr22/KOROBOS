@@ -151,7 +151,7 @@ class KOROBOSSettings(BaseSettings):
         v_upper = v.upper()
         if v_upper not in allowed:
             raise ValueError(
-                "kafka_security_protocol must be one of " f"{allowed}, got '{v}'"
+                f"kafka_security_protocol must be one of {allowed}, got '{v}'"
             )
         return v_upper
 

@@ -24,9 +24,7 @@ class TestCreateAccessToken:
         assert len(token) > 0
 
     def test_default_roles(self):
-        token = create_access_token(
-            user_id="user-456", email="test@example.com"
-        )
+        token = create_access_token(user_id="user-456", email="test@example.com")
         payload = verify_token(token)
         assert payload["roles"] == ["user"]
 
@@ -82,9 +80,7 @@ class TestVerifyToken:
             verify_token("")
 
     def test_tampered_token(self):
-        token = create_access_token(
-            user_id="user-tamper", email="test@example.com"
-        )
+        token = create_access_token(user_id="user-tamper", email="test@example.com")
         # Tamper with the token by flipping a character
         tampered = token[:-1] + ("A" if token[-1] != "A" else "B")
         with pytest.raises(ValueError, match="Invalid token"):
