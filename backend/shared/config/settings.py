@@ -111,6 +111,20 @@ class KOROBOSSettings(BaseSettings):
         description="Public key for RS256 verification (PEM format)",
     )
 
+    # ── AI / LLM (Google Gemini) ──
+    gemini_api_key: str = Field(
+        default="",
+        description="Google AI Studio API key for Gemini — get one free at https://aistudio.google.com",
+    )
+    gemini_model: str = Field(
+        default="gemini-2.0-flash",
+        description="Gemini model ID (gemini-2.0-flash is free-tier)",
+    )
+    gemini_max_tokens: int = Field(
+        default=1024,
+        description="Maximum output tokens for Gemini responses",
+    )
+
     # ── Service ──
     service_name: str = Field(default="korobos", description="Name of this service")
     service_port: int = Field(default=8000, description="Port this service listens on")

@@ -5,14 +5,15 @@ Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 
-Notes Service API routes — full CRUD for notes, note linking, and backlinks.
+Notes Service API routes — Sprint 6 §11, §19, §21.
 """
 
+import math
 from uuid import UUID
 
 from app.api.rate_limit import check_write_rate_limit
 from app.main import NOTES_CREATED, NOTES_DELETED, NOTES_UPDATED
-from app.schemas.schema import (
+from app.schemas.note_schema import (
     BacklinkListResponse,
     NoteCreate,
     NoteLinkCreate,
@@ -21,7 +22,7 @@ from app.schemas.schema import (
     NoteResponse,
     NoteUpdate,
 )
-from app.services.service_logic import NotesService
+from app.services.notes_service import NotesService
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,24 +34,21 @@ _SERVICE_LABEL = "notes-service"
 
 
 def _get_user_id(x_user_id: str = Header(..., alias="X-User-ID")) -> UUID:
-    """Extract user ID from X-User-ID header (injected by gateway)."""
     return UUID(x_user_id)
 
 
 def _get_redis(request: Request):
-    """Return the shared Redis client from app state (may be None)."""
     return getattr(request.app.state, "redis", None)
 
 
 async def _build_note_response(note, repo) -> NoteResponse:
-    """Attach tags to a note ORM object and return a NoteResponse."""
     tags = await repo.list_note_tag_names(note.id)
     data = NoteResponse.model_validate(note)
     data.tags = tags
     return data
 
 
-# -- CRUD Endpoints --
+# -- CRUD --
 
 
 @router.post("/notes", response_model=NoteResponse, status_code=201, tags=["Notes"])
@@ -72,16 +70,22 @@ async def create_note(
 @router.get("/notes", response_model=NoteListResponse, tags=["Notes"])
 async def list_notes(
     request: Request,
-    offset: int = Query(0, ge=0),
-    limit: int = Query(50, ge=1, le=100),
+    page: int = Query(1, ge=1, description="Page number (1-based)"),
+    limit: int = Query(20, ge=1, le=100, description="Items per page"),
     user_id: UUID = Depends(_get_user_id),
     session: AsyncSession = Depends(get_db_session),
 ):
-    """List all notes for the authenticated user."""
+    """List notes with page-based pagination — Sprint 6 §19."""
     svc = NotesService(session, redis=_get_redis(request))
-    notes, total = await svc.list_notes(user_id, offset, limit)
+    notes, total = await svc.list_notes(user_id, page=page, limit=limit)
     note_responses = [await _build_note_response(n, svc.repo) for n in notes]
-    return {"notes": note_responses, "total": total}
+    return {
+        "notes": note_responses,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": max(1, math.ceil(total / limit)),
+    }
 
 
 @router.get("/notes/{note_id}", response_model=NoteResponse, tags=["Notes"])
@@ -141,9 +145,7 @@ async def delete_note(
 
 
 @router.get(
-    "/notes/{note_id}/backlinks",
-    response_model=BacklinkListResponse,
-    tags=["Notes"],
+    "/notes/{note_id}/backlinks", response_model=BacklinkListResponse, tags=["Notes"]
 )
 async def get_backlinks(
     request: Request,
@@ -151,14 +153,14 @@ async def get_backlinks(
     user_id: UUID = Depends(_get_user_id),
     session: AsyncSession = Depends(get_db_session),
 ):
-    """Return all notes that link to this note."""
+    """Return all notes that link to this note — Sprint 6 §9."""
     svc = NotesService(session)
     note = await svc.get_note(note_id)
     if not note or note.user_id != user_id:
         raise HTTPException(status_code=404, detail="Note not found")
     backlinks = await svc.get_backlinks(note_id)
-    backlink_responses = [await _build_note_response(n, svc.repo) for n in backlinks]
-    return {"backlinks": backlink_responses, "total": len(backlink_responses)}
+    responses = [await _build_note_response(n, svc.repo) for n in backlinks]
+    return {"backlinks": responses, "total": len(responses)}
 
 
 # -- Note Linking --

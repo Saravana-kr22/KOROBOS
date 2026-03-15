@@ -1,0 +1,11 @@
+# KOROBOS — Grafana dashboard provisioning
+apiVersion: 1
+providers:
+  - name: korobos-notes
+    orgId: 1
+    folder: KOROBOS
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

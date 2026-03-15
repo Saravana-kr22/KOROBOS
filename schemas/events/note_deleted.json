@@ -1,0 +1,11 @@
+{
+  "event_type": "note.deleted",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": ["note_id", "user_id"],
+  "payload_properties": {
+    "note_id": { "type": "string", "format": "uuid" },
+    "user_id": { "type": "string", "format": "uuid" }
+  },
+  "allow_additional_payload": false
+}

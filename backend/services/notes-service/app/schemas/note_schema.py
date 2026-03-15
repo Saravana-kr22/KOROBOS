@@ -14,37 +14,24 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-# -- Request Schemas --
-
 
 class NoteCreate(BaseModel):
-    """Schema for creating a new note."""
-
     title: str = Field(..., min_length=1, max_length=500)
     content_md: str = Field(default="", description="Markdown content")
-    tags: list[str] = Field(default_factory=list, description="Tag names")
+    tags: list[str] = Field(default_factory=list)
 
 
 class NoteUpdate(BaseModel):
-    """Schema for updating an existing note."""
-
     title: Optional[str] = Field(None, min_length=1, max_length=500)
     content_md: Optional[str] = None
     tags: Optional[list[str]] = None
 
 
 class NoteLinkCreate(BaseModel):
-    """Schema for linking two notes."""
-
     target_note_id: UUID
 
 
-# -- Response Schemas --
-
-
 class NoteResponse(BaseModel):
-    """Schema for a note in API responses."""
-
     id: UUID
     user_id: UUID
     title: str
@@ -57,22 +44,19 @@ class NoteResponse(BaseModel):
 
 
 class NoteListResponse(BaseModel):
-    """Schema for paginated note list responses."""
-
     notes: list[NoteResponse]
     total: int
+    page: int
+    limit: int
+    pages: int
 
 
 class BacklinkListResponse(BaseModel):
-    """Schema for notes that link to a given note."""
-
     backlinks: list[NoteResponse]
     total: int
 
 
 class NoteLinkResponse(BaseModel):
-    """Schema for a note link in API responses."""
-
     id: UUID
     source_note_id: UUID
     target_note_id: UUID

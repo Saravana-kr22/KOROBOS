@@ -1,0 +1,81 @@
+# KOROBOS — Second Brain Operating System
+# Copyright (c) 2026 Saravana Perumal K
+# Licensed under the GNU Affero General Public License v3.
+#
+# Prometheus configuration — Sprint 6 §22
+#
+# Scrapes the /metrics endpoint of every KOROBOS microservice.
+# Mount this file into the Prometheus container (see docker-compose.yml).
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: "development"
+    project: "korobos"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files: []
+
+scrape_configs:
+  # ── Notes Service (Sprint 6 focus) ──────────────────────────────────────────
+  - job_name: "notes-service"
+    static_configs:
+      - targets: ["notes-service:8000"]
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # ── Other KOROBOS microservices ──────────────────────────────────────────────
+  - job_name: "auth-service"
+    static_configs:
+      - targets: ["auth-service:8000"]
+    metrics_path: /metrics
+
+  - job_name: "habit-service"
+    static_configs:
+      - targets: ["habit-service:8000"]
+    metrics_path: /metrics
+
+  - job_name: "learning-service"
+    static_configs:
+      - targets: ["learning-service:8000"]
+    metrics_path: /metrics
+
+  - job_name: "health-service"
+    static_configs:
+      - targets: ["health-service:8000"]
+    metrics_path: /metrics
+
+  - job_name: "analytics-service"
+    static_configs:
+      - targets: ["analytics-service:8000"]
+    metrics_path: /metrics
+
+  - job_name: "notification-service"
+    static_configs:
+      - targets: ["notification-service:8000"]
+    metrics_path: /metrics
+
+  - job_name: "ai-service"
+    static_configs:
+      - targets: ["ai-service:8000"]
+    metrics_path: /metrics
+
+  - job_name: "api-gateway"
+    static_configs:
+      - targets: ["api-gateway:8000"]
+    metrics_path: /metrics
+
+  # ── Kafka Exporter ───────────────────────────────────────────────────────────
+  - job_name: "kafka-exporter"
+    static_configs:
+      - targets: ["kafka-exporter:9308"]
+
+  # ── Prometheus self-monitoring ───────────────────────────────────────────────
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
