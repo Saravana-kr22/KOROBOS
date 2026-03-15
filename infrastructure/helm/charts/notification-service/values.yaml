@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/saravana-kr22/korobos/notification-service
   pullPolicy: IfNotPresent
-  tag: "sha-471bf6c"
+  tag: "sha-b1e90ce"
 
 nameOverride: ""
 fullnameOverride: ""
