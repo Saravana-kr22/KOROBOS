@@ -10,6 +10,7 @@ Canonical Kafka topic subscriptions for KOROBOS background workers.
 
 ANALYTICS_TOPICS = (
     "note.created",
+    "note.deleted",
     "note.link.created",
     "habit.created",
     "habit.completed",
@@ -26,10 +27,16 @@ NOTIFICATION_TOPICS = ("habit.completed",)
 SEARCH_TOPICS = (
     "note.created",
     "note.updated",
+    "note.deleted",
 )
 
 AI_TOPICS = (
     "note.created",
     "note.updated",
     "learning.session.logged",
+)
+
+GRAPH_TOPICS = (
+    "note.link.created",
+    "note.deleted",
 )

@@ -49,6 +49,7 @@ class NoteResponse(BaseModel):
     user_id: UUID
     title: str
     content_md: str
+    tags: list[str] = Field(default_factory=list)
     created_at: datetime
     updated_at: datetime
 
@@ -59,6 +60,13 @@ class NoteListResponse(BaseModel):
     """Schema for paginated note list responses."""
 
     notes: list[NoteResponse]
+    total: int
+
+
+class BacklinkListResponse(BaseModel):
+    """Schema for notes that link to a given note."""
+
+    backlinks: list[NoteResponse]
     total: int
 
 

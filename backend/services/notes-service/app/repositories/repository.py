@@ -66,8 +66,27 @@ class NotesRepository:
         await self.session.delete(note)
         await self.session.flush()
 
+    async def link_exists(self, source_id: UUID, target_id: UUID) -> bool:
+        """Return True if a NoteLink from source → target already exists."""
+        result = await self.session.execute(
+            select(NoteLink).where(
+                NoteLink.source_note_id == source_id,
+                NoteLink.target_note_id == target_id,
+            )
+        )
+        return result.scalar_one_or_none() is not None
+
     async def create_link(self, source_id: UUID, target_id: UUID) -> NoteLink:
-        """Create a link between two notes."""
+        """Create a link between two notes, or return the existing one."""
+        existing = await self.session.execute(
+            select(NoteLink).where(
+                NoteLink.source_note_id == source_id,
+                NoteLink.target_note_id == target_id,
+            )
+        )
+        link = existing.scalar_one_or_none()
+        if link is not None:
+            return link
         link = NoteLink(source_note_id=source_id, target_note_id=target_id)
         self.session.add(link)
         await self.session.flush()
@@ -105,5 +124,22 @@ class NotesRepository:
             .join(NoteTag, Tag.id == NoteTag.tag_id)
             .where(NoteTag.note_id == note_id)
             .order_by(Tag.name.asc())
+        )
+        return list(result.scalars().all())
+
+    async def find_by_title(self, user_id: UUID, title: str) -> Optional[Note]:
+        """Find a note by exact title for a given user (wiki-link resolution)."""
+        result = await self.session.execute(
+            select(Note).where(Note.user_id == user_id, Note.title == title)
+        )
+        return result.scalar_one_or_none()
+
+    async def get_backlinks(self, note_id: UUID) -> list[Note]:
+        """Return all notes that link TO note_id (inbound links)."""
+        result = await self.session.execute(
+            select(Note)
+            .join(NoteLink, NoteLink.source_note_id == Note.id)
+            .where(NoteLink.target_note_id == note_id)
+            .order_by(Note.created_at.desc())
         )
         return list(result.scalars().all())

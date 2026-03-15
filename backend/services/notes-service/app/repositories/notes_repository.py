@@ -1,0 +1,96 @@
+"""
+KOROBOS — Second Brain Operating System
+
+Copyright (c) 2026 Saravana Perumal K
+
+Licensed under the GNU Affero General Public License v3.
+
+Data access layer for Note CRUD operations.
+"""
+
+from typing import Optional
+from uuid import UUID
+
+from app.models.note_model import Note
+from app.models.tag_model import NoteTag, Tag
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
+class NotesRepository:
+    """Repository for Note CRUD operations against PostgreSQL."""
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def create(self, user_id: UUID, title: str, content_md: str) -> Note:
+        note = Note(user_id=user_id, title=title, content_md=content_md)
+        self.session.add(note)
+        await self.session.flush()
+        return note
+
+    async def get_by_id(self, note_id: UUID) -> Optional[Note]:
+        result = await self.session.execute(select(Note).where(Note.id == note_id))
+        return result.scalar_one_or_none()
+
+    async def list_by_user(
+        self, user_id: UUID, offset: int = 0, limit: int = 50
+    ) -> tuple[list[Note], int]:
+        count_q = select(func.count()).select_from(Note).where(Note.user_id == user_id)
+        total = (await self.session.execute(count_q)).scalar_one()
+
+        q = (
+            select(Note)
+            .where(Note.user_id == user_id)
+            .order_by(Note.created_at.desc())
+            .offset(offset)
+            .limit(limit)
+        )
+        result = await self.session.execute(q)
+        return list(result.scalars().all()), total
+
+    async def update(self, note: Note, **kwargs) -> Note:
+        for key, value in kwargs.items():
+            if value is not None:
+                setattr(note, key, value)
+        await self.session.flush()
+        return note
+
+    async def delete(self, note: Note) -> None:
+        await self.session.delete(note)
+        await self.session.flush()
+
+    async def find_by_title(self, user_id: UUID, title: str) -> Optional[Note]:
+        result = await self.session.execute(
+            select(Note).where(Note.user_id == user_id, Note.title == title)
+        )
+        return result.scalar_one_or_none()
+
+    async def get_or_create_tag(self, name: str) -> Tag:
+        result = await self.session.execute(select(Tag).where(Tag.name == name))
+        tag = result.scalar_one_or_none()
+        if tag is None:
+            tag = Tag(name=name)
+            self.session.add(tag)
+            await self.session.flush()
+        return tag
+
+    async def set_note_tags(self, note_id: UUID, tag_names: list[str]) -> None:
+        existing = await self.session.execute(
+            select(NoteTag).where(NoteTag.note_id == note_id)
+        )
+        for nt in existing.scalars().all():
+            await self.session.delete(nt)
+        for name in tag_names:
+            tag = await self.get_or_create_tag(name)
+            self.session.add(NoteTag(note_id=note_id, tag_id=tag.id))
+        await self.session.flush()
+
+    async def list_note_tag_names(self, note_id: UUID) -> list[str]:
+        result = await self.session.execute(
+            select(Tag.name)
+            .join(NoteTag, Tag.id == NoteTag.tag_id)
+            .where(NoteTag.note_id == note_id)
+            .order_by(Tag.name.asc())
+        )
+        return list(result.scalars().all())

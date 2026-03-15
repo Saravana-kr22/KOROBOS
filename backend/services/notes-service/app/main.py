@@ -10,28 +10,70 @@ Notes Service — knowledge management microservice.
 
 from contextlib import asynccontextmanager
 
-from app.api.routes import router as api_router
+import redis.asyncio as aioredis
+from app.api.notes_routes import router as api_router
+from app.config.settings import get_settings
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import close_producer, get_producer
 
 logger = get_logger("notes-service")
 
+# -- Prometheus metrics (Sprint 6 §22) --
+
+NOTES_CREATED = Counter(
+    "notes_created_total",
+    "Total number of notes created",
+    ["service"],
+)
+NOTES_UPDATED = Counter(
+    "notes_updated_total",
+    "Total number of notes updated",
+    ["service"],
+)
+NOTES_DELETED = Counter(
+    "notes_deleted_total",
+    "Total number of notes deleted",
+    ["service"],
+)
+REQUEST_LATENCY = Histogram(
+    "notes_request_duration_seconds",
+    "HTTP request latency for notes endpoints",
+    ["method", "endpoint"],
+)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup / shutdown lifecycle for the Notes Service."""
+    settings = get_settings()
     logger.info("Notes Service starting up")
+
+    # Kafka producer
     try:
         await get_producer()
         logger.info("Kafka producer initialized")
     except Exception as exc:
-        logger.warning(f"Kafka producer not available: {exc}")
+        logger.warning("Kafka producer not available: %s", exc)
+
+    # Shared Redis connection pool
+    try:
+        app.state.redis = aioredis.from_url(settings.redis_url, decode_responses=True)
+        await app.state.redis.ping()
+        logger.info("Redis connection pool initialized")
+    except Exception as exc:
+        logger.warning("Redis not available: %s", exc)
+        app.state.redis = None
+
     yield
+
     logger.info("Notes Service shutting down")
     await close_producer()
+    if app.state.redis:
+        await app.state.redis.aclose()
 
 
 app = FastAPI(
@@ -41,13 +83,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Standardized: Listen at '/' (gateway handles prefix)
 app.include_router(api_router)
 
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    logger.error("Unhandled exception: %s", exc, exc_info=True)
     return JSONResponse(
         status_code=500,
         content={
@@ -67,7 +108,8 @@ async def health_check():
 
 @app.get("/metrics")
 async def metrics():
-    return {
-        "status": "success",
-        "data": {"service": "notes-service", "version": "1.0.0"},
-    }
+    """Prometheus-compatible metrics endpoint (Sprint 6 §22)."""
+    return Response(
+        content=generate_latest(),
+        media_type=CONTENT_TYPE_LATEST,
+    )

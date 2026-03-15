@@ -25,6 +25,13 @@ class NoteUpdatedEvent(BaseEvent):
     source_service: str = "notes-service"
 
 
+class NoteDeletedEvent(BaseEvent):
+    """Event emitted when a note is deleted."""
+
+    event_type: str = "note.deleted"
+    source_service: str = "notes-service"
+
+
 class NoteLinkCreatedEvent(BaseEvent):
     """Event emitted when a link between notes is created."""
 

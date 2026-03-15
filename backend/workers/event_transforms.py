@@ -16,6 +16,8 @@ def analytics_metric_for_event(
 ) -> tuple[str, float] | None:
     if event_type == "note.created":
         return "notes.created", 1.0
+    if event_type == "note.deleted":
+        return "notes.deleted", 1.0
     if event_type == "note.link.created":
         return "notes.links.created", 1.0
     if event_type == "habit.created":
