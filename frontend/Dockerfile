@@ -8,8 +8,8 @@ FROM node:22-slim
 
 WORKDIR /app
 
-# Install required dependencies for Next.js SWC
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install required dependencies for Next.js SWC and security patches
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 

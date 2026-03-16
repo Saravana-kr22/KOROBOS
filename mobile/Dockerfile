@@ -8,6 +8,9 @@ FROM node:22-slim
 
 WORKDIR /app
 
+# Install security patches
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
 RUN npm install -g npm@latest
 
 COPY package.json package-lock.json ./
