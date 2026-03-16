@@ -58,7 +58,8 @@ def generate_service(service_name: str):
 
     # main.py
     with open(os.path.join(base_dir, "main.py"), "w") as f:
-        f.write(textwrap.dedent(f"""\
+        f.write(
+            textwrap.dedent(f"""\
             {HEADER}
 
             from contextlib import asynccontextmanager
@@ -125,11 +126,13 @@ def generate_service(service_name: str):
                     "status": "success",
                     "data": {{"service": "{service_name}", "version": "1.0.0"}},
                 }}
-        """))
+        """)
+        )
 
     # routes.py
     with open(os.path.join(base_dir, "api", "routes.py"), "w") as f:
-        f.write(textwrap.dedent(f"""\
+        f.write(
+            textwrap.dedent(f"""\
             {HEADER}
 
             from fastapi import APIRouter
@@ -140,7 +143,8 @@ def generate_service(service_name: str):
             @router.get("/", tags=["{label}"])
             async def root():
                 return {{"service": "{service_name}", "status": "running"}}
-        """))
+        """)
+        )
 
     # model.py
     with open(os.path.join(base_dir, "models", "model.py"), "w") as f:
@@ -181,7 +185,8 @@ def generate_service(service_name: str):
 
     # config/settings.py
     with open(os.path.join(base_dir, "config", "settings.py"), "w") as f:
-        f.write(textwrap.dedent(f'''\
+        f.write(
+            textwrap.dedent(f'''\
             {HEADER}
 
             from backend.shared.config.settings import KOROBOSSettings
@@ -196,7 +201,8 @@ def generate_service(service_name: str):
                     "env_file_encoding": "utf-8",
                     "case_sensitive": False,
                 }}
-        '''))
+        ''')
+        )
 
     # requirements.txt
     svc_dir = os.path.join("backend", "services", service_name)
@@ -207,7 +213,8 @@ def generate_service(service_name: str):
 
     # Dockerfile
     with open(os.path.join(svc_dir, "Dockerfile"), "w") as f:
-        f.write(textwrap.dedent(f"""\
+        f.write(
+            textwrap.dedent(f"""\
             # KOROBOS — Copyright (c) 2026 Saravana Perumal K — AGPL v3
 
             FROM python:3.11-slim
@@ -228,7 +235,8 @@ def generate_service(service_name: str):
 
             EXPOSE 8000
             CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-        """))
+        """)
+        )
 
     print(f"✅ Service '{service_name}' generated at {svc_dir}/")
     print("   Structure:")

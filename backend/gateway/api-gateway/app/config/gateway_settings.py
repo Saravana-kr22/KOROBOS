@@ -55,6 +55,10 @@ class GatewaySettings(BaseSettings):
         default="http://localhost:8007",
         description="AI service base URL",
     )
+    services_database: str = Field(
+        default="http://localhost:8008",
+        description="Database service base URL",
+    )
 
     # ── Security ──
     jwt_secret: str = Field(

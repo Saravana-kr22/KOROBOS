@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/saravana-kr22/korobos/mobile
+  pullPolicy: IfNotPresent
+  tag: "sha-b7bf74d"
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8000
+
+config:
+  environment: "production"
+  logLevel: "INFO"
+
+secrets: {}
+  # Example
+  # EXPO_PUBLIC_API_URL: "https://api.example.com"
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80

@@ -169,6 +169,7 @@ services:
       - SERVICES_ANALYTICS=http://analytics-service:8000
       - SERVICES_NOTIFICATIONS=http://notification-service:8000
       - SERVICES_AI=http://ai-service:8000
+      - SERVICES_DATABASE=http://database-service:8000
       - REDIS_URL=redis://redis:6379/0
       - JWT_SECRET=dev-secret-key
     depends_on:
@@ -180,6 +181,7 @@ services:
       - analytics-service
       - notification-service
       - ai-service
+      - database-service
       - redis
 
   auth-service:
@@ -390,6 +392,33 @@ services:
       - KAFKA_SASL_PASSWORD=korobos-secret
       - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}  # get a free key at https://aistudio.google.com
+    volumes:
+      - kafka_certs:/etc/korobos/kafka:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
+
+  database-service:
+    build:
+      context: .
+      dockerfile: backend/services/database-service/Dockerfile
+    ports:
+      - "8008:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
     volumes:
       - kafka_certs:/etc/korobos/kafka:ro
     depends_on:

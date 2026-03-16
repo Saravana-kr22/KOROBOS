@@ -1,0 +1,36 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/saravana-kr22/korobos/workers
+  pullPolicy: IfNotPresent
+  tag: "sha-b7bf74d"
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8000
+
+config:
+  environment: "development"
+  logLevel: "INFO"
+
+secrets: {}
+  # Example
+  # KAFKA_BROKERS: "kafka:9092"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80

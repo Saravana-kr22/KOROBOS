@@ -36,6 +36,14 @@ def analytics_metric_for_event(
         return "auth.logins", 1.0
     if event_type == "ai.interaction.completed":
         return "ai.interactions.completed", 1.0
+    if event_type == "database.created":
+        return "databases.created", 1.0
+    if event_type == "record.created":
+        return "records.created", 1.0
+    if event_type == "record.updated":
+        return "records.updated", 1.0
+    if event_type == "record.deleted":
+        return "records.deleted", 1.0
     return None
 
 
@@ -61,6 +69,26 @@ def search_document_from_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "title": payload.get("title", ""),
         "content_md": payload.get("content_md", ""),
         "tags": payload.get("tags", []),
+    }
+
+
+def search_document_from_record_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Transform a database record event into a Meilisearch document."""
+    record_id = payload.get("record_id", "")
+    database_id = payload.get("database_id", "")
+
+    # Build searchable content from record values
+    values = payload.get("values", {})
+    content_parts = [str(v) for v in values.values() if v]
+    searchable_content = " ".join(content_parts)
+
+    return {
+        "id": record_id,
+        "record_id": record_id,
+        "database_id": database_id,
+        "user_id": payload.get("user_id", ""),
+        "content": searchable_content,
+        "type": "record",
     }
 
 
@@ -110,6 +138,40 @@ def ai_prompt_for_event(
             "metadata_json": {
                 "source_event": event_type,
                 "session_id": payload.get("session_id"),
+            },
+        }
+
+    if event_type == "record.created":
+        database_id = payload.get("database_id", "")
+        values = payload.get("values", {})
+        values_str = "\n".join(f"{k}: {v}" for k, v in values.items() if v)
+        return {
+            "interaction_type": "insight",
+            "prompt": (
+                "Generate insights about this new database record in "
+                f"'{database_id}':\n\n{values_str}"
+            ),
+            "metadata_json": {
+                "source_event": event_type,
+                "record_id": payload.get("record_id"),
+                "database_id": database_id,
+            },
+        }
+
+    if event_type == "record.updated":
+        database_id = payload.get("database_id", "")
+        values = payload.get("values", {})
+        values_str = "\n".join(f"{k}: {v}" for k, v in values.items() if v)
+        return {
+            "interaction_type": "insight",
+            "prompt": (
+                f"Update insights for modified database record in '{database_id}':\n\n"
+                f"{values_str}"
+            ),
+            "metadata_json": {
+                "source_event": event_type,
+                "record_id": payload.get("record_id"),
+                "database_id": database_id,
             },
         }
 

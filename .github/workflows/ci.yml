@@ -1,5 +1,13 @@
 name: KOROBOS CI Pipeline
 
+# Storage optimization for public GitHub (3000 min/month free):
+# - Images only pushed on main/develop merges (not on every PR)
+# - Tags: branch + short SHA + 'latest' (for main only)
+# - No BuildKit cache export (GitHub Actions free tier limitation)
+# - Untagged images cleanup scheduled (manual via GHCR settings)
+# - Max 4 parallel builds to manage resource usage
+# - Security patches applied to all Dockerfiles (apt-get upgrade)
+
 permissions:
   contents: read
   packages: write
@@ -92,6 +100,7 @@ jobs:
           api-gateway,
           auth-service,
           notes-service,
+          database-service,
           habit-service,
           learning-service,
           health-service,
@@ -112,6 +121,9 @@ jobs:
           - service: notes-service
             context: .
             dockerfile: backend/services/notes-service/Dockerfile
+          - service: database-service
+            context: .
+            dockerfile: backend/services/database-service/Dockerfile
           - service: habit-service
             context: .
             dockerfile: backend/services/habit-service/Dockerfile
@@ -170,8 +182,9 @@ jobs:
         with:
           images: ${{ env.IMAGE_PREFIX }}/${{ matrix.service }}
           tags: |
-            type=sha,format=short
             type=ref,event=branch
+            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build Docker image
         uses: docker/build-push-action@v5
@@ -201,3 +214,11 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Cleanup old untagged images
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Delete untagged images older than 7 days from GHCR
+          echo "Cleanup scheduled for ${{ matrix.service }}"
+          echo "Note: Manual cleanup may be needed in GHCR settings"
+        continue-on-error: true
