@@ -1,0 +1,36 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/saravana-kr22/korobos/frontend
+  pullPolicy: IfNotPresent
+  tag: "sha-b1e90ce"
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+config:
+  environment: "production"
+  logLevel: "INFO"
+
+secrets: {}
+  # Example
+  # NEXT_PUBLIC_API_URL: "https://api.example.com"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80

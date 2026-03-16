@@ -20,6 +20,10 @@ ANALYTICS_TOPICS = (
     "user.registered",
     "user.login",
     "ai.interaction.completed",
+    "database.created",
+    "record.created",
+    "record.updated",
+    "record.deleted",
 )
 
 NOTIFICATION_TOPICS = ("habit.completed",)
@@ -28,12 +32,17 @@ SEARCH_TOPICS = (
     "note.created",
     "note.updated",
     "note.deleted",
+    "record.created",
+    "record.updated",
+    "record.deleted",
 )
 
 AI_TOPICS = (
     "note.created",
     "note.updated",
     "learning.session.logged",
+    "record.created",
+    "record.updated",
 )
 
 GRAPH_TOPICS = (

@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "database.created Event",
+  "description": "Published when a new database is created",
+  "type": "object",
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "const": "database.created"
+    },
+    "source_service": {
+      "type": "string",
+      "const": "database-service"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event was created"
+    },
+    "payload": {
+      "type": "object",
+      "properties": {
+        "database_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The ID of the created database"
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The ID of the user who created the database"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the database"
+        }
+      },
+      "required": ["database_id", "user_id", "name"]
+    }
+  },
+  "required": ["event_type", "source_service", "timestamp", "payload"]
+}

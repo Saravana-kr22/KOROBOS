@@ -1,0 +1,152 @@
+/*
+Calendar View Styles
+*/
+
+.container {
+  padding: 1rem 0;
+}
+
+.notice {
+  background: #f3e5f5;
+  border-left: 4px solid #9c27b0;
+  color: #6a1b9a;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #999;
+  font-size: 1rem;
+}
+
+.calendar {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.header button:hover {
+  background: #5568d3;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.weekDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.weekDay {
+  font-weight: 600;
+  color: #667eea;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.emptyDay {
+  aspect-ratio: 1;
+  background: #f9f9f9;
+}
+
+.day {
+  aspect-ratio: 1;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.day:hover {
+  background: #f0f0f0;
+  border-color: #667eea;
+}
+
+.dayNumber {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.dayRecords {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.dayRecord {
+  background: #667eea;
+  color: white;
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.more {
+  font-size: 0.65rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .calendar {
+    padding: 1rem;
+  }
+
+  .header h3 {
+    font-size: 1rem;
+  }
+
+  .dayNumber {
+    font-size: 0.75rem;
+  }
+
+  .dayRecord {
+    font-size: 0.6rem;
+  }
+}

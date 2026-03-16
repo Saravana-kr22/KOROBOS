@@ -5,78 +5,86 @@ Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
 
-Centralized router that aggregates all dedicated route modules
-and provides a generic catch-all proxy for remaining services.
+Database routes proxy — forwards /api/v1/databases/* and /api/v1/records/*
+to the database-service.
 """
 
 import logging
 
 import httpx
-from app.routes.analytics_routes import router as analytics_router
-from app.routes.auth_routes import router as auth_router
-from app.routes.database_routes import databases_router, records_router
-from app.routes.habit_routes import router as habit_router
-from app.routes.health_routes import router as health_router
-from app.routes.learning_routes import router as learning_router
-from app.routes.notes_routes import router as notes_router
 from app.services.service_registry import ServiceRegistry
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
-logger = logging.getLogger("api-gateway.router")
+databases_router = APIRouter(prefix="/api/v1/databases", tags=["Databases"])
+records_router = APIRouter(prefix="/api/v1/records", tags=["Records"])
 
-# Master router
-api_router = APIRouter()
-
-# Include dedicated service routers
-api_router.include_router(auth_router)
-api_router.include_router(notes_router)
-api_router.include_router(habit_router)
-api_router.include_router(learning_router)
-api_router.include_router(health_router)
-api_router.include_router(analytics_router)
-api_router.include_router(databases_router)
-api_router.include_router(records_router)
+logger = logging.getLogger("api-gateway.routes.database")
 
 
-# -- Generic catch-all proxy for remaining services --
-
-
-@api_router.api_route(
-    "/api/v1/{service_name}/{path:path}",
+@databases_router.api_route(
+    "/{path:path}",
     methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
-    tags=["Gateway Proxy"],
-    operation_id="generic_proxy",
+    operation_id="proxy_databases",
 )
-async def generic_proxy(request: Request, service_name: str, path: str):
-    """
-    Catch-all proxy for services without dedicated route modules.
-
-    Handles: notifications, ai
-    """
+async def proxy_databases(request: Request, path: str):
+    """Forward all /api/v1/databases/* requests to the database-service."""
     registry = ServiceRegistry()
-    target_base = registry.get_service_url(service_name)
+    target_base = registry.get_service_url("database")
 
     if not target_base:
         return JSONResponse(
-            status_code=404,
+            status_code=503,
             content={
                 "status": "error",
                 "error": {
-                    "code": "SERVICE_NOT_FOUND",
-                    "message": f"Service '{service_name}' is not registered",
+                    "code": "SERVICE_UNAVAILABLE",
+                    "message": "Database service not configured",
                 },
             },
         )
 
     target_url = f"{target_base}/{path}"
+    return await _proxy_request(request, target_url)
 
+
+@records_router.api_route(
+    "/{path:path}",
+    methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
+    operation_id="proxy_records",
+)
+async def proxy_records(request: Request, path: str):
+    """Forward all /api/v1/records/* requests to the database-service."""
+    registry = ServiceRegistry()
+    target_base = registry.get_service_url("database")
+
+    if not target_base:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "error",
+                "error": {
+                    "code": "SERVICE_UNAVAILABLE",
+                    "message": "Database service not configured",
+                },
+            },
+        )
+
+    target_url = f"{target_base}/{path}"
+    return await _proxy_request(request, target_url)
+
+
+async def _proxy_request(request: Request, target_url: str) -> JSONResponse:
+    """Generic HTTP proxy helper.
+
+    Injects user ID and roles from request state into X-User-ID and
+    X-User-Roles headers for the upstream service.
+    """
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
             headers = dict(request.headers)
             headers.pop("host", None)
 
-            # Inject user context if authenticated
             user_id = getattr(request.state, "user_id", None)
             if user_id:
                 headers["X-User-ID"] = str(user_id)
@@ -105,19 +113,19 @@ async def generic_proxy(request: Request, service_name: str, path: str):
                 )
 
         except httpx.ConnectError:
-            logger.error(f"Cannot connect to {service_name} at {target_url}")
+            logger.error("Cannot connect to upstream: %s", target_url)
             return JSONResponse(
                 status_code=502,
                 content={
                     "status": "error",
                     "error": {
                         "code": "BAD_GATEWAY",
-                        "message": f"Cannot connect to {service_name} service",
+                        "message": "Upstream service unavailable",
                     },
                 },
             )
         except Exception as exc:
-            logger.error(f"Proxy error for {service_name}: {exc}")
+            logger.error("Proxy error: %s", exc)
             return JSONResponse(
                 status_code=502,
                 content={

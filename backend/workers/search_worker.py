@@ -19,7 +19,10 @@ from backend.shared.config.settings import get_settings
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.consumer import BaseEventConsumer
 from backend.shared.messaging.schemas import BaseEvent
-from backend.workers.event_transforms import search_document_from_payload
+from backend.workers.event_transforms import (
+    search_document_from_payload,
+    search_document_from_record_payload,
+)
 from backend.workers.topics import SEARCH_TOPICS
 
 logger = get_logger("search-worker")
@@ -32,19 +35,32 @@ class SearchEventConsumer(BaseEventConsumer):
     async def handle_event(self, topic: str, payload: dict[str, Any]):
         event = BaseEvent.model_validate(payload)
 
+        # Handle note events
         if event.event_type in {"note.created", "note.updated"}:
             document = search_document_from_payload(event.payload)
-            await asyncio.to_thread(self._upsert_documents, [document])
+            await asyncio.to_thread(self._upsert_documents, [document], "notes")
         elif event.event_type == "note.deleted":
             note_id = event.payload.get("note_id")
             if note_id:
-                await asyncio.to_thread(self._delete_document, note_id)
+                await asyncio.to_thread(self._delete_document, note_id, "notes")
+
+        # Handle database record events
+        elif event.event_type in {"record.created", "record.updated"}:
+            document = search_document_from_record_payload(event.payload)
+            await asyncio.to_thread(self._upsert_documents, [document], "records")
+        elif event.event_type == "record.deleted":
+            record_id = event.payload.get("record_id")
+            if record_id:
+                await asyncio.to_thread(self._delete_document, record_id, "records")
+
         else:
             logger.debug("Ignoring non-search event_type: %s", event.event_type)
 
-    def _upsert_documents(self, documents: list[dict[str, Any]]) -> None:
+    def _upsert_documents(
+        self, documents: list[dict[str, Any]], index_name: str = "notes"
+    ) -> None:
         base_url = settings.search_url.rstrip("/")
-        target_url = f"{base_url}/indexes/notes/documents?primaryKey=id"
+        target_url = f"{base_url}/indexes/{index_name}/documents?primaryKey=id"
         payload = json.dumps(documents).encode("utf-8")
 
         headers = {"Content-Type": "application/json"}
@@ -64,16 +80,19 @@ class SearchEventConsumer(BaseEventConsumer):
                     raise RuntimeError(
                         f"Search index update failed with status {response.status}"
                     )
+                logger.info(
+                    f"Upserted {len(documents)} documents to {index_name} index"
+                )
         except error.HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="ignore")
             raise RuntimeError(
                 f"Search index update failed with status {exc.code}: {detail}"
             ) from exc
 
-    def _delete_document(self, note_id: str) -> None:
-        """Remove a note from the Meilisearch index by its ID."""
+    def _delete_document(self, doc_id: str, index_name: str = "notes") -> None:
+        """Remove a document from the Meilisearch index by its ID."""
         base_url = settings.search_url.rstrip("/")
-        target_url = f"{base_url}/indexes/notes/documents/{note_id}"
+        target_url = f"{base_url}/indexes/{index_name}/documents/{doc_id}"
 
         headers = {}
         if settings.search_api_key:
@@ -86,10 +105,13 @@ class SearchEventConsumer(BaseEventConsumer):
                     raise RuntimeError(
                         f"Search index delete failed with status {response.status}"
                     )
+                logger.info(f"Deleted {doc_id} from {index_name} index")
         except error.HTTPError as exc:
             if exc.code == 404:
                 logger.debug(
-                    "Document %s not in search index, skipping delete", note_id
+                    "Document %s not in %s index, skipping delete",
+                    doc_id,
+                    index_name,
                 )
                 return
             detail = exc.read().decode("utf-8", errors="ignore")

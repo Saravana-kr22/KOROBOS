@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "record.updated Event",
+  "description": "Published when a record is updated",
+  "type": "object",
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "const": "record.updated"
+    },
+    "source_service": {
+      "type": "string",
+      "const": "database-service"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event was created"
+    },
+    "payload": {
+      "type": "object",
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The ID of the updated record"
+        },
+        "database_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The ID of the database containing the record"
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The ID of the user who updated the record"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Map of property_id -> updated value for the record"
+        }
+      },
+      "required": ["record_id", "database_id", "user_id", "values"]
+    }
+  },
+  "required": ["event_type", "source_service", "timestamp", "payload"]
+}
