@@ -5,9 +5,23 @@ Tests: auth middleware (skip public paths, reject missing token, accept valid to
        gateway routing and health endpoints.
 """
 
+import importlib
+import sys
+from pathlib import Path
+
 import pytest
-from app.main import app
 from httpx import ASGITransport, AsyncClient
+
+# Ensure gateway app is in sys.path
+_test_dir = Path(__file__).resolve().parent
+_backend_root = _test_dir.parent
+_gateway_path = str(_backend_root / "gateway" / "api-gateway")
+if _gateway_path not in sys.path:
+    sys.path.insert(0, _gateway_path)
+
+# Import the gateway app using importlib to avoid namespace collision
+_app_module = importlib.import_module("app.main")
+app = _app_module.app
 
 
 @pytest.fixture

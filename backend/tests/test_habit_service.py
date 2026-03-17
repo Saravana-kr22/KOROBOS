@@ -9,13 +9,31 @@ Unit tests for the Habit Service — repository, service, and route logic.
 """
 
 import importlib
+import sys
 from datetime import date, timedelta
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import pytest
 
-# Path is configured in conftest.py's pytest_configure hook
+# Ensure habit-service path is in sys.path for imports
+_test_dir = Path(__file__).resolve().parent
+_backend_root = _test_dir.parent
+_habit_service_path = str(_backend_root / "services" / "habit-service")
+
+# Move habit-service path to the beginning for this module's imports
+# This is safe because we're in a test file that won't conflict with gateway tests
+if _habit_service_path in sys.path:
+    sys.path.remove(_habit_service_path)
+# Insert at position 0 to prioritize it
+sys.path.insert(0, _habit_service_path)
+
+# Clear any cached app modules to ensure we load from the correct path
+_modules_to_remove = [key for key in sys.modules if key.startswith("app")]
+for mod in _modules_to_remove:
+    del sys.modules[mod]
+
 # Import service modules now that path is set up
 HabitCompletedEvent = importlib.import_module("app.events.events").HabitCompletedEvent
 HabitCreatedEvent = importlib.import_module("app.events.events").HabitCreatedEvent
