@@ -47,6 +47,16 @@ EVENT_SAMPLES = {
         "user_id": "user-123",
         "streak": 7,
     },
+    "habit.streak.updated": {
+        "habit_id": "habit-123",
+        "user_id": "user-123",
+        "streak": 7,
+    },
+    "habit.reminder.due": {
+        "habit_id": "habit-123",
+        "user_id": "user-123",
+        "habit_name": "Morning Meditation",
+    },
     "learning.session.logged": {
         "session_id": "session-123",
         "user_id": "user-123",

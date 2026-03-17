@@ -7,14 +7,16 @@ Licensed under the GNU Affero General Public License v3.
 
 Notification Worker
 
-Consumes habit completion events from Kafka and creates in-app
-notifications, wiring the notification pipeline described in Sprint 4.
+Consumes events from Kafka and creates in-app and push notifications,
+wiring the notification pipeline described in Sprint 4.
 """
 
 import asyncio
 import importlib
 from typing import Any
 from uuid import UUID
+
+import aiohttp
 
 from backend.shared.database.connection import async_session_factory
 from backend.shared.logging.logger import get_logger
@@ -28,6 +30,9 @@ configure_service_app_path("notification-service")
 NotificationRepository = importlib.import_module(
     "app.repositories.repository"
 ).NotificationRepository
+PushTokenRepository = importlib.import_module(
+    "app.repositories.push_token_repository"
+).PushTokenRepository
 
 logger = get_logger("notification-worker")
 
@@ -36,8 +41,9 @@ class NotificationEventConsumer(BaseEventConsumer):
     """
     Consumer for events that should trigger user-facing notifications.
 
-    Initial scope:
-      - habit.completed → create a simple in-app reminder/celebration.
+    Handles:
+      - habit.completed → in-app notification
+      - habit.reminder.due → in-app + push notification
     """
 
     async def handle_event(self, topic: str, payload: dict[str, Any]):
@@ -67,6 +73,40 @@ class NotificationEventConsumer(BaseEventConsumer):
                 channel="in_app",
             )
             await session.commit()
+
+            # For reminder events, also send push notification if tokens exist
+            if event_type == "habit.reminder.due":
+                await self._send_push_notifications(user_id, title, body, session)
+
+    async def _send_push_notifications(
+        self, user_id: UUID, title: str, body: str, session
+    ) -> None:
+        """Send push notifications to all registered tokens for a user."""
+        push_repo = PushTokenRepository(session)
+        push_tokens = await push_repo.get_by_user(user_id)
+
+        if not push_tokens:
+            return
+
+        async with aiohttp.ClientSession() as http_session:
+            for push_token in push_tokens:
+                await self._send_expo_push(http_session, push_token.token, title, body)
+
+    async def _send_expo_push(
+        self, session: aiohttp.ClientSession, token: str, title: str, body: str
+    ) -> None:
+        """Send a single push notification via Expo Push API."""
+        try:
+            payload = {"to": token, "title": title, "body": body}
+            async with session.post(
+                "https://exp.host/--/api/v2/push/send", json=payload
+            ) as resp:
+                if resp.status != 200:
+                    logger.warning(
+                        f"Expo push failed for {token[:10]}...: {resp.status}"
+                    )
+        except Exception as exc:
+            logger.error(f"Error sending Expo push notification: {exc}")
 
 
 async def main() -> None:

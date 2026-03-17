@@ -1,0 +1,12 @@
+{
+  "event_type": "habit.reminder.due",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": ["habit_id", "user_id", "habit_name"],
+  "payload_properties": {
+    "habit_id": { "type": "string" },
+    "user_id": { "type": "string" },
+    "habit_name": { "type": "string" }
+  },
+  "allow_additional_payload": true
+}

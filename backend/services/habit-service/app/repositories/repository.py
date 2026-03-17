@@ -8,11 +8,10 @@ Licensed under the GNU Affero General Public License v3.
 Data access layer for the Habit Service.
 """
 
-from datetime import date
 from typing import Optional
 from uuid import UUID
 
-from app.models.model import Habit, HabitLog
+from app.models.model import Habit
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -74,32 +73,3 @@ class HabitRepository:
     async def delete(self, habit: Habit) -> None:
         await self.session.delete(habit)
         await self.session.flush()
-
-    async def log_completion(self, habit_id: UUID, log_date: date) -> HabitLog:
-        log = HabitLog(habit_id=habit_id, log_date=log_date, completed=True)
-        self.session.add(log)
-        await self.session.flush()
-        return log
-
-    async def get_streak(self, habit_id: UUID) -> int:
-        """Calculate current streak of consecutive completions."""
-        q = (
-            select(HabitLog)
-            .where(HabitLog.habit_id == habit_id, HabitLog.completed.is_(True))
-            .order_by(HabitLog.log_date.desc())
-        )
-        result = await self.session.execute(q)
-        logs = result.scalars().all()
-
-        streak = 0
-        today = date.today()
-        expected = today
-        for log in logs:
-            if log.log_date == expected:
-                streak += 1
-                from datetime import timedelta
-
-                expected -= timedelta(days=1)
-            else:
-                break
-        return streak

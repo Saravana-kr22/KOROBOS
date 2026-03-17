@@ -15,9 +15,11 @@ import sys
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 BACKEND_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 GATEWAY_APP = os.path.join(BACKEND_ROOT, "gateway", "api-gateway")
+HABIT_SERVICE_APP = os.path.join(BACKEND_ROOT, "services", "habit-service")
 
+# Add base paths (project root and gateway app for other tests)
 for path in [PROJECT_ROOT, BACKEND_ROOT, GATEWAY_APP]:
-    if path not in sys.path:
+    if path and path not in sys.path:
         sys.path.insert(0, path)
 
 # Set test environment variables

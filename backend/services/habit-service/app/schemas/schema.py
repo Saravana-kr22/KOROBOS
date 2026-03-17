@@ -8,7 +8,7 @@ Licensed under the GNU Affero General Public License v3.
 Pydantic schemas for the Habit Service API.
 """
 
-from datetime import date, datetime
+from datetime import date, datetime, time
 from typing import Optional
 from uuid import UUID
 
@@ -17,8 +17,11 @@ from pydantic import BaseModel, Field
 
 class HabitCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=300)
-    frequency: str = Field(default="daily", description="daily, weekly, monthly")
+    frequency: str = Field(default="daily", description="daily, weekly, custom")
     description: Optional[str] = None
+    is_active: bool = True
+    days_of_week: Optional[str] = None  # comma-separated weekday ints (0=Mon, 6=Sun)
+    time_of_day: Optional[time] = None
 
 
 class HabitUpdate(BaseModel):
@@ -27,12 +30,24 @@ class HabitUpdate(BaseModel):
     description: Optional[str] = None
 
 
+class HabitScheduleResponse(BaseModel):
+    id: UUID
+    habit_id: UUID
+    frequency: str
+    days_of_week: Optional[str]
+    time_of_day: Optional[time]
+
+    model_config = {"from_attributes": True}
+
+
 class HabitResponse(BaseModel):
     id: UUID
     user_id: UUID
     name: str
     frequency: str
     description: Optional[str]
+    is_active: bool
+    schedule: Optional[HabitScheduleResponse] = None
     created_at: datetime
     updated_at: datetime
 
@@ -52,3 +67,21 @@ class HabitCompleteResponse(BaseModel):
 class HabitListResponse(BaseModel):
     habits: list[HabitResponse]
     total: int
+
+
+class HabitTodayItem(BaseModel):
+    habit_id: UUID
+    name: str
+    completed: bool
+
+
+class HabitTodayResponse(BaseModel):
+    habits: list[HabitTodayItem]
+
+
+class HabitStatsResponse(BaseModel):
+    habit_id: UUID
+    completion_rate: float
+    current_streak: int
+    longest_streak: int
+    weekly_consistency: float

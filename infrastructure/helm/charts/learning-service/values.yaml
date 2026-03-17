@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/saravana-kr22/korobos/learning-service
   pullPolicy: IfNotPresent
-  tag: "sha-c0a9551"
+  tag: "sha-a25dccd"
 
 nameOverride: ""
 fullnameOverride: ""

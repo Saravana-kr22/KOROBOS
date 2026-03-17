@@ -87,3 +87,8 @@ class NotificationRepository:
         )
         await self.session.execute(stmt)
         await self.session.flush()
+
+    async def get_by_id(self, notification_id: UUID) -> Notification | None:
+        q = select(Notification).where(Notification.id == notification_id)
+        result = await self.session.execute(q)
+        return result.scalar_one_or_none()

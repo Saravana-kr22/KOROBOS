@@ -9,9 +9,10 @@ ORM models for the Habit Service.
 """
 
 import uuid
-from datetime import date
+from datetime import date, time
+from typing import Optional
 
-from sqlalchemy import Boolean, Date, ForeignKey, String, Text
+from sqlalchemy import Boolean, Date, ForeignKey, String, Text, Time
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -32,10 +33,35 @@ class Habit(Base, TimestampMixin):
     name: Mapped[str] = mapped_column(String(300), nullable=False)
     frequency: Mapped[str] = mapped_column(String(50), nullable=False, default="daily")
     description: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     logs: Mapped[list["HabitLog"]] = relationship(
         back_populates="habit", cascade="all, delete-orphan"
     )
+    schedule: Mapped[Optional["HabitSchedule"]] = relationship(
+        back_populates="habit", cascade="all, delete-orphan", uselist=False
+    )
+
+
+class HabitSchedule(Base, TimestampMixin):
+    """Habit Schedules table — defines when habits should be completed."""
+
+    __tablename__ = "habit_schedules"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    habit_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("habits.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    frequency: Mapped[str] = mapped_column(String(50), nullable=False, default="daily")
+    days_of_week: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    time_of_day: Mapped[Optional[time]] = mapped_column(Time, nullable=True)
+
+    habit: Mapped["Habit"] = relationship(back_populates="schedule")
 
 
 class HabitLog(Base):

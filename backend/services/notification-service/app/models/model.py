@@ -10,7 +10,7 @@ ORM model for the Notification Service.
 
 import uuid
 
-from sqlalchemy import Boolean, String, Text
+from sqlalchemy import Boolean, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -34,3 +34,22 @@ class Notification(Base, TimestampMixin):
         String(50), nullable=False, default="in_app", comment="in_app, email, push"
     )
     is_read: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
+
+class PushToken(Base):
+    """Push notification tokens for mobile devices."""
+
+    __tablename__ = "push_tokens"
+    __table_args__ = (UniqueConstraint("token", name="uq_token"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
+    token: Mapped[str] = mapped_column(String(500), nullable=False, unique=True)
+    platform: Mapped[str] = mapped_column(
+        String(20), nullable=False, comment="ios, android"
+    )
+    created_at: Mapped[str] = mapped_column(String, nullable=False)
