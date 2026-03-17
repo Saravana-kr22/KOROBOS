@@ -12,10 +12,17 @@ from datetime import date
 from typing import Optional
 from uuid import UUID
 
-from app.events.events import HabitCompletedEvent, HabitCreatedEvent
+from app.events.events import (
+    HabitCompletedEvent,
+    HabitCreatedEvent,
+    HabitStreakUpdatedEvent,
+)
 from app.models.model import Habit
+from app.repositories.habit_log_repository import HabitLogRepository
 from app.repositories.repository import HabitRepository
 from app.schemas.schema import HabitCreate, HabitUpdate
+from app.services.schedule_service import ScheduleService
+from app.services.streak_service import StreakService
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.shared.messaging.producer import publish_event
@@ -26,6 +33,9 @@ class HabitService:
 
     def __init__(self, session: AsyncSession):
         self.repo = HabitRepository(session)
+        self.log_repo = HabitLogRepository(session)
+        self.streak_service = StreakService(self.log_repo)
+        self.schedule_service = ScheduleService(self.log_repo)
 
     async def create_habit(self, user_id: UUID, data: HabitCreate) -> Habit:
         habit = await self.repo.create(
@@ -34,6 +44,15 @@ class HabitService:
             frequency=data.frequency,
             description=data.description or "",
         )
+
+        # Create default schedule
+        await self.schedule_service.create_schedule(
+            habit.id,
+            frequency=data.frequency,
+            days_of_week=data.days_of_week,
+            time_of_day=data.time_of_day,
+        )
+
         event = HabitCreatedEvent(
             payload={
                 "habit_id": str(habit.id),
@@ -48,8 +67,8 @@ class HabitService:
         if habit is None:
             return False, 0
 
-        await self.repo.log_completion(habit_id, date.today())
-        streak = await self.repo.get_streak(habit_id)
+        await self.log_repo.log_completion(habit_id, date.today())
+        streak = await self.streak_service.get_current_streak(habit_id)
         event = HabitCompletedEvent(
             payload={
                 "habit_id": str(habit_id),
@@ -58,6 +77,15 @@ class HabitService:
             }
         )
         await publish_event(event, key=str(habit.user_id))
+
+        streak_event = HabitStreakUpdatedEvent(
+            payload={
+                "habit_id": str(habit_id),
+                "user_id": str(habit.user_id),
+                "streak": streak,
+            }
+        )
+        await publish_event(streak_event, key=str(habit.user_id))
         return True, streak
 
     async def get_habit(self, habit_id: UUID) -> Optional[Habit]:
@@ -71,3 +99,12 @@ class HabitService:
 
     async def delete_habit(self, habit: Habit) -> None:
         await self.repo.delete(habit)
+
+    async def get_today_habits(self, user_id: UUID) -> list[dict]:
+        """Return today's habits (based on schedule) with completion status."""
+        return await self.schedule_service.get_today_habits(user_id)
+
+    async def get_stats(self, habit_id: UUID) -> dict:
+        """Return habit analytics metrics."""
+        stats = await self.log_repo.get_stats(habit_id)
+        return {"habit_id": habit_id, **stats}

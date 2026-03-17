@@ -14,6 +14,7 @@ ANALYTICS_TOPICS = (
     "note.link.created",
     "habit.created",
     "habit.completed",
+    "habit.streak.updated",
     "learning.session.logged",
     "meal.logged",
     "workout.logged",
@@ -26,7 +27,7 @@ ANALYTICS_TOPICS = (
     "record.deleted",
 )
 
-NOTIFICATION_TOPICS = ("habit.completed",)
+NOTIFICATION_TOPICS = ("habit.completed", "habit.reminder.due")
 
 SEARCH_TOPICS = (
     "note.created",
@@ -43,6 +44,8 @@ AI_TOPICS = (
     "learning.session.logged",
     "record.created",
     "record.updated",
+    "habit.completed",
+    "habit.streak.updated",
 )
 
 GRAPH_TOPICS = (

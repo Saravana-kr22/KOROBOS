@@ -24,6 +24,8 @@ def analytics_metric_for_event(
         return "habits.created", 1.0
     if event_type == "habit.completed":
         return "habits.completed", float(payload.get("streak", 1))
+    if event_type == "habit.streak.updated":
+        return "habits.streak", float(payload.get("streak", 0))
     if event_type == "learning.session.logged":
         return "learning.minutes", float(payload.get("duration", 0))
     if event_type == "meal.logged":
@@ -57,6 +59,11 @@ def notification_content_for_event(
             body = f"Great job! Your current streak is {streak} days."
         else:
             body = "Great job completing your habit today!"
+        return title, body
+    if event_type == "habit.reminder.due":
+        habit_name = payload.get("habit_name", "Your habit")
+        title = "Habit Reminder ⏰"
+        body = f"Time to complete '{habit_name}'!"
         return title, body
     return None
 
@@ -172,6 +179,39 @@ def ai_prompt_for_event(
                 "source_event": event_type,
                 "record_id": payload.get("record_id"),
                 "database_id": database_id,
+            },
+        }
+
+    if event_type == "habit.completed":
+        habit_id = payload.get("habit_id", "")
+        streak = payload.get("streak", 0)
+        return {
+            "interaction_type": "recommendation",
+            "prompt": (
+                f"A user just completed a habit (ID: {habit_id}) "
+                f"and has a {streak}-day streak. "
+                "Suggest 2-3 strategies to maintain habit momentum."
+            ),
+            "metadata_json": {
+                "source_event": event_type,
+                "habit_id": habit_id,
+                "streak": streak,
+            },
+        }
+
+    if event_type == "habit.streak.updated":
+        streak = payload.get("streak", 0)
+        habit_id = payload.get("habit_id", "")
+        return {
+            "interaction_type": "insight",
+            "prompt": (
+                f"A habit (ID: {habit_id}) streak has been updated to {streak} days. "
+                "Provide a brief motivational insight about this progress."
+            ),
+            "metadata_json": {
+                "source_event": event_type,
+                "habit_id": habit_id,
+                "streak": streak,
             },
         }
 

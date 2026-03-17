@@ -19,3 +19,13 @@ class HabitCreatedEvent(BaseEvent):
 class HabitCompletedEvent(BaseEvent):
     event_type: str = "habit.completed"
     source_service: str = "habit-service"
+
+
+class HabitStreakUpdatedEvent(BaseEvent):
+    event_type: str = "habit.streak.updated"
+    source_service: str = "habit-service"
+
+
+class HabitReminderDueEvent(BaseEvent):
+    event_type: str = "habit.reminder.due"
+    source_service: str = "habit-service"
