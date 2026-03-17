@@ -402,4 +402,4 @@ After Sprint 9 KOROBOS supports:
 - learning analytics
 - AI-powered learning insights
 
-This completes the **learning intelligence layer** of KOROBOS, making it a **knowledge + behavior + learning platform**.
+This Sprint completes the **learning intelligence layer** of KOROBOS, making it a **knowledge + behavior + learning platform**.
