@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
 interface HabitTodayItem {
@@ -34,12 +34,7 @@ export default function HabitsPage() {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
 
-  useEffect(() => {
-    if (!token) return;
-    loadHabits();
-  }, [token]);
-
-  const loadHabits = async () => {
+  const loadHabits = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
@@ -64,12 +59,17 @@ export default function HabitsPage() {
         const data = await allRes.json();
         setAllHabits(data.habits || []);
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to load habits");
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return;
+    loadHabits();
+  }, [token, loadHabits]);
 
   const handleCreateHabit = async (e: FormEvent) => {
     e.preventDefault();
@@ -99,7 +99,7 @@ export default function HabitsPage() {
       } else {
         setError("Failed to create habit");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to create habit");
     }
   };
@@ -116,7 +116,7 @@ export default function HabitsPage() {
       if (res.ok) {
         await loadHabits();
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to mark habit complete");
     }
   };
@@ -228,7 +228,7 @@ export default function HabitsPage() {
       )}
 
       <section style={{ marginBottom: "30px" }}>
-        <h2>Today's Habits</h2>
+        <h2>Today&apos;s Habits</h2>
         {todayHabits.length === 0 ? (
           <p style={{ color: "#666" }}>No habits for today</p>
         ) : (

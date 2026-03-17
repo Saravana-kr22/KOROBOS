@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 interface Habit {
@@ -39,12 +40,7 @@ export default function HabitDetailPage() {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
 
-  useEffect(() => {
-    if (!token) return;
-    loadHabitDetail();
-  }, [token, habitId]);
-
-  const loadHabitDetail = async () => {
+  const loadHabitDetail = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
@@ -78,12 +74,17 @@ export default function HabitDetailPage() {
         const statsData = await statsRes.json();
         setStats(statsData);
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to load habit");
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, habitId]);
+
+  useEffect(() => {
+    if (!token) return;
+    loadHabitDetail();
+  }, [token, habitId, loadHabitDetail]);
 
   const markComplete = async () => {
     try {
@@ -97,7 +98,7 @@ export default function HabitDetailPage() {
       if (res.ok) {
         await loadHabitDetail();
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to mark habit complete");
     }
   };
@@ -124,7 +125,7 @@ export default function HabitDetailPage() {
       } else {
         setError("Failed to update habit");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to update habit");
     }
   };
@@ -145,7 +146,7 @@ export default function HabitDetailPage() {
       } else {
         setError("Failed to delete habit");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to delete habit");
     }
   };
@@ -161,9 +162,12 @@ export default function HabitDetailPage() {
   return (
     <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
       <div style={{ marginBottom: "20px" }}>
-        <a href="/habits" style={{ color: "#007bff", textDecoration: "none" }}>
+        <Link
+          href="/habits"
+          style={{ color: "#007bff", textDecoration: "none" }}
+        >
           ← Back to Habits
-        </a>
+        </Link>
       </div>
 
       {error && (
