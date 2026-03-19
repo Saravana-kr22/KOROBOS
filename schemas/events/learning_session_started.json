@@ -1,0 +1,13 @@
+{
+  "event_type": "learning.session.started",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": ["session_id", "user_id", "topic"],
+  "payload_properties": {
+    "session_id": { "type": "string" },
+    "user_id": { "type": "string" },
+    "topic": { "type": "string" },
+    "start_time": { "type": "string" }
+  },
+  "allow_additional_payload": true
+}

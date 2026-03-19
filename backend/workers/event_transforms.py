@@ -28,6 +28,12 @@ def analytics_metric_for_event(
         return "habits.streak", float(payload.get("streak", 0))
     if event_type == "learning.session.logged":
         return "learning.minutes", float(payload.get("duration", 0))
+    if event_type == "learning.session.completed":
+        return "learning.minutes", float(payload.get("duration", 0))
+    if event_type == "learning.session.started":
+        return "learning.sessions.started", 1.0
+    if event_type == "learning.topic.created":
+        return "learning.topics.created", 1.0
     if event_type == "meal.logged":
         return "calories.intake", float(payload.get("calories", 0))
     if event_type == "workout.logged":
@@ -99,6 +105,30 @@ def search_document_from_record_payload(payload: dict[str, Any]) -> dict[str, An
     }
 
 
+def search_document_from_learning_payload(
+    event_type: str, payload: dict[str, Any]
+) -> dict[str, Any]:
+    """Transform a learning event to a Meilisearch document."""
+    if event_type == "learning.topic.created":
+        return {
+            "id": f"topic-{payload['topic_id']}",
+            "topic_id": payload["topic_id"],
+            "user_id": payload["user_id"],
+            "name": payload.get("name", ""),
+            "type": "topic",
+        }
+    # learning.session.logged and learning.session.completed
+    return {
+        "id": f"session-{payload['session_id']}",
+        "session_id": payload["session_id"],
+        "user_id": payload["user_id"],
+        "topic": payload.get("topic", ""),
+        "duration": payload.get("duration", 0),
+        "notes": payload.get("notes", ""),
+        "type": "session",
+    }
+
+
 def ai_prompt_for_event(
     event_type: str, payload: dict[str, Any]
 ) -> dict[str, Any] | None:
@@ -132,7 +162,7 @@ def ai_prompt_for_event(
             },
         }
 
-    if event_type == "learning.session.logged":
+    if event_type in ("learning.session.logged", "learning.session.completed"):
         topic = payload.get("topic", "learning session")
         duration = payload.get("duration", 0)
         notes = payload.get("notes", "")
@@ -145,6 +175,21 @@ def ai_prompt_for_event(
             "metadata_json": {
                 "source_event": event_type,
                 "session_id": payload.get("session_id"),
+            },
+        }
+
+    if event_type == "learning.topic.created":
+        topic_name = payload.get("name", "new topic")
+        return {
+            "interaction_type": "gap_analysis",
+            "prompt": (
+                f"A user just created a new learning topic: '{topic_name}'. "
+                "Identify key knowledge areas and prerequisites needed. "
+                "What are the essential concepts to focus on?"
+            ),
+            "metadata_json": {
+                "source_event": event_type,
+                "topic_id": payload.get("topic_id"),
             },
         }
 

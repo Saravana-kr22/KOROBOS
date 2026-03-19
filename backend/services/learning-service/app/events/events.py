@@ -4,11 +4,18 @@ KOROBOS — Second Brain Operating System
 Copyright (c) 2026 Saravana Perumal K
 
 Licensed under the GNU Affero General Public License v3.
+
+Kafka event definitions for the Learning Service.
+
+.. deprecated:: Re-export shim — import from ``learning_events`` directly.
 """
 
-from backend.shared.messaging.schemas import BaseEvent
+# Re-export from canonical location
+from app.events.learning_events import (  # noqa: F401
+    LearningSessionCompletedEvent,
+    LearningSessionLoggedEvent,
+    LearningSessionStartedEvent,
+    LearningTopicCreatedEvent,
+)
 
-
-class LearningSessionLoggedEvent(BaseEvent):
-    event_type: str = "learning.session.logged"
-    source_service: str = "learning-service"
+from backend.shared.messaging.schemas import BaseEvent  # noqa: F401
