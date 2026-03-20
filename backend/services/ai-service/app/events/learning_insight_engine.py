@@ -15,7 +15,7 @@ from uuid import UUID
 from app.schemas.schema import AIPromptRequest
 from app.services.service_logic import AIService
 
-from backend.shared.database.connection import AsyncSessionLocal
+from backend.shared.database.connection import async_session_factory
 from backend.shared.messaging.consumer import BaseEventConsumer
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ class LearningInsightEngine(BaseEventConsumer):
             )
 
             # Create DB session and call AI service
-            async with AsyncSessionLocal() as session:
+            async with async_session_factory() as session:
                 ai_svc = AIService(session)
                 request = AIPromptRequest(
                     prompt=prompt,

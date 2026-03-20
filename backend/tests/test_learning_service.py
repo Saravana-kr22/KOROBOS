@@ -26,7 +26,21 @@ if _service_path in sys.path:
     sys.path.remove(_service_path)
 sys.path.insert(0, _service_path)
 
-# sys.modules clearing removed to avoid isinstance failures and metadata conflicts
+# Clear any cached app modules ONLY IF they are from a different service
+# to avoid SQLAlchemy "Table already defined" errors when multiple test files
+# import from the same service.
+_current_app_path = ""
+if "app" in sys.modules:
+    _app_mod = sys.modules["app"]
+    _current_app_path = getattr(_app_mod, "__file__", "") or ""
+
+if "learning-service" not in _current_app_path:
+    _to_remove = [k for k in sys.modules if k.startswith("app")]
+    for mod in _to_remove:
+        del sys.modules[mod]
+
+# RE-ADDED: Namespace collision with analytics-service requires clearing "app"
+# but only if switching services to avoid metadata conflicts.
 
 # Import service modules
 LearningSession = importlib.import_module("app.models.model").LearningSession  # type: ignore[assignment]

@@ -15,7 +15,7 @@ without infrastructure.
 import sys
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -28,10 +28,18 @@ if _service_path in sys.path:
     sys.path.remove(_service_path)
 sys.path.insert(0, _service_path)
 
-# Clear any cached app modules before import
-_to_remove = [k for k in sys.modules if k.startswith("app")]
-for mod in _to_remove:
-    del sys.modules[mod]
+# Clear any cached app modules ONLY IF they are from a different service
+# to avoid SQLAlchemy "Table already defined" errors when multiple test files
+# import from the same service.
+_current_app_path = ""
+if "app" in sys.modules:
+    _app_mod = sys.modules["app"]
+    _current_app_path = getattr(_app_mod, "__file__", "") or ""
+
+if "learning-service" not in _current_app_path:
+    _to_remove = [k for k in sys.modules if k.startswith("app")]
+    for mod in _to_remove:
+        del sys.modules[mod]
 
 # ── app import (after path is set) ──────────────────────────────────────────
 from httpx import ASGITransport, AsyncClient  # noqa: E402
@@ -494,7 +502,9 @@ async def test_delete_session_returns_204(client: AsyncClient):
     session_id = uuid4()
     fake_session = MagicMock(spec=LearningSession)
     fake_session.id = session_id
-    fake_session.user_id = USER_ID
+    fake_session.user_id = UUID(
+        USER_ID
+    )  # Must be UUID to match route's _get_user_id return type
 
     with (
         patch("backend.shared.database.connection.get_db_session") as mock_get_db,

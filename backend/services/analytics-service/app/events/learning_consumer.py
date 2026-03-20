@@ -15,7 +15,7 @@ from uuid import UUID
 
 from app.services.service_logic import AnalyticsService
 
-from backend.shared.database.connection import AsyncSessionLocal
+from backend.shared.database.connection import async_session_factory
 from backend.shared.messaging.consumer import BaseEventConsumer
 
 logger = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ class LearningEventConsumer(BaseEventConsumer):
             duration_hours = duration_minutes / 60.0
 
             # Create DB session and record metric
-            async with AsyncSessionLocal() as session:
+            async with async_session_factory() as session:
                 analytics_svc = AnalyticsService(session)
                 await analytics_svc.record_metric(
                     user_id=user_id,

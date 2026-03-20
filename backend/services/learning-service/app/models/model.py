@@ -14,5 +14,5 @@ ORM models for the Learning Service.
 """
 
 # Re-export from canonical locations (Sprint_9.md naming)
-from app.models.session_model import LearningSession, SessionNote  # noqa: F401
-from app.models.topic_model import Topic  # noqa: F401
+from .session_model import LearningSession, SessionNote  # noqa: F401
+from .topic_model import Topic  # noqa: F401

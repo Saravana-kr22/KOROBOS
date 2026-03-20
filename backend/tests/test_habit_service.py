@@ -23,16 +23,20 @@ _backend_root = _test_dir.parent
 _habit_service_path = str(_backend_root / "services" / "habit-service")
 
 # Move habit-service path to the beginning for this module's imports
-# This is safe because we're in a test file that won't conflict with gateway tests
 if _habit_service_path in sys.path:
     sys.path.remove(_habit_service_path)
-# Insert at position 0 to prioritize it
 sys.path.insert(0, _habit_service_path)
 
-# Clear any cached app modules to ensure we load from the correct path
-_modules_to_remove = [key for key in sys.modules if key.startswith("app")]
-for mod in _modules_to_remove:
-    del sys.modules[mod]
+# Clear any cached app modules ONLY IF they are from a different service
+_current_app_path = ""
+if "app" in sys.modules:
+    _app_mod = sys.modules["app"]
+    _current_app_path = getattr(_app_mod, "__file__", "") or ""
+
+if "habit-service" not in _current_app_path:
+    _to_remove = [k for k in sys.modules if k.startswith("app")]
+    for mod in _to_remove:
+        del sys.modules[mod]
 
 # Import service modules now that path is set up
 HabitCompletedEvent = importlib.import_module("app.events.events").HabitCompletedEvent
@@ -56,7 +60,8 @@ ScheduleService = importlib.import_module(
     "app.services.schedule_service"
 ).ScheduleService
 StreakService = importlib.import_module("app.services.streak_service").StreakService
-HabitService = importlib.import_module("app.services.service_logic").HabitService
+_habit_service_logic_module = importlib.import_module("app.services.service_logic")
+HabitService = _habit_service_logic_module.HabitService
 
 
 @pytest.mark.anyio
@@ -153,14 +158,25 @@ async def test_create_habit_publishes_event(monkeypatch):
     user_id = uuid4()
     habit_id = uuid4()
 
-    # Mock the publish_event function
+    # Mock the Kafka producer to avoid connection attempts
+    from unittest.mock import AsyncMock as UtAsyncMock
+
+    mock_producer = UtAsyncMock()
+
+    async def mock_get_producer():
+        return mock_producer
+
+    monkeypatch.setattr(
+        "backend.shared.messaging.producer.get_producer", mock_get_producer
+    )
+
+    # Mock the publish_event function — patch the module stored at import time
     published_events = []
 
     async def mock_publish(event, key):
         published_events.append((event, key))
 
-    service_logic = importlib.import_module("app.services.service_logic")
-    monkeypatch.setattr(service_logic, "publish_event", mock_publish)
+    monkeypatch.setattr(_habit_service_logic_module, "publish_event", mock_publish)
 
     # Mock the repository
     mock_session = AsyncMock()
@@ -198,14 +214,25 @@ async def test_complete_habit_returns_streak_and_publishes_events(monkeypatch):
     user_id = uuid4()
     habit_id = uuid4()
 
-    # Track published events
+    # Mock the Kafka producer to avoid connection attempts
+    from unittest.mock import AsyncMock as UtAsyncMock
+
+    mock_producer = UtAsyncMock()
+
+    async def mock_get_producer():
+        return mock_producer
+
+    monkeypatch.setattr(
+        "backend.shared.messaging.producer.get_producer", mock_get_producer
+    )
+
+    # Track published events — patch the module stored at import time
     published_events = []
 
     async def mock_publish(event, key):
         published_events.append((event, key))
 
-    service_logic = importlib.import_module("app.services.service_logic")
-    monkeypatch.setattr(service_logic, "publish_event", mock_publish)
+    monkeypatch.setattr(_habit_service_logic_module, "publish_event", mock_publish)
 
     # Mock session and repositories
     mock_session = AsyncMock()
@@ -229,14 +256,12 @@ async def test_complete_habit_returns_streak_and_publishes_events(monkeypatch):
     mock_log_repo.log_completion = AsyncMock()
     mock_log_repo.get_streak = AsyncMock(return_value=7)
 
-    # Monkey patch the repository constructors to return mocks
+    # Monkey patch repository constructors via the module stored at import time
     monkeypatch.setattr(
-        "app.services.service_logic.HabitRepository",
-        lambda _: mock_repo,
+        _habit_service_logic_module, "HabitRepository", lambda _: mock_repo
     )
     monkeypatch.setattr(
-        "app.services.service_logic.HabitLogRepository",
-        lambda _: mock_log_repo,
+        _habit_service_logic_module, "HabitLogRepository", lambda _: mock_log_repo
     )
 
     # Mock StreakService to use the mock log repo
