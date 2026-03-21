@@ -94,8 +94,7 @@ class TimerService:
                 detail={
                     "error": "SESSION_NOT_ACTIVE",
                     "message": (
-                        f"Session status is '{session.status}', "
-                        "not active or paused."
+                        f"Session status is '{session.status}', not active or paused."
                     ),
                 },
             )
