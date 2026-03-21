@@ -20,6 +20,8 @@ from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.consumer import BaseEventConsumer
 from backend.shared.messaging.schemas import BaseEvent
 from backend.workers.event_transforms import (
+    search_document_from_habit_payload,
+    search_document_from_health_payload,
     search_document_from_learning_payload,
     search_document_from_payload,
     search_document_from_record_payload,
@@ -68,6 +70,18 @@ class SearchEventConsumer(BaseEventConsumer):
                 event.event_type, event.payload
             )
             await asyncio.to_thread(self._upsert_documents, [document], "learning")
+
+        # Handle habit events
+        elif event.event_type == "habit.created":
+            document = search_document_from_habit_payload(event.payload)
+            await asyncio.to_thread(self._upsert_documents, [document], "habits")
+
+        # Handle health events (meals and workouts)
+        elif event.event_type in {"meal.logged", "workout.logged"}:
+            document = search_document_from_health_payload(
+                event.event_type, event.payload
+            )
+            await asyncio.to_thread(self._upsert_documents, [document], "health")
 
         else:
             logger.debug("Ignoring non-search event_type: %s", event.event_type)

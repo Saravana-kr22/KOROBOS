@@ -65,6 +65,11 @@ scrape_configs:
       - targets: ["ai-service:8000"]
     metrics_path: /metrics
 
+  - job_name: "search-service"
+    static_configs:
+      - targets: ["search-service:8000"]
+    metrics_path: /metrics
+
   - job_name: "api-gateway"
     static_configs:
       - targets: ["api-gateway:8000"]
