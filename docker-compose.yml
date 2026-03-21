@@ -153,6 +153,22 @@ services:
     volumes:
       - minio_data:/data
 
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    environment:
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: clickhouse
+    ports:
+      - "8123:8123"  # HTTP interface
+      - "9000:9000"  # Native protocol
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # --- Application Microservices ---
   api-gateway:
     build:
@@ -331,6 +347,9 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
       - REDIS_URL=redis://redis:6379/0
+      - CLICKHOUSE_URL=http://clickhouse:8123
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=clickhouse
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
@@ -343,6 +362,8 @@ services:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      clickhouse:
         condition: service_healthy
       kafka:
         condition: service_started
@@ -582,6 +603,7 @@ volumes:
   redis_data:
   meilisearch_data:
   minio_data:
+  clickhouse_data:
   kafka_certs:
   prometheus_data:
   grafana_data:

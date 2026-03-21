@@ -24,6 +24,10 @@ class DashboardSettings(BaseSettings):
 
     # ── Service URLs ──
     # Internal URLs for calling source services via httpx
+    analytics_service_url: str = Field(
+        default="http://analytics-service:8000",
+        description="Analytics Service base URL",
+    )
     habit_service_url: str = Field(
         default="http://habit-service:8000",
         description="Habit Service base URL",

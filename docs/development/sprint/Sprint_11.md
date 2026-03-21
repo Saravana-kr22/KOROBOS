@@ -1,3 +1,12 @@
+# KOROBOS — Sprint 11 Execution Plan
+
+## Dashboard Aggregation Service (Web + Android React Native Support)
+
+Version: 1.0
+Owner: Saravana Perumal
+
+---
+
 # 1. Sprint Objective
 
 Sprint 11 introduces the **Dashboard Aggregation Service**, which acts as the **central intelligence layer** of KOROBOS.
