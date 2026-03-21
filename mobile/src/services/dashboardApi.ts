@@ -17,30 +17,18 @@ import { apiClient } from "./apiClient";
 
 export const dashboardApi = {
   async getOverview(): Promise<OverviewResponse> {
-    const response = await apiClient.get<OverviewResponse>(
-      "/api/v1/dashboard/overview",
-    );
-    return response.data;
+    return apiClient.get<OverviewResponse>("/api/v1/dashboard/overview");
   },
 
   async getDaily(): Promise<DailyMetrics> {
-    const response = await apiClient.get<DailyMetrics>(
-      "/api/v1/dashboard/daily",
-    );
-    return response.data;
+    return apiClient.get<DailyMetrics>("/api/v1/dashboard/daily");
   },
 
   async getWeekly(): Promise<WeeklyResponse> {
-    const response = await apiClient.get<WeeklyResponse>(
-      "/api/v1/dashboard/weekly",
-    );
-    return response.data;
+    return apiClient.get<WeeklyResponse>("/api/v1/dashboard/weekly");
   },
 
   async getMetrics(): Promise<DailyMetrics> {
-    const response = await apiClient.get<DailyMetrics>(
-      "/api/v1/dashboard/metrics",
-    );
-    return response.data;
+    return apiClient.get<DailyMetrics>("/api/v1/dashboard/metrics");
   },
 };

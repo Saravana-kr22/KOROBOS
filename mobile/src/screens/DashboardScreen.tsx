@@ -175,10 +175,6 @@ const DashboardScreen = () => {
             }}
             width={Dimensions.get("window").width - 48}
             height={220}
-            yAxisLabel=""
-            yAxisSuffix=""
-            yMin={0}
-            yMax={100}
             chartConfig={{
               backgroundColor: "#f8f9fa",
               backgroundGradientFrom: "#f8f9fa",
@@ -193,6 +189,9 @@ const DashboardScreen = () => {
                 stroke: "#007bff",
               },
             }}
+            yAxisLabel=""
+            yAxisSuffix=""
+            fromZero={true}
             bezier
             style={{ marginVertical: 16, borderRadius: 8 }}
           />
