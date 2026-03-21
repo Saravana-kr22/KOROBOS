@@ -18,6 +18,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import UUID, uuid4
 
 import pytest
+from sqlalchemy.orm import configure_mappers
+
+from backend.shared.database.base_model import Base
 
 # ── path setup ──────────────────────────────────────────────────────────────
 _test_dir = Path(__file__).resolve().parent
@@ -37,9 +40,15 @@ if "app" in sys.modules:
     _current_app_path = getattr(_app_mod, "__file__", "") or ""
 
 if "learning-service" not in _current_app_path:
+    # Clear app modules that might have been cached from other services
     _to_remove = [k for k in sys.modules if k.startswith("app")]
     for mod in _to_remove:
         del sys.modules[mod]
+
+    # Clear SQLAlchemy registry to avoid table redefinition errors
+    # and registry pollution across service tests in CI.
+    Base.registry._class_registry.clear()
+    Base.metadata.clear()
 
 # ── app import (after path is set) ──────────────────────────────────────────
 from httpx import ASGITransport, AsyncClient  # noqa: E402
@@ -50,6 +59,15 @@ with patch("backend.shared.messaging.producer.get_producer", new=AsyncMock()):
 
     app_module = importlib.import_module("app.main")
     app = app_module.app
+
+# Configure mappers to catch relationship resolution issues before tests run.
+try:
+    configure_mappers()
+except Exception as e:
+    msg = f"ERROR: SQLAlchemy mapper configuration failed: {e}"
+    print(msg)
+    # Fail early if mapper configuration has serious issues
+    raise
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 USER_ID = str(uuid4())

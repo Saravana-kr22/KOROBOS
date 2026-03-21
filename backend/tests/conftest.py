@@ -21,14 +21,12 @@ HABIT_SERVICE_APP = os.path.join(BACKEND_ROOT, "services", "habit-service")
 LEARNING_SERVICE_APP = os.path.join(BACKEND_ROOT, "services", "learning-service")
 ANALYTICS_SERVICE_APP = os.path.join(BACKEND_ROOT, "services", "analytics-service")
 
-# Add base paths - ORDER MATTERS: services first (so "app" imports work),
-# then backend and project root (so "backend" imports work)
+# Add base paths - ORDER MATTERS: PROJECT_ROOT first so "backend" imports work
+# then BACKEND_ROOT for shared imports. Service-specific "app" imports
+# are handled within the individual test modules.
 for path in [
-    LEARNING_SERVICE_APP,
-    ANALYTICS_SERVICE_APP,
-    GATEWAY_APP,
-    BACKEND_ROOT,
     PROJECT_ROOT,
+    BACKEND_ROOT,
 ]:
     if path and path not in sys.path:
         sys.path.insert(0, path)

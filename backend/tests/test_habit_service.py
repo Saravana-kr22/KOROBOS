@@ -16,6 +16,9 @@ from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import pytest
+from sqlalchemy.orm import configure_mappers
+
+from backend.shared.database.base_model import Base
 
 # Ensure habit-service path is in sys.path for imports
 _test_dir = Path(__file__).resolve().parent
@@ -34,9 +37,15 @@ if "app" in sys.modules:
     _current_app_path = getattr(_app_mod, "__file__", "") or ""
 
 if "habit-service" not in _current_app_path:
+    # Clear app modules that might have been cached from other services
     _to_remove = [k for k in sys.modules if k.startswith("app")]
     for mod in _to_remove:
         del sys.modules[mod]
+
+    # Clear SQLAlchemy registry to avoid table redefinition errors
+    # and registry pollution across service tests in CI.
+    Base.registry._class_registry.clear()
+    Base.metadata.clear()
 
 # Import service modules now that path is set up
 HabitCompletedEvent = importlib.import_module("app.events.events").HabitCompletedEvent
@@ -62,6 +71,15 @@ ScheduleService = importlib.import_module(
 StreakService = importlib.import_module("app.services.streak_service").StreakService
 _habit_service_logic_module = importlib.import_module("app.services.service_logic")
 HabitService = _habit_service_logic_module.HabitService
+
+# Configure mappers to catch relationship resolution issues before tests run.
+try:
+    configure_mappers()
+except Exception as e:
+    msg = f"ERROR: SQLAlchemy mapper configuration failed: {e}"
+    print(msg)
+    # Fail early if mapper configuration has serious issues
+    raise
 
 
 @pytest.mark.anyio

@@ -19,30 +19,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.shared.database.base_model import Base, TimestampMixin
 
 
-class Habit(Base, TimestampMixin):
-    """Habits table — tracks user habits."""
-
-    __tablename__ = "habits"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), nullable=False, index=True
-    )
-    name: Mapped[str] = mapped_column(String(300), nullable=False)
-    frequency: Mapped[str] = mapped_column(String(50), nullable=False, default="daily")
-    description: Mapped[str] = mapped_column(Text, nullable=True, default="")
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-
-    logs: Mapped[list["HabitLog"]] = relationship(
-        back_populates="habit", cascade="all, delete-orphan"
-    )
-    schedule: Mapped[Optional["HabitSchedule"]] = relationship(
-        back_populates="habit", cascade="all, delete-orphan", uselist=False
-    )
-
-
 class HabitSchedule(Base, TimestampMixin):
     """Habit Schedules table — defines when habits should be completed."""
 
@@ -79,3 +55,27 @@ class HabitLog(Base):
     completed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     habit: Mapped["Habit"] = relationship(back_populates="logs")
+
+
+class Habit(Base, TimestampMixin):
+    """Habits table — tracks user habits."""
+
+    __tablename__ = "habits"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), nullable=False, index=True
+    )
+    name: Mapped[str] = mapped_column(String(300), nullable=False)
+    frequency: Mapped[str] = mapped_column(String(50), nullable=False, default="daily")
+    description: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    logs: Mapped[list["HabitLog"]] = relationship(
+        back_populates="habit", cascade="all, delete-orphan"
+    )
+    schedule: Mapped[Optional["HabitSchedule"]] = relationship(
+        back_populates="habit", cascade="all, delete-orphan", uselist=False
+    )
