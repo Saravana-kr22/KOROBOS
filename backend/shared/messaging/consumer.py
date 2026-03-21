@@ -70,9 +70,23 @@ class BaseEventConsumer(ABC):
     Handles the Kafka event loop with error handling and logging.
     """
 
-    def __init__(self, topics: list[str], group_id: str):
-        self.topics = topics
-        self.group_id = group_id
+    def __init__(
+        self,
+        topics: list[str] | None = None,
+        group_id: str | None = None,
+    ):
+        # Subclasses may declare topics/group_id as class attributes; fall back
+        # to those when the caller omits the constructor arguments.
+        self.topics = (
+            topics
+            if topics is not None
+            else list(getattr(self.__class__, "topics", []))
+        )
+        self.group_id = (
+            group_id
+            if group_id is not None
+            else getattr(self.__class__, "group_id", "")
+        )
         self.consumer: Optional[AIOKafkaConsumer] = None
         self._running = False
         self._task: Optional[asyncio.Task] = None

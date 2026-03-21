@@ -260,3 +260,117 @@ async def test_base_event_consumer_does_not_commit_when_dlq_publish_fails(
         await consumer._handle_record(record)
 
     assert consumer.consumer.commits == []
+
+
+# ===========================================================================
+# BaseEventConsumer: class-attribute-based subclass instantiation
+# ===========================================================================
+
+
+class _ClassAttrConsumer(BaseEventConsumer):
+    """Subclass that declares topics/group_id as class attrs, no __init__."""
+
+    topics = ["test.topic.a", "test.topic.b"]
+    group_id = "test-class-attr-group"
+
+    async def handle_event(self, topic: str, payload: dict):
+        pass
+
+
+def test_consumer_class_attrs_used_when_no_args():
+    """Class-level topics/group_id used when no positional args passed."""
+    consumer = _ClassAttrConsumer()
+    assert consumer.topics == ["test.topic.a", "test.topic.b"]
+    assert consumer.group_id == "test-class-attr-group"
+
+
+def test_consumer_explicit_args_override_class_attrs():
+    """Explicit constructor args take precedence over class-level attributes."""
+    consumer = _ClassAttrConsumer(topics=["override.topic"], group_id="override-group")
+    assert consumer.topics == ["override.topic"]
+    assert consumer.group_id == "override-group"
+
+
+# ===========================================================================
+# Sprint 9 consumer startup: LearningInsightEngine & LearningEventConsumer
+# instantiate cleanly from class attrs (regression guard for bug where
+# LearningInsightEngine() / LearningEventConsumer() raised TypeError).
+# ===========================================================================
+
+
+def test_learning_insight_engine_no_arg_instantiation():
+    """LearningInsightEngine() must not require positional args."""
+    import importlib
+    import sys
+    from pathlib import Path
+
+    services = Path(__file__).resolve().parent.parent / "services"
+    ai_path = str(services / "ai-service")
+
+    if ai_path not in sys.path:
+        sys.path.insert(0, ai_path)
+
+    # Clear stale app modules and path cache
+    for k in list(sys.modules):
+        if k == "app" or k.startswith("app."):
+            del sys.modules[k]
+    sys.path_importer_cache.clear()
+
+    LearningInsightEngine = importlib.import_module(
+        "app.events.learning_insight_engine"
+    ).LearningInsightEngine
+
+    engine = LearningInsightEngine()
+    assert engine.topics == ["learning.session.completed"]
+    assert engine.group_id == "ai-service-learning"
+
+    # Clean up after this test: remove ai-service path and clear app modules
+    # so the next test (analytics-service) can load cleanly
+    if ai_path in sys.path:
+        sys.path.remove(ai_path)
+    for k in list(sys.modules):
+        if k == "app" or k.startswith("app."):
+            del sys.modules[k]
+    sys.path_importer_cache.clear()
+
+
+def test_learning_event_consumer_no_arg_instantiation():
+    """LearningEventConsumer() must not require positional args."""
+    import importlib
+    import sys
+    from pathlib import Path
+
+    services = Path(__file__).resolve().parent.parent / "services"
+    analytics_path = str(services / "analytics-service")
+
+    # Remove ALL service paths from sys.path to ensure clean slate
+    for service_name in [
+        "ai-service",
+        "analytics-service",
+        "auth-service",
+        "habit-service",
+        "notes-service",
+        "database-service",
+    ]:
+        service_path = str(services / service_name)
+        while service_path in sys.path:
+            sys.path.remove(service_path)
+
+    # Now insert analytics-service
+    if analytics_path not in sys.path:
+        sys.path.insert(0, analytics_path)
+
+    # Clear all cached `app.*` modules and the path-importer cache
+    for k in list(sys.modules):
+        if k == "app" or k.startswith("app."):
+            del sys.modules[k]
+    sys.path_importer_cache.clear()
+
+    LearningEventConsumer = importlib.import_module(
+        "app.events.learning_consumer"
+    ).LearningEventConsumer
+
+    consumer = LearningEventConsumer()
+    assert "learning.session.completed" in consumer.topics
+    assert "learning.session.logged" in consumer.topics
+    assert consumer.group_id == "analytics-service-learning"

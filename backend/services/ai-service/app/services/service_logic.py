@@ -10,7 +10,6 @@ import asyncio
 import logging
 from uuid import UUID
 
-import google.generativeai as genai
 from app.events.events import AIInteractionCompletedEvent
 from app.repositories.repository import AIRepository
 from app.schemas.schema import AIPromptRequest
@@ -71,6 +70,8 @@ def _call_gemini(prompt: str, interaction_type: str) -> str:
             f"[AI placeholder — set GEMINI_API_KEY to enable real responses] "
             f"Interaction type: {interaction_type}."
         )
+
+    import google.generativeai as genai  # lazy: only needed when key is set
 
     genai.configure(api_key=settings.gemini_api_key)
     system_prompt = _SYSTEM_PROMPTS.get(interaction_type, _SYSTEM_PROMPTS["assistant"])

@@ -17,6 +17,7 @@ from app.models.topic_model import Topic
 from app.repositories.session_repository import LearningRepository
 from app.repositories.topic_repository import TopicRepository
 from app.schemas.learning_schema import LearningSessionCreate, TopicCreate, TopicUpdate
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.shared.messaging.producer import publish_event
@@ -35,6 +36,11 @@ class LearningService:
         self, user_id: UUID, data: LearningSessionCreate
     ) -> LearningSession:
         """Create a manually logged (completed) session."""
+        if data.topic_id is not None:
+            topic = await self.topic_repo.get_by_id(data.topic_id)
+            if not topic or topic.user_id != user_id:
+                raise HTTPException(status_code=404, detail="Topic not found")
+
         session = await self.repo.create(
             user_id=user_id,
             topic=data.topic,

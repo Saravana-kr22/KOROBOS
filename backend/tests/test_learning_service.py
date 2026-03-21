@@ -502,3 +502,70 @@ async def test_unlink_note_calls_repo():
 
     await svc.unlink_note(session_id, note_id)
     svc.repo.unlink_note.assert_called_once_with(session_id, note_id)
+
+
+# ===========================================================================
+# Analytics: streak — yesterday-only edge case (Sprint 9 regression)
+# ===========================================================================
+
+
+@pytest.mark.anyio
+async def test_streak_yesterday_no_session_today():
+    """No session today but session yesterday → streak = 1, not 0."""
+    user_id = uuid4()
+    today = _utcnow().date()
+    yesterday = today - timedelta(days=1)
+
+    db_session = AsyncMock()
+    repo = LearningRepository(db_session)
+
+    rows = [MagicMock(day=yesterday)]
+    mock_result = MagicMock()
+    mock_result.all.return_value = rows
+    db_session.execute = AsyncMock(return_value=mock_result)
+
+    streak = await repo._calculate_streak(user_id, today)
+    assert streak == 1
+
+
+@pytest.mark.anyio
+async def test_streak_yesterday_and_day_before():
+    """Sessions on yesterday and day-before-yesterday, none today → streak = 2."""
+    user_id = uuid4()
+    today = _utcnow().date()
+    yesterday = today - timedelta(days=1)
+    two_days_ago = today - timedelta(days=2)
+
+    db_session = AsyncMock()
+    repo = LearningRepository(db_session)
+
+    rows = [MagicMock(day=yesterday), MagicMock(day=two_days_ago)]
+    mock_result = MagicMock()
+    mock_result.all.return_value = rows
+    db_session.execute = AsyncMock(return_value=mock_result)
+
+    streak = await repo._calculate_streak(user_id, today)
+    assert streak == 2
+
+
+# ===========================================================================
+# Timer: pause → immediate stop produces zero duration without crashing
+# ===========================================================================
+
+
+@pytest.mark.anyio
+async def test_stop_after_immediate_pause_zero_duration():
+    """Pausing then immediately stopping a session with 0 accumulated time
+    should not crash and should produce duration = 0."""
+    session = MagicMock(spec=LearningSession)
+    session.status = "paused"
+    session.duration = 0
+    session.start_time = None  # cleared by pause
+
+    db_session = AsyncMock()
+    repo = LearningRepository(db_session)
+    result = await repo.stop_session(session)
+
+    assert result.status == "completed"
+    assert result.end_time is not None
+    assert result.duration == 0  # no elapsed time was added

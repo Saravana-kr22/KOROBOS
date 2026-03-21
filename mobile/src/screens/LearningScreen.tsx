@@ -79,6 +79,13 @@ export default function LearningScreen() {
   const [showStartForm, setShowStartForm] = useState(false);
   const [startTopic, setStartTopic] = useState("");
 
+  // Tracks a timer session that was started while offline (no server session).
+  // Holds the topic name and the epoch ms when the local timer began.
+  const [localTimerSession, setLocalTimerSession] = useState<{
+    topic: string;
+    startedAt: number;
+  } | null>(null);
+
   // Suggestions
   const [filteredTopics, setFilteredTopics] = useState<Topic[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -121,6 +128,8 @@ export default function LearningScreen() {
       const active = all.find(
         (s) => s.status === "active" || s.status === "paused",
       );
+      // Reconnected: clear any local-only session since server is authoritative.
+      setLocalTimerSession(null);
       if (active) {
         setActiveSession(active);
         if (active.status === "active" && active.start_time) {
@@ -237,13 +246,54 @@ export default function LearningScreen() {
       setShowStartForm(false);
       await loadData();
     } catch (err: any) {
-      const msg = err?.message || "Failed to start session";
-      Alert.alert("Error", msg);
+      // Offline fallback: track the session locally so the user can keep timing.
+      // On stop the elapsed time will be queued as a manual log entry.
+      const topic = startTopic.trim();
+      setLocalTimerSession({ topic, startedAt: Date.now() });
+      setActiveSession({
+        id: `local-${Date.now()}`,
+        topic,
+        status: "active",
+        start_time: new Date().toISOString(),
+        duration: 0,
+      } as any);
+      setElapsed(0);
+      setStartTopic("");
+      setShowStartForm(false);
+      Alert.alert(
+        "Offline Mode",
+        "No network — timer running locally. Your session will be saved when you stop.",
+      );
     }
   };
 
   const handleStopSession = async () => {
     if (!activeSession) return;
+
+    // Local offline session: queue it as a manual log entry.
+    if (localTimerSession) {
+      try {
+        await cancelTimerNotification();
+        const durationMinutes = Math.max(1, Math.round(elapsed / 60));
+        await queueSessionLog({
+          topic: localTimerSession.topic,
+          duration: durationMinutes,
+        });
+        const remaining = await getPendingCount();
+        setPendingCount(remaining);
+        setLocalTimerSession(null);
+        setActiveSession(null);
+        setElapsed(0);
+        Alert.alert(
+          "Session Saved Offline",
+          "Session queued and will sync when you're back online.",
+        );
+      } catch {
+        Alert.alert("Error", "Failed to save offline session");
+      }
+      return;
+    }
+
     try {
       await cancelTimerNotification();
       await learningApi.stopSession({ session_id: activeSession.id });

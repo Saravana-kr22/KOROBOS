@@ -16,6 +16,7 @@ from app.events.learning_events import (
 )
 from app.models.session_model import LearningSession
 from app.repositories.session_repository import LearningRepository
+from app.repositories.topic_repository import TopicRepository
 from app.schemas.learning_schema import (
     SessionPauseRequest,
     SessionResumeRequest,
@@ -31,6 +32,7 @@ from backend.shared.messaging.producer import publish_event
 class TimerService:
     def __init__(self, session: AsyncSession):
         self.repo = LearningRepository(session)
+        self.topic_repo = TopicRepository(session)
 
     async def start_session(
         self, user_id: UUID, data: SessionStartRequest
@@ -49,6 +51,11 @@ class TimerService:
                     "session_id": str(existing.id),
                 },
             )
+
+        if data.topic_id is not None:
+            topic = await self.topic_repo.get_by_id(data.topic_id)
+            if not topic or topic.user_id != user_id:
+                raise HTTPException(status_code=404, detail="Topic not found")
 
         session = await self.repo.create_active_session(
             user_id=user_id,

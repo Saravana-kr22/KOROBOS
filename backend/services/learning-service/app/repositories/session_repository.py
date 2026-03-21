@@ -285,11 +285,12 @@ class LearningRepository:
             if not days or days[0] != yesterday:
                 return 0
             days_to_check = days
+            expected = yesterday  # streak starts from yesterday, not today
         else:
             days_to_check = days
+            expected = today
 
         streak = 0
-        expected = today
         for day in days_to_check:
             if day == expected:
                 streak += 1
