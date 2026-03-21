@@ -26,6 +26,10 @@ class HealthService:
             log_type="meal",
             calories=data.calories,
             description=data.description or "",
+            food_name=data.food_name,
+            protein=data.protein,
+            carbs=data.carbs,
+            fat=data.fat,
         )
         event = MealLoggedEvent(
             payload={
@@ -33,6 +37,10 @@ class HealthService:
                 "user_id": str(user_id),
                 "calories": data.calories,
                 "description": data.description or "",
+                "food_name": data.food_name,
+                "protein": data.protein,
+                "carbs": data.carbs,
+                "fat": data.fat,
             }
         )
         await publish_event(event, key=str(user_id))
@@ -45,6 +53,7 @@ class HealthService:
             duration=data.duration,
             calories=data.calories or 0,
             description=data.description or "",
+            workout_type=data.workout_type,
         )
         event = WorkoutLoggedEvent(
             payload={
@@ -53,6 +62,7 @@ class HealthService:
                 "duration": data.duration,
                 "calories": data.calories or 0,
                 "description": data.description or "",
+                "workout_type": data.workout_type,
             }
         )
         await publish_event(event, key=str(user_id))
@@ -63,3 +73,14 @@ class HealthService:
 
     async def get_stats(self, user_id: UUID):
         return await self.repo.get_stats(user_id)
+
+    async def delete_log(self, user_id: UUID, log_id: UUID) -> None:
+        """Delete a health log, validating user ownership."""
+        log = await self.repo.get_by_id(log_id)
+        if not log or log.user_id != user_id:
+            return None
+        await self.repo.delete(log)
+
+    async def get_daily_stats(self, user_id: UUID, date=None):
+        """Get daily calorie stats for a given date (defaults to today)."""
+        return await self.repo.get_daily_stats(user_id, date)

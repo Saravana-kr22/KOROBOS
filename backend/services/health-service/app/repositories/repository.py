@@ -6,6 +6,7 @@ Copyright (c) 2026 Saravana Perumal K
 Licensed under the GNU Affero General Public License v3.
 """
 
+from datetime import date
 from typing import Optional
 from uuid import UUID
 
@@ -25,6 +26,11 @@ class HealthRepository:
         calories: int = 0,
         duration: int = 0,
         description: str = "",
+        food_name: Optional[str] = None,
+        protein: Optional[int] = None,
+        carbs: Optional[int] = None,
+        fat: Optional[int] = None,
+        workout_type: Optional[str] = None,
     ) -> HealthLog:
         obj = HealthLog(
             user_id=user_id,
@@ -32,6 +38,11 @@ class HealthRepository:
             calories=calories,
             duration=duration,
             description=description,
+            food_name=food_name,
+            protein=protein,
+            carbs=carbs,
+            fat=fat,
+            workout_type=workout_type,
         )
         self.session.add(obj)
         await self.session.flush()
@@ -100,4 +111,43 @@ class HealthRepository:
             "total_workouts": workouts,
             "total_calories": total_cal,
             "total_workout_minutes": total_dur,
+        }
+
+    async def get_daily_stats(
+        self, user_id: UUID, date_: Optional[date] = None
+    ) -> dict:
+        """Get daily calorie stats (consumed, burned, net) for a given date."""
+        if date_ is None:
+            date_ = date.today()
+
+        # Calories consumed (meals on this date)
+        consumed_q = (
+            select(func.coalesce(func.sum(HealthLog.calories), 0))
+            .select_from(HealthLog)
+            .where(
+                HealthLog.user_id == user_id,
+                HealthLog.log_type == "meal",
+                func.date(HealthLog.created_at) == date_,
+            )
+        )
+        calories_consumed = (await self.session.execute(consumed_q)).scalar_one()
+
+        # Calories burned (workouts on this date)
+        burned_q = (
+            select(func.coalesce(func.sum(HealthLog.calories), 0))
+            .select_from(HealthLog)
+            .where(
+                HealthLog.user_id == user_id,
+                HealthLog.log_type == "workout",
+                func.date(HealthLog.created_at) == date_,
+            )
+        )
+        calories_burned = (await self.session.execute(burned_q)).scalar_one()
+
+        net_calories = calories_consumed - calories_burned
+
+        return {
+            "calories_consumed": calories_consumed,
+            "calories_burned": calories_burned,
+            "net_calories": net_calories,
         }

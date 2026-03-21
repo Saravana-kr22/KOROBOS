@@ -36,3 +36,18 @@ class HealthLog(Base, TimestampMixin):
         Integer, nullable=True, default=0, comment="Duration in minutes"
     )
     description: Mapped[str] = mapped_column(Text, nullable=True, default="")
+    food_name: Mapped[str] = mapped_column(
+        String(500), nullable=True, comment="Name of meal/food (for meal logs)"
+    )
+    protein: Mapped[int] = mapped_column(
+        Integer, nullable=True, comment="Protein in grams (for meal logs)"
+    )
+    carbs: Mapped[int] = mapped_column(
+        Integer, nullable=True, comment="Carbohydrates in grams (for meal logs)"
+    )
+    fat: Mapped[int] = mapped_column(
+        Integer, nullable=True, comment="Fat in grams (for meal logs)"
+    )
+    workout_type: Mapped[str] = mapped_column(
+        String(100), nullable=True, comment="Type of workout (running, swimming, etc.)"
+    )

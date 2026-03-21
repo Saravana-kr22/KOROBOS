@@ -22,6 +22,9 @@ COPY backend/poetry.lock /app/poetry.lock
 RUN poetry config virtualenvs.create false \
     && poetry install --only main --no-root
 
+# Install Prometheus client for metrics
+RUN pip install --no-cache-dir prometheus-client==0.20.0
+
 # Copy shared libraries and service source code
 COPY backend/__init__.py /app/backend/__init__.py
 COPY backend/shared /app/backend/shared

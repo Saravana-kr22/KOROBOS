@@ -1,0 +1,20 @@
+{
+  "event_type": "health.stats.updated",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": [
+    "user_id",
+    "date",
+    "calories_consumed",
+    "calories_burned",
+    "net_calories"
+  ],
+  "payload_properties": {
+    "user_id": { "type": "string" },
+    "date": { "type": "string" },
+    "calories_consumed": { "type": "integer" },
+    "calories_burned": { "type": "integer" },
+    "net_calories": { "type": "integer" }
+  },
+  "allow_additional_payload": true
+}
