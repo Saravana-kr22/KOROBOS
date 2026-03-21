@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface DailyMetrics {
   date: string;
@@ -59,7 +59,7 @@ export default function DashboardPage() {
         const data = await weeklyRes.json();
         setWeekly(data);
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to load dashboard");
     } finally {
       setLoading(false);
@@ -109,7 +109,7 @@ export default function DashboardPage() {
             border: "1px solid #dee2e6",
           }}
         >
-          <h2>Today's Summary</h2>
+          <h2>Today&apos;s Summary</h2>
           <div
             style={{
               display: "grid",

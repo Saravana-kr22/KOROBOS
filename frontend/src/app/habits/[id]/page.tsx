@@ -74,7 +74,7 @@ export default function HabitDetailPage() {
         const statsData = await statsRes.json();
         setStats(statsData);
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to load habit");
     } finally {
       setLoading(false);
@@ -98,7 +98,7 @@ export default function HabitDetailPage() {
       if (res.ok) {
         await loadHabitDetail();
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to mark habit complete");
     }
   };
@@ -125,7 +125,7 @@ export default function HabitDetailPage() {
       } else {
         setError("Failed to update habit");
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to update habit");
     }
   };
@@ -146,7 +146,7 @@ export default function HabitDetailPage() {
       } else {
         setError("Failed to delete habit");
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to delete habit");
     }
   };

@@ -59,7 +59,7 @@ export default function HabitsPage() {
         const data = await allRes.json();
         setAllHabits(data.habits || []);
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to load habits");
     } finally {
       setLoading(false);
@@ -99,7 +99,7 @@ export default function HabitsPage() {
       } else {
         setError("Failed to create habit");
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to create habit");
     }
   };
@@ -116,7 +116,7 @@ export default function HabitsPage() {
       if (res.ok) {
         await loadHabits();
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to mark habit complete");
     }
   };
