@@ -72,7 +72,7 @@ export default function HealthPage() {
         const data = await logsRes.json();
         setLogs(data.logs || []);
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to load health data");
     } finally {
       setLoading(false);
@@ -121,7 +121,7 @@ export default function HealthPage() {
       } else {
         setError("Failed to log meal");
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to log meal");
     }
   };
@@ -161,7 +161,7 @@ export default function HealthPage() {
       } else {
         setError("Failed to log workout");
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to log workout");
     }
   };
@@ -178,7 +178,7 @@ export default function HealthPage() {
       if (res.ok) {
         await loadHealth();
       }
-    } catch (_err) {
+    } catch {
       setError("Failed to delete log");
     }
   };

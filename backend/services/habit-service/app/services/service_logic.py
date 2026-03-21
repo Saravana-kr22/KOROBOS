@@ -108,3 +108,30 @@ class HabitService:
         """Return habit analytics metrics."""
         stats = await self.log_repo.get_stats(habit_id)
         return {"habit_id": habit_id, **stats}
+
+    async def get_user_habit_stats(self, user_id: UUID) -> dict:
+        """Return aggregate habit statistics for user today."""
+        habits, _ = await self.repo.list_by_user(user_id, offset=0, limit=1000)
+        if not habits:
+            return {
+                "total_habits": 0,
+                "habits_completed": 0,
+                "current_streak": 0,
+            }
+
+        # Get today's habits with completion status
+        today_habits = await self.get_today_habits(user_id)
+        completed_count = sum(1 for h in today_habits if h.get("completed"))
+
+        # Get max current streak across all habits
+        max_streak = 0
+        for habit in habits:
+            if habit.is_active:
+                streak = await self.streak_service.get_current_streak(habit.id)
+                max_streak = max(max_streak, streak)
+
+        return {
+            "total_habits": len(habits),
+            "habits_completed": completed_count,
+            "current_streak": max_streak,
+        }

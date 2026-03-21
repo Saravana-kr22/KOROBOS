@@ -301,4 +301,27 @@ def ai_prompt_for_event(
             },
         }
 
+    if event_type == "dashboard.updated":
+        productivity_score = payload.get("productivity_score", 0)
+        habits_completed = payload.get("habits_completed", 0)
+        learning_minutes = payload.get("learning_minutes", 0)
+        calories_balance = payload.get("calories_balance", 0)
+        return {
+            "interaction_type": "insight",
+            "prompt": (
+                f"User achieved productivity score {productivity_score}/100 today. "
+                f"Habits: {habits_completed} completed, "
+                f"Learning: {learning_minutes}min, "
+                f"Calories balance: {calories_balance}kcal. "
+                "Suggest 1 actionable improvement for tomorrow's routine."
+            ),
+            "metadata_json": {
+                "source_event": event_type,
+                "productivity_score": productivity_score,
+                "habits_completed": habits_completed,
+                "learning_minutes": learning_minutes,
+                "calories_balance": calories_balance,
+            },
+        }
+
     return None

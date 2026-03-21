@@ -34,6 +34,7 @@ class ServiceRegistry:
             "notifications": settings.services_notifications,
             "ai": settings.services_ai,
             "database": settings.services_database,
+            "dashboard": settings.services_dashboard,
         }
 
     def get_service_url(self, service_name: str) -> Optional[str]:

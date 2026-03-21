@@ -21,6 +21,13 @@ export default function RootLayout() {
       }}
     >
       <Tabs.Screen
+        name="dashboard"
+        options={{
+          title: "Dashboard",
+          tabBarLabel: "Dashboard",
+        }}
+      />
+      <Tabs.Screen
         name="learning"
         options={{
           title: "Learning",

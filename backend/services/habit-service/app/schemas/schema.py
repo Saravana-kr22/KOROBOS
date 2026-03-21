@@ -85,3 +85,9 @@ class HabitStatsResponse(BaseModel):
     current_streak: int
     longest_streak: int
     weekly_consistency: float
+
+
+class UserHabitStatsResponse(BaseModel):
+    total_habits: int
+    habits_completed: int
+    current_streak: int

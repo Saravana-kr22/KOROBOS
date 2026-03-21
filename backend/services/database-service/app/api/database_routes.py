@@ -5,17 +5,22 @@ API endpoints for database, property, and record operations.
 """
 
 import logging
+from datetime import date
 from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.services.database_service.app.api.rate_limit import check_write_rate_limit
+from backend.services.database_service.app.models.database_model import Database
+from backend.services.database_service.app.models.record_model import Record
 from backend.services.database_service.app.schemas.database_schema import (
     DatabaseCreate,
     DatabaseListResponse,
     DatabaseResponse,
+    DatabaseStatsResponse,
     DatabaseUpdate,
     PropertyCreate,
     PropertyResponse,
@@ -124,6 +129,41 @@ async def list_databases(
         limit=limit,
         pages=pages,
     )
+
+
+@router.get(
+    "/stats",
+    response_model=DatabaseStatsResponse,
+    tags=["Databases"],
+)
+async def get_database_stats(
+    user_id: UUID = Depends(_get_user_id),
+    session: AsyncSession = Depends(get_db_session),
+) -> DatabaseStatsResponse:
+    """Get database and record statistics for the user."""
+    today = date.today()
+
+    # Total databases count
+    db_result = await session.execute(
+        select(func.count(Database.id)).where(Database.user_id == user_id)
+    )
+    total_databases = db_result.scalar() or 0
+
+    # Records created today (across all user's databases)
+    record_result = await session.execute(
+        select(func.count(Record.id)).where(
+            Record.database_id.in_(
+                select(Database.id).where(Database.user_id == user_id)
+            ),
+            func.date(Record.created_at) == today,
+        )
+    )
+    records_created_today = record_result.scalar() or 0
+
+    return {
+        "total_databases": total_databases,
+        "records_created_today": records_created_today,
+    }
 
 
 @router.get(

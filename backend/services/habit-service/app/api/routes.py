@@ -20,6 +20,7 @@ from app.schemas.schema import (
     HabitStatsResponse,
     HabitTodayResponse,
     HabitUpdate,
+    UserHabitStatsResponse,
 )
 from app.services.service_logic import HabitService
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
@@ -98,6 +99,17 @@ async def get_today_habits(
             pass  # Cache failure — return result anyway
 
     return result
+
+
+@router.get("/habit-stats", response_model=UserHabitStatsResponse, tags=["Habits"])
+async def get_user_habit_stats(
+    user_id: UUID = Depends(_get_user_id),
+    session: AsyncSession = Depends(get_db_session),
+):
+    """Get aggregate habit statistics for the user today."""
+    svc = HabitService(session)
+    stats = await svc.get_user_habit_stats(user_id)
+    return stats
 
 
 @router.get("/habits/{habit_id}", response_model=HabitResponse, tags=["Habits"])

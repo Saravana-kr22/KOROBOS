@@ -9,10 +9,12 @@ Notes Service API routes — Sprint 6 §11, §19, §21.
 """
 
 import math
+from datetime import date
 from uuid import UUID
 
 from app.api.rate_limit import check_write_rate_limit
 from app.main import NOTES_CREATED, NOTES_DELETED, NOTES_UPDATED
+from app.models.note_model import Note
 from app.schemas.note_schema import (
     BacklinkListResponse,
     NoteCreate,
@@ -20,10 +22,12 @@ from app.schemas.note_schema import (
     NoteLinkResponse,
     NoteListResponse,
     NoteResponse,
+    NoteStatsResponse,
     NoteUpdate,
 )
 from app.services.notes_service import NotesService
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.shared.database.connection import get_db_session
@@ -85,6 +89,35 @@ async def list_notes(
         "page": page,
         "limit": limit,
         "pages": max(1, math.ceil(total / limit)),
+    }
+
+
+@router.get("/stats", response_model=NoteStatsResponse, tags=["Notes"])
+async def get_note_stats(
+    user_id: UUID = Depends(_get_user_id),
+    session: AsyncSession = Depends(get_db_session),
+):
+    """Get note activity statistics for the user."""
+    today = date.today()
+
+    # Total notes count
+    total_result = await session.execute(
+        select(func.count(Note.id)).where(Note.user_id == user_id)
+    )
+    total_notes = total_result.scalar() or 0
+
+    # Notes created today
+    today_result = await session.execute(
+        select(func.count(Note.id)).where(
+            Note.user_id == user_id,
+            func.date(Note.created_at) == today,
+        )
+    )
+    notes_created_today = today_result.scalar() or 0
+
+    return {
+        "notes_created_today": notes_created_today,
+        "total_notes": total_notes,
     }
 
 
