@@ -81,7 +81,14 @@ class TestVerifyToken:
 
     def test_tampered_token(self):
         token = create_access_token(user_id="user-tamper", email="test@example.com")
-        # Tamper with the token by flipping a character
-        tampered = token[:-1] + ("A" if token[-1] != "A" else "B")
+        # Corrupt the signature segment (third part) by replacing several characters
+        # in the middle.  Changing only the very last base64url character is
+        # unreliable: depending on alignment it may map to "don't-care" bits that
+        # base64-decoding ignores, leaving the signature bytes identical.
+        header, payload_b64, sig = token.rsplit(".", 2)
+        # Swap two characters near the start of the signature so the decoded
+        # bytes definitely differ.
+        corrupted_sig = sig[1] + sig[0] + sig[2:] if len(sig) >= 2 else sig + "X"
+        tampered = f"{header}.{payload_b64}.{corrupted_sig}"
         with pytest.raises(ValueError, match="Invalid token"):
             verify_token(tampered)

@@ -8,9 +8,11 @@ Licensed under the GNU Affero General Public License v3.
 AI Service — intelligent recommendations microservice.
 """
 
+import asyncio
 from contextlib import asynccontextmanager
 
 from app.api.routes import router as api_router
+from app.events.learning_insight_engine import LearningInsightEngine
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -19,16 +21,40 @@ from backend.shared.messaging.producer import close_producer, get_producer
 
 logger = get_logger("ai-service")
 
+# Global insight engine instance for lifespan management
+_learning_insight_engine: LearningInsightEngine | None = None
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global _learning_insight_engine
     logger.info("AI Service starting up")
+
     try:
         await get_producer()
         logger.info("Kafka producer initialized")
     except Exception as exc:
         logger.warning(f"Kafka producer not available: {exc}")
+
+    # Start learning insight engine
+    try:
+        _learning_insight_engine = LearningInsightEngine()
+        asyncio.create_task(_learning_insight_engine.start())
+        logger.info("Learning insight engine started")
+    except Exception as exc:
+        logger.warning("Learning insight engine failed to start: %s", exc)
+        _learning_insight_engine = None
+
     yield
+
+    # Stop learning insight engine
+    if _learning_insight_engine:
+        try:
+            await _learning_insight_engine.stop()
+            logger.info("Learning insight engine stopped")
+        except Exception as exc:
+            logger.warning("Error stopping learning insight engine: %s", exc)
+
     logger.info("AI Service shutting down")
     await close_producer()
 

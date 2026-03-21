@@ -6,30 +6,13 @@ Copyright (c) 2026 Saravana Perumal K
 Licensed under the GNU Affero General Public License v3.
 
 ORM models for the Learning Service.
+
+.. deprecated::
+    Import from ``session_model`` / ``topic_model`` directly
+    (Sprint_9.md file-naming convention).  This module re-exports
+    all symbols for backward compatibility.
 """
 
-import uuid
-
-from sqlalchemy import Integer, String, Text
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
-
-from backend.shared.database.base_model import Base, TimestampMixin
-
-
-class LearningSession(Base, TimestampMixin):
-    """Learning sessions table — tracks study/learning time."""
-
-    __tablename__ = "learning_sessions"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), nullable=False, index=True
-    )
-    topic: Mapped[str] = mapped_column(String(300), nullable=False)
-    duration: Mapped[int] = mapped_column(
-        Integer, nullable=False, comment="Duration in minutes"
-    )
-    notes: Mapped[str] = mapped_column(Text, nullable=True, default="")
+# Re-export from canonical locations (Sprint_9.md naming)
+from .session_model import LearningSession, SessionNote  # noqa: F401
+from .topic_model import Topic  # noqa: F401

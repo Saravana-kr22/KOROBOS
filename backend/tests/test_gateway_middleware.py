@@ -16,8 +16,21 @@ from httpx import ASGITransport, AsyncClient
 _test_dir = Path(__file__).resolve().parent
 _backend_root = _test_dir.parent
 _gateway_path = str(_backend_root / "gateway" / "api-gateway")
-if _gateway_path not in sys.path:
-    sys.path.insert(0, _gateway_path)
+
+if _gateway_path in sys.path:
+    sys.path.remove(_gateway_path)
+sys.path.insert(0, _gateway_path)
+
+# Clear any cached app modules ONLY IF they are from a different service
+_current_app_path = ""
+if "app" in sys.modules:
+    _app_mod = sys.modules["app"]
+    _current_app_path = getattr(_app_mod, "__file__", "") or ""
+
+if "api-gateway" not in _current_app_path:
+    _to_remove = [k for k in sys.modules if k.startswith("app")]
+    for mod in _to_remove:
+        del sys.modules[mod]
 
 # Import the gateway app using importlib to avoid namespace collision
 _app_module = importlib.import_module("app.main")

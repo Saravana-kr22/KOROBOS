@@ -10,7 +10,6 @@ import asyncio
 import logging
 from uuid import UUID
 
-import google.generativeai as genai
 from app.events.events import AIInteractionCompletedEvent
 from app.repositories.repository import AIRepository
 from app.schemas.schema import AIPromptRequest
@@ -27,8 +26,26 @@ _SYSTEM_PROMPTS = {
         "Summarize the given note in 2–3 sentences and list up to 3 key takeaways."
     ),
     "recommendation": (
-        "You are a learning coach. "
-        "Suggest 3 concrete next steps based on the user's activity."
+        "You are an expert learning coach. "
+        "Analyze the user's study topics and duration. "
+        "Suggest 3 concrete next steps, identify potential knowledge gaps, "
+        "and suggest the most productive times for future study based on their history."
+    ),
+    "gap_analysis": (
+        "You are a learning gap analyst. "
+        "Analyze the user's learning history to identify gaps. "
+        "For the given topic, identify: 1) concepts likely missed or "
+        "underexplored, 2) weak prerequisite knowledge, "
+        "3) areas to revisit for deeper understanding. Be actionable."
+    ),
+    "study_optimization": (
+        "You are a study optimization coach. "
+        "Based on the user's study patterns (session frequency, duration, topics), "
+        "suggest optimal study strategies including: "
+        "1) ideal session length and frequency for this topic, "
+        "2) spaced repetition schedule recommendations, "
+        "3) complementary topics to study alongside. "
+        "Ground suggestions in evidence-based learning science."
     ),
     "assistant": "You are a helpful assistant. Answer the user's question clearly.",
 }
@@ -53,6 +70,8 @@ def _call_gemini(prompt: str, interaction_type: str) -> str:
             f"[AI placeholder — set GEMINI_API_KEY to enable real responses] "
             f"Interaction type: {interaction_type}."
         )
+
+    import google.generativeai as genai  # lazy: only needed when key is set
 
     genai.configure(api_key=settings.gemini_api_key)
     system_prompt = _SYSTEM_PROMPTS.get(interaction_type, _SYSTEM_PROMPTS["assistant"])

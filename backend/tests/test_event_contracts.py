@@ -64,6 +64,25 @@ EVENT_SAMPLES = {
         "duration": 45,
         "notes": "Studied consumer groups",
     },
+    "learning.session.started": {
+        "session_id": "session-123",
+        "user_id": "user-123",
+        "topic": "Kafka Basics",
+        "start_time": "2026-03-20T10:00:00Z",
+    },
+    "learning.session.completed": {
+        "session_id": "session-123",
+        "user_id": "user-123",
+        "topic": "Kafka Basics",
+        "duration": 45,
+        "start_time": "2026-03-20T10:00:00Z",
+        "end_time": "2026-03-20T10:45:00Z",
+    },
+    "learning.topic.created": {
+        "topic_id": "topic-123",
+        "user_id": "user-123",
+        "name": "Kafka Basics",
+    },
     "meal.logged": {
         "log_id": "meal-123",
         "user_id": "user-123",

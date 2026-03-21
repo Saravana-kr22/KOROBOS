@@ -20,6 +20,7 @@ from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.consumer import BaseEventConsumer
 from backend.shared.messaging.schemas import BaseEvent
 from backend.workers.event_transforms import (
+    search_document_from_learning_payload,
     search_document_from_payload,
     search_document_from_record_payload,
 )
@@ -52,6 +53,21 @@ class SearchEventConsumer(BaseEventConsumer):
             record_id = event.payload.get("record_id")
             if record_id:
                 await asyncio.to_thread(self._delete_document, record_id, "records")
+
+        # Handle learning events
+        elif event.event_type in {
+            "learning.session.logged",
+            "learning.session.completed",
+        }:
+            document = search_document_from_learning_payload(
+                event.event_type, event.payload
+            )
+            await asyncio.to_thread(self._upsert_documents, [document], "learning")
+        elif event.event_type == "learning.topic.created":
+            document = search_document_from_learning_payload(
+                event.event_type, event.payload
+            )
+            await asyncio.to_thread(self._upsert_documents, [document], "learning")
 
         else:
             logger.debug("Ignoring non-search event_type: %s", event.event_type)

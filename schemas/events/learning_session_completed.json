@@ -1,0 +1,15 @@
+{
+  "event_type": "learning.session.completed",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": ["session_id", "user_id", "topic", "duration"],
+  "payload_properties": {
+    "session_id": { "type": "string" },
+    "user_id": { "type": "string" },
+    "topic": { "type": "string" },
+    "duration": { "type": "number" },
+    "start_time": { "type": "string" },
+    "end_time": { "type": "string" }
+  },
+  "allow_additional_payload": true
+}

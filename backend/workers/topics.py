@@ -16,6 +16,9 @@ ANALYTICS_TOPICS = (
     "habit.completed",
     "habit.streak.updated",
     "learning.session.logged",
+    "learning.session.started",
+    "learning.session.completed",
+    "learning.topic.created",
     "meal.logged",
     "workout.logged",
     "user.registered",
@@ -25,6 +28,9 @@ ANALYTICS_TOPICS = (
     "record.created",
     "record.updated",
     "record.deleted",
+    "learning.session.logged",
+    "learning.session.completed",
+    "learning.topic.created",
 )
 
 NOTIFICATION_TOPICS = ("habit.completed", "habit.reminder.due")
@@ -36,12 +42,17 @@ SEARCH_TOPICS = (
     "record.created",
     "record.updated",
     "record.deleted",
+    "learning.session.logged",
+    "learning.session.completed",
+    "learning.topic.created",
 )
 
 AI_TOPICS = (
     "note.created",
     "note.updated",
     "learning.session.logged",
+    "learning.session.completed",
+    "learning.topic.created",
     "record.created",
     "record.updated",
     "habit.completed",

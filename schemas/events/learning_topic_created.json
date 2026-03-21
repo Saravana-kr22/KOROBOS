@@ -1,0 +1,12 @@
+{
+  "event_type": "learning.topic.created",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": ["topic_id", "user_id", "name"],
+  "payload_properties": {
+    "topic_id": { "type": "string" },
+    "user_id": { "type": "string" },
+    "name": { "type": "string" }
+  },
+  "allow_additional_payload": true
+}
