@@ -159,3 +159,10 @@ class RecordListResponse(BaseModel):
     page: int
     limit: int
     pages: int
+
+
+class DatabaseStatsResponse(BaseModel):
+    """Database statistics response."""
+
+    total_databases: int
+    records_created_today: int

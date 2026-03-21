@@ -49,17 +49,17 @@ Mobile users must be able to:
 
 # 3. Architecture
 
-Client (Web / React Native)
-↓
-API Gateway
-↓
-Health Service
-↓
-PostgreSQL
-↓
-Event Bus
-↓
-Consumers
+        Client (Web / React Native)
+        ↓
+        API Gateway
+        ↓
+        Health Service
+        ↓
+        PostgreSQL
+        ↓
+        Event Bus
+        ↓
+        Consumers
 
 Analytics Service
 AI Service
@@ -81,14 +81,14 @@ Health Tracking System includes:
 
 # 5. Technology Stack
 
-Backend: FastAPI
-Database: PostgreSQL
-ORM: SQLAlchemy
-Migration: Alembic
-Cache: Redis
+Backend: FastAPI\
+Database: PostgreSQL\
+ORM: SQLAlchemy\
+Migration: Alembic\
+Cache: Redis\
 Event Bus: Kafka
 
-Frontend Web: React / Next.js
+Frontend Web: React / Next.js\
 Frontend Mobile: React Native
 
 ---
@@ -97,29 +97,29 @@ Frontend Mobile: React Native
 
 backend/services/health-service/
 
-app/
-main.py
-api/health_routes.py
-services/meal_service.py
-services/workout_service.py
-services/calorie_service.py
-repositories/meal_repository.py
-repositories/workout_repository.py
-models/meal_model.py
-models/workout_model.py
-schemas/health_schema.py
-events/health_events.py
-config/settings.py
+        app/
+            main.py
+            api/health_routes.py
+            services/meal_service.py
+            services/workout_service.py
+            services/calorie_service.py
+            repositories/meal_repository.py
+            repositories/workout_repository.py
+            models/meal_model.py
+            models/workout_model.py
+            schemas/health_schema.py
+            events/health_events.py
+            config/settings.py
 
-Dockerfile
-requirements.txt
+        Dockerfile
+        requirements.txt
 
 ---
 
 # 7. Core Entities
 
-meals
-workouts
+meals\
+workouts\
 daily_health_stats
 
 ---
@@ -128,67 +128,67 @@ daily_health_stats
 
 Table: meals
 
-id UUID
-user_id UUID
-food_name TEXT
-calories INT
-protein INT
-carbs INT
-fat INT
-logged_at TIMESTAMP
+        id UUID
+        user_id UUID
+        food_name TEXT
+        calories INT
+        protein INT
+        carbs INT
+        fat INT
+        logged_at TIMESTAMP
 
 ---
 
 Table: workouts
 
-id UUID
-user_id UUID
-type TEXT
-duration_minutes INT
-calories_burned INT
-logged_at TIMESTAMP
+        id UUID
+        user_id UUID
+        type TEXT
+        duration_minutes INT
+        calories_burned INT
+        logged_at TIMESTAMP
 
 ---
 
 Table: daily_health_stats
 
-user_id UUID
-date DATE
-total_calories INT
-calories_burned INT
-net_calories INT
+        user_id UUID
+        date DATE
+        total_calories INT
+        calories_burned INT
+        net_calories INT
 
 ---
 
 # 9. Meal Logging Flow
 
-User logs meal
-↓
-API request
-↓
-validate input
-↓
-store meal
-↓
-update daily stats
-↓
-emit event
+        User logs meal
+        ↓
+        API request
+        ↓
+        validate input
+        ↓
+        store meal
+        ↓
+        update daily stats
+        ↓
+        emit event
 
 ---
 
 # 10. Workout Logging Flow
 
-User logs workout
-↓
-API request
-↓
-store workout
-↓
-update calories burned
-↓
-update daily stats
-↓
-emit event
+        User logs workout
+        ↓
+        API request
+        ↓
+        store workout
+        ↓
+        update calories burned
+        ↓
+        update daily stats
+        ↓
+        emit event
 
 ---
 
@@ -212,11 +212,13 @@ GET /health/daily
 
 Response:
 
+```json
 {
-"calories_consumed": 2000,
-"calories_burned": 500,
-"net_calories": 1500
+  "calories_consumed": 2000,
+  "calories_burned": 500,
+  "net_calories": 1500
 }
+```
 
 ---
 
@@ -234,10 +236,10 @@ Mobile features:
 
 # 14. API Endpoints
 
-POST /health/meals
+POST /health/meals\
 GET /health/meals
 
-POST /health/workouts
+POST /health/workouts\
 GET /health/workouts
 
 GET /health/daily
@@ -248,19 +250,21 @@ GET /health/daily
 
 Events:
 
-meal.logged
-workout.logged
+meal.logged\
+workout.logged\
 health.stats.updated
 
 Example:
 
+```json
 {
-"event_type": "meal.logged",
-"payload": {
-"user_id": "...",
-"calories": 500
+  "event_type": "meal.logged",
+  "payload": {
+    "user_id": "...",
+    "calories": 500
+  }
 }
-}
+```
 
 ---
 

@@ -119,6 +119,14 @@ EVENT_SAMPLES = {
         "calories_burned": 500,
         "net_calories": 1500,
     },
+    "dashboard.updated": {
+        "user_id": "user-123",
+        "date": "2026-03-22",
+        "productivity_score": 78,
+        "habits_completed": 5,
+        "learning_minutes": 45,
+        "calories_balance": 1500,
+    },
 }
 
 DLQ_SAMPLE = {

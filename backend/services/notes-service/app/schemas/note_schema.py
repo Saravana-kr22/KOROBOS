@@ -62,3 +62,8 @@ class NoteLinkResponse(BaseModel):
     target_note_id: UUID
 
     model_config = {"from_attributes": True}
+
+
+class NoteStatsResponse(BaseModel):
+    notes_created_today: int
+    total_notes: int

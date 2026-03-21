@@ -65,3 +65,10 @@ GRAPH_TOPICS = (
     "note.link.created",
     "note.deleted",
 )
+
+DASHBOARD_TOPICS = (
+    "habit.completed",
+    "learning.session.completed",
+    "meal.logged",
+    "workout.logged",
+)

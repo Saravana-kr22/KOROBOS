@@ -1,0 +1,15 @@
+{
+  "event_type": "dashboard.updated",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "required_payload_fields": ["user_id", "date", "productivity_score"],
+  "payload_properties": {
+    "user_id": { "type": "string" },
+    "date": { "type": "string" },
+    "productivity_score": { "type": "integer" },
+    "habits_completed": { "type": "integer" },
+    "learning_minutes": { "type": "integer" },
+    "calories_balance": { "type": "integer" }
+  },
+  "allow_additional_payload": true
+}
