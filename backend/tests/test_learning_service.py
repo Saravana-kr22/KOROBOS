@@ -16,6 +16,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
+from sqlalchemy.orm import configure_mappers
 
 # Ensure learning-service path is in sys.path for imports
 _test_dir = Path(__file__).resolve().parent
@@ -81,6 +82,15 @@ LearningTopicCreatedEvent = importlib.import_module(
 
 TimerService = importlib.import_module("app.services.timer_service").TimerService
 LearningService = importlib.import_module("app.services.service_logic").LearningService
+
+# Configure mappers to catch relationship resolution issues before tests run.
+try:
+    configure_mappers()
+except Exception as e:
+    msg = f"ERROR: SQLAlchemy mapper configuration failed: {e}"
+    print(msg)
+    # Fail early if mapper configuration has serious issues
+    raise
 
 
 def _utcnow():

@@ -16,6 +16,7 @@ from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import pytest
+from sqlalchemy.orm import configure_mappers
 
 # Ensure habit-service path is in sys.path for imports
 _test_dir = Path(__file__).resolve().parent
@@ -63,6 +64,15 @@ ScheduleService = importlib.import_module(
 StreakService = importlib.import_module("app.services.streak_service").StreakService
 _habit_service_logic_module = importlib.import_module("app.services.service_logic")
 HabitService = _habit_service_logic_module.HabitService
+
+# Configure mappers to catch relationship resolution issues before tests run.
+try:
+    configure_mappers()
+except Exception as e:
+    msg = f"ERROR: SQLAlchemy mapper configuration failed: {e}"
+    print(msg)
+    # Fail early if mapper configuration has serious issues
+    raise
 
 
 @pytest.mark.anyio

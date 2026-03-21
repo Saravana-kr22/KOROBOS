@@ -18,6 +18,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import UUID, uuid4
 
 import pytest
+from sqlalchemy.orm import configure_mappers
 
 # ── path setup ──────────────────────────────────────────────────────────────
 _test_dir = Path(__file__).resolve().parent
@@ -51,6 +52,15 @@ with patch("backend.shared.messaging.producer.get_producer", new=AsyncMock()):
 
     app_module = importlib.import_module("app.main")
     app = app_module.app
+
+# Configure mappers to catch relationship resolution issues before tests run.
+try:
+    configure_mappers()
+except Exception as e:
+    msg = f"ERROR: SQLAlchemy mapper configuration failed: {e}"
+    print(msg)
+    # Fail early if mapper configuration has serious issues
+    raise
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 USER_ID = str(uuid4())
