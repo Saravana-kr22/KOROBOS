@@ -4,7 +4,7 @@
 
 import { useRouter } from "expo-router";
 import React from "react";
-import DatabasesListScreen from "../../src/screens/DatabasesListScreen";
+import { DatabasesListScreen } from "../../src/screens/DatabasesListScreen";
 
 export default function DatabasesPage() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default function DatabasesPage() {
   };
   return (
     <DatabasesListScreen
-      navigation={navigation}
+      navigation={navigation as any}
       route={{ params: {} } as any}
     />
   );

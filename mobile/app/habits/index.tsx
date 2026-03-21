@@ -16,7 +16,5 @@ export default function HabitsPage() {
     },
     goBack: () => router.back(),
   };
-  return (
-    <HabitsListScreen navigation={navigation} route={{ params: {} } as any} />
-  );
+  return <HabitsListScreen navigation={navigation} />;
 }

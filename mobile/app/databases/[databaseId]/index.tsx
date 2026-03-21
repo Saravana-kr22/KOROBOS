@@ -4,7 +4,7 @@
 
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import DatabaseDetailScreen from "../../../src/screens/DatabaseDetailScreen";
+import { DatabaseDetailScreen } from "../../../src/screens/DatabaseDetailScreen";
 
 export default function DatabaseDetailPage() {
   const router = useRouter();
@@ -20,5 +20,5 @@ export default function DatabaseDetailPage() {
     setOptions: (_opts: any) => {},
   };
   const route = { params: { databaseId } } as any;
-  return <DatabaseDetailScreen navigation={navigation} route={route} />;
+  return <DatabaseDetailScreen navigation={navigation as any} route={route} />;
 }

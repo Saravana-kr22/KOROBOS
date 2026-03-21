@@ -4,20 +4,24 @@
  */
 
 import { useRouter } from "expo-router";
-import React from "react";
+import * as SecureStore from "expo-secure-store";
+import React, { useEffect, useState } from "react";
 import NotesListScreen from "../../src/screens/NotesListScreen";
+import type { Note } from "../../src/types/notes";
 
 export default function NotesPage() {
   const router = useRouter();
-  const navigation = {
-    navigate: (name: string, params?: any) => {
-      if (name === "NoteEditor") {
-        router.push(`/notes/${params?.noteId ?? "new"}`);
-      }
-    },
-    goBack: () => router.back(),
-  };
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    SecureStore.getItemAsync("auth_token").then((t) => setToken(t ?? ""));
+  }, []);
+
   return (
-    <NotesListScreen navigation={navigation} route={{ params: {} } as any} />
+    <NotesListScreen
+      token={token}
+      onSelectNote={(note: Note) => router.push(`/notes/${note.id}`)}
+      onCreateNote={() => router.push("/notes/new")}
+    />
   );
 }
