@@ -446,6 +446,7 @@ async def test_log_session_publishes_event():
     svc = LearningService(db_session)
     svc.repo = AsyncMock()
     svc.repo.create = AsyncMock(return_value=session)
+    svc.topic_repo = AsyncMock()
 
     with patch(
         "app.services.service_logic.publish_event", new=AsyncMock()

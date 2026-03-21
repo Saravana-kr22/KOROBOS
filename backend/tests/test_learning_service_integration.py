@@ -18,6 +18,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import UUID, uuid4
 
 import pytest
+from prometheus_client import REGISTRY
 from sqlalchemy.orm import configure_mappers
 
 # ── path setup ──────────────────────────────────────────────────────────────
@@ -61,6 +62,28 @@ except Exception as e:
     print(msg)
     # Fail early if mapper configuration has serious issues
     raise
+
+# ── prometheus cleanup ──────────────────────────────────────────────────────
+# Clear Prometheus registry before tests to avoid "Duplicated timeseries" errors
+# when running multiple tests in the same process
+
+
+@pytest.fixture(autouse=True)
+def cleanup_prometheus():
+    """Clear Prometheus metrics between tests to avoid registry collisions."""
+    yield
+    # Remove all collectors except those we want to keep
+    collectors_to_remove = [
+        c
+        for c in list(REGISTRY._collector_to_names.keys())
+        if "learning_sessions" in str(c)
+    ]
+    for collector in collectors_to_remove:
+        try:
+            REGISTRY.unregister(collector)
+        except Exception:
+            pass  # Already unregistered
+
 
 # ── helpers ─────────────────────────────────────────────────────────────────
 USER_ID = str(uuid4())
