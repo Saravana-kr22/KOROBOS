@@ -57,6 +57,8 @@ AI_TOPICS = (
     "record.updated",
     "habit.completed",
     "habit.streak.updated",
+    "meal.logged",
+    "workout.logged",
 )
 
 GRAPH_TOPICS = (

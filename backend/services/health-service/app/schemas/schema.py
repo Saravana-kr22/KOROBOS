@@ -15,12 +15,17 @@ from pydantic import BaseModel, Field
 
 class MealLogCreate(BaseModel):
     calories: int = Field(..., gt=0)
+    food_name: Optional[str] = Field(None, max_length=500)
+    protein: Optional[int] = Field(None, ge=0, description="Grams")
+    carbs: Optional[int] = Field(None, ge=0, description="Grams")
+    fat: Optional[int] = Field(None, ge=0, description="Grams")
     description: Optional[str] = None
 
 
 class WorkoutLogCreate(BaseModel):
     duration: int = Field(..., gt=0, description="Minutes")
     calories: Optional[int] = Field(None, ge=0)
+    workout_type: Optional[str] = Field(None, max_length=100)
     description: Optional[str] = None
 
 
@@ -31,6 +36,11 @@ class HealthLogResponse(BaseModel):
     calories: Optional[int]
     duration: Optional[int]
     description: Optional[str]
+    food_name: Optional[str]
+    protein: Optional[int]
+    carbs: Optional[int]
+    fat: Optional[int]
+    workout_type: Optional[str]
     created_at: datetime
     updated_at: datetime
 
@@ -47,3 +57,9 @@ class HealthStatsResponse(BaseModel):
     total_workouts: int
     total_calories: int
     total_workout_minutes: int
+
+
+class DailyStatsResponse(BaseModel):
+    calories_consumed: int
+    calories_burned: int
+    net_calories: int

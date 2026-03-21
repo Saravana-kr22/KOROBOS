@@ -17,3 +17,8 @@ class MealLoggedEvent(BaseEvent):
 class WorkoutLoggedEvent(BaseEvent):
     event_type: str = "workout.logged"
     source_service: str = "health-service"
+
+
+class HealthStatsUpdatedEvent(BaseEvent):
+    event_type: str = "health.stats.updated"
+    source_service: str = "health-service"

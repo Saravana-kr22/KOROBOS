@@ -112,6 +112,13 @@ EVENT_SAMPLES = {
         "note_id": "note-123",
         "user_id": "user-123",
     },
+    "health.stats.updated": {
+        "user_id": "user-123",
+        "date": "2026-03-22",
+        "calories_consumed": 2000,
+        "calories_burned": 500,
+        "net_calories": 1500,
+    },
 }
 
 DLQ_SAMPLE = {

@@ -260,4 +260,45 @@ def ai_prompt_for_event(
             },
         }
 
+    if event_type == "meal.logged":
+        food_name = payload.get("food_name", "meal")
+        calories = payload.get("calories", 0)
+        protein = payload.get("protein", "unknown")
+        carbs = payload.get("carbs", "unknown")
+        fat = payload.get("fat", "unknown")
+        return {
+            "interaction_type": "recommendation",
+            "prompt": (
+                f"A user just logged a meal: {food_name} ({calories} kcal). "
+                f"Macros: protein={protein}g, carbs={carbs}g, fat={fat}g. "
+                "Provide 2-3 balanced nutrition recommendations for their next "
+                "meal based on this intake."
+            ),
+            "metadata_json": {
+                "source_event": event_type,
+                "food_name": food_name,
+                "calories": calories,
+            },
+        }
+
+    if event_type == "workout.logged":
+        workout_type = payload.get("workout_type", "workout")
+        duration = payload.get("duration", 0)
+        calories_burned = payload.get("calories", 0)
+        return {
+            "interaction_type": "recommendation",
+            "prompt": (
+                f"A user just completed a {workout_type} workout for "
+                f"{duration} minutes (~{calories_burned} kcal burned). "
+                "Suggest 2-3 ways to improve their workout routine or "
+                "cross-training opportunities."
+            ),
+            "metadata_json": {
+                "source_event": event_type,
+                "workout_type": workout_type,
+                "duration": duration,
+                "calories_burned": calories_burned,
+            },
+        }
+
     return None
