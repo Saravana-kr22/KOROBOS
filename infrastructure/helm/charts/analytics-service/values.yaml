@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/saravana-kr22/korobos/analytics-service
   pullPolicy: IfNotPresent
-  tag: "sha-e39f4b9"
+  tag: "sha-cb59059"
 
 nameOverride: ""
 fullnameOverride: ""
