@@ -23,8 +23,12 @@ ANALYTICS_SERVICE_APP = os.path.join(BACKEND_ROOT, "services", "analytics-servic
 
 # Add base paths - ORDER MATTERS: PROJECT_ROOT first so "backend" imports work
 # then BACKEND_ROOT for shared imports. Service-specific "app" imports
-# are handled within the individual test modules.
+# are handled within the individual test modules where possible,
+# but we add them here at lower priority for overall collection.
 for path in [
+    LEARNING_SERVICE_APP,
+    ANALYTICS_SERVICE_APP,
+    GATEWAY_APP,
     PROJECT_ROOT,
     BACKEND_ROOT,
 ]:

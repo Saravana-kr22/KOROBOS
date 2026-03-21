@@ -16,9 +16,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
-from sqlalchemy.orm import configure_mappers
-
-from backend.shared.database.base_model import Base
 
 # Ensure learning-service path is in sys.path for imports
 _test_dir = Path(__file__).resolve().parent
@@ -42,11 +39,6 @@ if "learning-service" not in _current_app_path:
     _to_remove = [k for k in sys.modules if k.startswith("app")]
     for mod in _to_remove:
         del sys.modules[mod]
-
-    # Clear SQLAlchemy registry to avoid table redefinition errors
-    # and registry pollution across service tests in CI.
-    Base.registry._class_registry.clear()
-    Base.metadata.clear()
 
 # RE-ADDED: Namespace collision with analytics-service requires clearing "app"
 # but only if switching services to avoid metadata conflicts.
@@ -89,15 +81,6 @@ LearningTopicCreatedEvent = importlib.import_module(
 
 TimerService = importlib.import_module("app.services.timer_service").TimerService
 LearningService = importlib.import_module("app.services.service_logic").LearningService
-
-# Configure mappers to catch relationship resolution issues before tests run.
-try:
-    configure_mappers()
-except Exception as e:
-    msg = f"ERROR: SQLAlchemy mapper configuration failed: {e}"
-    print(msg)
-    # Fail early if mapper configuration has serious issues
-    raise
 
 
 def _utcnow():
