@@ -12,7 +12,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
-  FlatList,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -22,35 +21,25 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LineChart } from "react-native-chart-kit";
 import { useFocusEffect } from "@react-navigation/native";
-import { dashboardApi } from "../services/dashboardApi";
-import {
-  DailyMetrics,
-  OverviewResponse,
-  WeeklyResponse,
-} from "../types/dashboard";
+import { analyticsApi, AnalyticsOverview } from "../services/analyticsApi";
 
 const DashboardScreen = () => {
-  const [overview, setOverview] = useState<OverviewResponse | null>(null);
-  const [weekly, setWeekly] = useState<WeeklyResponse | null>(null);
+  const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isStale, setIsStale] = useState(false);
 
   const loadDashboard = useCallback(async () => {
     try {
-      const [overviewData, weeklyData] = await Promise.all([
-        dashboardApi.getOverview(),
-        dashboardApi.getWeekly(),
-      ]);
+      const overviewData = await analyticsApi.getOverview();
       setOverview(overviewData);
-      setWeekly(weeklyData);
       setIsStale(false);
 
       // Cache to AsyncStorage on success
       try {
         await AsyncStorage.setItem(
           "korobos:dashboard_cache",
-          JSON.stringify({ overview: overviewData, weekly: weeklyData }),
+          JSON.stringify({ overview: overviewData }),
         );
       } catch (cacheErr) {
         console.warn("Failed to cache dashboard data:", cacheErr);
@@ -61,10 +50,8 @@ const DashboardScreen = () => {
       try {
         const cached = await AsyncStorage.getItem("korobos:dashboard_cache");
         if (cached) {
-          const { overview: cachedOverview, weekly: cachedWeekly } =
-            JSON.parse(cached);
+          const { overview: cachedOverview } = JSON.parse(cached);
           setOverview(cachedOverview);
-          setWeekly(cachedWeekly);
           setIsStale(true);
         }
       } catch (cacheErr) {
@@ -115,7 +102,7 @@ const DashboardScreen = () => {
       {/* Overview Card */}
       {overview && (
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Today's Summary</Text>
+          <Text style={styles.cardTitle}>Productivity Overview</Text>
           <View style={styles.overviewGrid}>
             <View style={styles.metricBox}>
               <Text
@@ -126,17 +113,17 @@ const DashboardScreen = () => {
               >
                 {overview.productivity_score}
               </Text>
-              <Text style={styles.metricLabel}>Productivity Score</Text>
+              <Text style={styles.metricLabel}>Score</Text>
             </View>
             <View style={styles.metricBox}>
               <Text style={styles.metricValue}>
-                {overview.habits_completed}
+                {overview.habits.completion_rate.toFixed(0)}%
               </Text>
               <Text style={styles.metricLabel}>Habits</Text>
             </View>
             <View style={styles.metricBox}>
               <Text style={styles.metricValue}>
-                {overview.learning_minutes}
+                {(overview.learning.learning_hours * 60).toFixed(0)}
               </Text>
               <Text style={styles.metricLabel}>Learning (min)</Text>
             </View>
@@ -145,67 +132,27 @@ const DashboardScreen = () => {
                 style={[
                   styles.metricValue,
                   {
-                    color:
-                      overview.calories_balance > 0 ? "#dc3545" : "#28a745",
+                    color: overview.health.balance > 0 ? "#dc3545" : "#28a745",
                   },
                 ]}
               >
-                {overview.calories_balance}
+                {Math.round(overview.health.balance)}
               </Text>
               <Text style={styles.metricLabel}>Cal Balance</Text>
             </View>
           </View>
-        </View>
-      )}
-
-      {/* Weekly Section */}
-      {weekly && (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Weekly Trends</Text>
-          <LineChart
-            data={{
-              labels: weekly.days.map((day) => day.date.slice(5)), // MM-DD format
-              datasets: [
-                {
-                  data: weekly.days.map((day) => day.productivity_score),
-                  color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`, // #007bff
-                  strokeWidth: 2,
-                },
-              ],
-            }}
-            width={Dimensions.get("window").width - 48}
-            height={220}
-            chartConfig={{
-              backgroundColor: "#f8f9fa",
-              backgroundGradientFrom: "#f8f9fa",
-              backgroundGradientTo: "#f8f9fa",
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: { borderRadius: 8 },
-              propsForDots: {
-                r: "4",
-                strokeWidth: "2",
-                stroke: "#007bff",
-              },
-            }}
-            yAxisLabel=""
-            yAxisSuffix=""
-            fromZero={true}
-            bezier
-            style={{ marginVertical: 16, borderRadius: 8 }}
-          />
-          <View style={styles.weeklyStats}>
-            <Text style={styles.weeklyStatText}>
-              Avg Score:{" "}
+          <View style={styles.additionalMetrics}>
+            <Text style={styles.additionalLabel}>
+              Streak:{" "}
               <Text style={{ fontWeight: "600" }}>
-                {weekly.avg_productivity_score}
-              </Text>
+                {overview.habits.current_streak}
+              </Text>{" "}
+              days
             </Text>
-            <Text style={styles.weeklyStatText}>
-              Total Learning:{" "}
+            <Text style={styles.additionalLabel}>
+              Health:{" "}
               <Text style={{ fontWeight: "600" }}>
-                {weekly.total_learning_minutes} min
+                {Math.round(overview.health.intake)} kcal
               </Text>
             </Text>
           </View>
@@ -297,13 +244,13 @@ const styles = StyleSheet.create({
     minWidth: 50,
     textAlign: "right",
   },
-  weeklyStats: {
-    marginTop: 12,
-    paddingTop: 12,
+  additionalMetrics: {
+    marginTop: 16,
+    paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: "#dee2e6",
   },
-  weeklyStatText: {
+  additionalLabel: {
     fontSize: 13,
     color: "#666",
     marginVertical: 4,
