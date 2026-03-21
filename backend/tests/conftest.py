@@ -62,37 +62,29 @@ def pytest_collection_modifyitems(items):
 
     Run all tests from one service before moving to another service,
     or use per-test module isolation.
-    """
-    # Group tests by their file
-    from collections import defaultdict
 
-    by_file = defaultdict(list)
+    Uses filename matching (not absolute paths) so ordering works in
+    both local and CI environments.
+    """
+    import os
+
+    learning_tests = []
+    learning_integration_tests = []
+    analytics_tests = []
+    other_tests = []
+
     for item in items:
-        by_file[item.fspath.strpath].append(item)
+        basename = os.path.basename(item.fspath.strpath)
+        if basename == "test_learning_service.py":
+            learning_tests.append(item)
+        elif basename == "test_learning_service_integration.py":
+            learning_integration_tests.append(item)
+        elif basename == "test_analytics_integration.py":
+            analytics_tests.append(item)
+        else:
+            other_tests.append(item)
 
     # Reorder: learning service tests first, then other tests, then analytics
-    learning_tests = by_file.get(
-        "/home/grl/Documents/KOROBOS/backend/tests/test_learning_service.py", []
-    )
-    learning_integration_tests = by_file.get(
-        "/home/grl/Documents/KOROBOS/backend/tests/test_learning_service_integration.py",
-        [],
-    )
-    analytics_tests = by_file.get(
-        "/home/grl/Documents/KOROBOS/backend/tests/test_analytics_integration.py", []
-    )
-    other_tests = [
-        item
-        for item in items
-        if item.fspath.strpath
-        not in [
-            "/home/grl/Documents/KOROBOS/backend/tests/test_learning_service.py",
-            "/home/grl/Documents/KOROBOS/backend/tests/test_learning_service_integration.py",
-            "/home/grl/Documents/KOROBOS/backend/tests/test_analytics_integration.py",
-        ]
-    ]
-
-    # Rebuild items list with new order
     items[:] = (
         learning_tests + learning_integration_tests + other_tests + analytics_tests
     )
