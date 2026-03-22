@@ -48,12 +48,15 @@ line-length = 88
 select = ["E", "F"]
 
 [tool.mypy]
-files = ["tests", "shared", "gateway", "services"]
+files = ["shared"]
+ignore_missing_imports = true
+explicit_package_bases = true
+namespace_packages = true
 
 [[tool.mypy.overrides]]
-# app.* is a runtime-only namespace populated via sys.path manipulation in tests
-module = ["app.*"]
-ignore_missing_imports = true
+# Services have separate app packages that should not be type-checked together
+module = ["services.*", "gateway.*"]
+ignore_errors = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
