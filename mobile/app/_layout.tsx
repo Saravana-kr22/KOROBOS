@@ -63,6 +63,13 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
+        name="search"
+        options={{
+          title: "Search",
+          tabBarLabel: "Search",
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
           href: null, // hide from tab bar — index just redirects

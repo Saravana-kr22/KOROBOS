@@ -45,6 +45,9 @@ SEARCH_TOPICS = (
     "learning.session.logged",
     "learning.session.completed",
     "learning.topic.created",
+    "habit.created",
+    "meal.logged",
+    "workout.logged",
 )
 
 AI_TOPICS = (

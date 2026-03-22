@@ -83,6 +83,10 @@ def test_notification_transform_formats_habit_completion():
 
 
 def test_search_transform_preserves_searchable_note_fields():
+    import time
+
+    before_ts = int(time.time())
+
     document = search_document_from_payload(
         {
             "note_id": "note-123",
@@ -93,14 +97,20 @@ def test_search_transform_preserves_searchable_note_fields():
         }
     )
 
-    assert document == {
-        "id": "note-123",
-        "note_id": "note-123",
-        "user_id": "user-123",
-        "title": "Deep Work",
-        "content_md": "Focus block notes",
-        "tags": ["focus", "planning"],
-    }
+    after_ts = int(time.time())
+
+    # Verify core fields
+    assert document["id"] == "note-123"
+    assert document["note_id"] == "note-123"
+    assert document["user_id"] == "user-123"
+    assert document["title"] == "Deep Work"
+    assert document["content_md"] == "Focus block notes"
+    assert document["tags"] == ["focus", "planning"]
+
+    # Verify created_at is a reasonable Unix timestamp
+    assert "created_at" in document
+    assert isinstance(document["created_at"], int)
+    assert before_ts <= document["created_at"] <= after_ts
 
 
 def test_ai_transform_builds_prompts_for_note_updates_and_learning_events():

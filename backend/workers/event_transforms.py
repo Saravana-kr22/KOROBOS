@@ -8,7 +8,23 @@ Licensed under the GNU Affero General Public License v3.
 Pure event-to-action transforms used by worker handlers.
 """
 
+import time
+from datetime import datetime
 from typing import Any
+
+
+def _unix_ts(payload: dict[str, Any]) -> int:
+    """Extract created_at from payload as Unix timestamp. Falls back to now."""
+    val = payload.get("created_at")
+    if val is None:
+        return int(time.time())
+    if isinstance(val, (int, float)):
+        return int(val)
+    try:
+        dt = datetime.fromisoformat(str(val).replace("Z", "+00:00"))
+        return int(dt.timestamp())
+    except (ValueError, TypeError):
+        return int(time.time())
 
 
 def analytics_metric_for_event(
@@ -82,6 +98,7 @@ def search_document_from_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "title": payload.get("title", ""),
         "content_md": payload.get("content_md", ""),
         "tags": payload.get("tags", []),
+        "created_at": _unix_ts(payload),
     }
 
 
@@ -102,6 +119,7 @@ def search_document_from_record_payload(payload: dict[str, Any]) -> dict[str, An
         "user_id": payload.get("user_id", ""),
         "content": searchable_content,
         "type": "record",
+        "created_at": _unix_ts(payload),
     }
 
 
@@ -116,6 +134,7 @@ def search_document_from_learning_payload(
             "user_id": payload["user_id"],
             "name": payload.get("name", ""),
             "type": "topic",
+            "created_at": _unix_ts(payload),
         }
     # learning.session.logged and learning.session.completed
     return {
@@ -126,7 +145,57 @@ def search_document_from_learning_payload(
         "duration": payload.get("duration", 0),
         "notes": payload.get("notes", ""),
         "type": "session",
+        "created_at": _unix_ts(payload),
     }
+
+
+def search_document_from_habit_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Transform a habit event to a Meilisearch document."""
+    return {
+        "id": payload["habit_id"],
+        "habit_id": payload["habit_id"],
+        "user_id": payload["user_id"],
+        "name": payload.get("name", ""),
+        "description": payload.get("description", ""),
+        "frequency": payload.get("frequency", "daily"),
+        "type": "habit",
+        "created_at": _unix_ts(payload),
+    }
+
+
+def search_document_from_health_payload(
+    event_type: str, payload: dict[str, Any]
+) -> dict[str, Any]:
+    """Transform a health event (meal or workout) to a Meilisearch document."""
+    log_id = payload.get("log_id", "")
+    user_id = payload.get("user_id", "")
+
+    if event_type == "meal.logged":
+        return {
+            "id": log_id,
+            "log_id": log_id,
+            "user_id": user_id,
+            "food_name": payload.get("food_name", ""),
+            "description": payload.get("description", ""),
+            "calories": payload.get("calories", 0),
+            "protein": payload.get("protein"),
+            "carbs": payload.get("carbs"),
+            "fat": payload.get("fat"),
+            "type": "meal",
+            "created_at": _unix_ts(payload),
+        }
+    else:  # workout.logged
+        return {
+            "id": log_id,
+            "log_id": log_id,
+            "user_id": user_id,
+            "workout_type": payload.get("workout_type", ""),
+            "description": payload.get("description", ""),
+            "duration": payload.get("duration", 0),
+            "calories": payload.get("calories", 0),
+            "type": "workout",
+            "created_at": _unix_ts(payload),
+        }
 
 
 def ai_prompt_for_event(

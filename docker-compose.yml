@@ -186,6 +186,7 @@ services:
       - SERVICES_NOTIFICATIONS=http://notification-service:8000
       - SERVICES_AI=http://ai-service:8000
       - SERVICES_DATABASE=http://database-service:8000
+      - SERVICES_SEARCH=http://search-service:8000
       - REDIS_URL=redis://redis:6379/0
       - JWT_SECRET=dev-secret-key
     depends_on:
@@ -198,6 +199,7 @@ services:
       - notification-service
       - ai-service
       - database-service
+      - search-service
       - redis
 
   auth-service:
@@ -451,6 +453,21 @@ services:
         condition: service_started
       kafka-init:
         condition: service_completed_successfully
+
+  search-service:
+    build:
+      context: .
+      dockerfile: backend/services/search-service/Dockerfile
+    ports:
+      - "8010:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - SEARCH_URL=http://meilisearch:7700
+      - SEARCH_API_KEY=masterKey
+      - SERVICE_NAME=search-service
+    depends_on:
+      - redis
+      - meilisearch
 
   analytics-worker:
     build:
