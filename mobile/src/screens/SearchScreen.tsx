@@ -8,13 +8,7 @@
  * Search Screen — unified search across all domains.
  */
 
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  useFocusEffect,
-} from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -32,6 +26,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   searchApi,
   SearchResult,
+  SearchResponse,
   SuggestResponse,
 } from "../services/searchApi";
 
@@ -142,7 +137,7 @@ export default function SearchScreen() {
         !!state.dateFrom || !!state.dateTo || !!state.tags.trim();
 
       try {
-        let response;
+        let response: SearchResponse;
 
         if (hasAdvancedFilters) {
           // Use advanced search when filters are present
@@ -192,7 +187,7 @@ export default function SearchScreen() {
         try {
           const cached = await AsyncStorage.getItem(cacheKey);
           if (cached) {
-            const response = JSON.parse(cached);
+            const response: SearchResponse = JSON.parse(cached);
             setState((prev) => ({
               ...prev,
               results:
