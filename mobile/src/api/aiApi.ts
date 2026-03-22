@@ -49,7 +49,9 @@ export const getInsights = async (
   if (insightType) params.append("insight_type", insightType);
   params.append("limit", limit.toString());
 
-  const response = await apiClient.get(`/ai/insights?${params.toString()}`);
+  const response = await apiClient.get<{
+    data: { insights: Insight[]; total: number };
+  }>(`/ai/insights?${params.toString()}`);
   return response.data;
 };
 
@@ -64,9 +66,9 @@ export const getRecommendations = async (
   if (category) params.append("category", category);
   params.append("limit", limit.toString());
 
-  const response = await apiClient.get(
-    `/ai/recommendations?${params.toString()}`,
-  );
+  const response = await apiClient.get<{
+    data: { recommendations: Recommendation[]; total: number };
+  }>(`/ai/recommendations?${params.toString()}`);
   return response.data;
 };
 
@@ -74,7 +76,7 @@ export const getRecommendations = async (
  * Get aggregated summary of insights and recommendations
  */
 export const getSummary = async (): Promise<Summary> => {
-  const response = await apiClient.get("/ai/summary");
+  const response = await apiClient.get<{ data: Summary }>("/ai/summary");
   return response.data;
 };
 
@@ -91,7 +93,7 @@ export const createPrompt = async (
     | "study_optimization" = "assistant",
   metadataJson?: Record<string, any>,
 ) => {
-  const response = await apiClient.post("/ai/prompt", {
+  const response = await apiClient.post<{ data: unknown }>("/ai/prompt", {
     prompt,
     interaction_type: interactionType,
     metadata_json: metadataJson,
@@ -106,7 +108,7 @@ export const listInteractions = async (
   offset: number = 0,
   limit: number = 50,
 ) => {
-  const response = await apiClient.get(
+  const response = await apiClient.get<{ data: unknown }>(
     `/ai/interactions?offset=${offset}&limit=${limit}`,
   );
   return response.data;
