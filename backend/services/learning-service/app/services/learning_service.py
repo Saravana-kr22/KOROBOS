@@ -9,6 +9,7 @@ Licensed under the GNU Affero General Public License v3.
 from uuid import UUID
 
 from app.events.learning_events import (
+    LearningSessionCompletedEvent,
     LearningSessionLoggedEvent,
     LearningTopicCreatedEvent,
 )
@@ -50,7 +51,24 @@ class LearningService:
             status="completed",
         )
         try:
-            event = LearningSessionLoggedEvent(
+            # Get linked notes for the session
+            session_note_ids = await self.repo.get_session_note_ids(session.id)
+
+            # Publish learning.session.completed event for knowledge graph
+            if data.topic_id:
+                completed_event = LearningSessionCompletedEvent(
+                    payload={
+                        "session_id": str(session.id),
+                        "topic_id": str(data.topic_id),
+                        "user_id": str(user_id),
+                        "session_notes": [str(note_id) for note_id in session_note_ids],
+                        "duration": data.duration,
+                    }
+                )
+                await publish_event(completed_event, key=str(user_id))
+
+            # Also publish session logged event for other consumers
+            logged_event = LearningSessionLoggedEvent(
                 payload={
                     "session_id": str(session.id),
                     "user_id": str(user_id),
@@ -59,7 +77,7 @@ class LearningService:
                     "notes": data.notes or "",
                 }
             )
-            await publish_event(event, key=str(user_id))
+            await publish_event(logged_event, key=str(user_id))
         except Exception:
             pass  # Event failure must not block session creation
         return session

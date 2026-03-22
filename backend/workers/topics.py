@@ -65,8 +65,15 @@ AI_TOPICS = (
 )
 
 GRAPH_TOPICS = (
+    "note.created",
     "note.link.created",
     "note.deleted",
+    "record.created",
+    "habit.created",
+    "learning.topic.created",
+    "learning.session.completed",
+    "meal.logged",
+    "workout.logged",
 )
 
 DASHBOARD_TOPICS = (

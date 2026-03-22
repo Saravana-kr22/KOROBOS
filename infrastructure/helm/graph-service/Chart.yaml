@@ -1,0 +1,16 @@
+apiVersion: v2
+name: graph-service
+description: KOROBOS Knowledge Graph Service Helm Chart
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+
+maintainers:
+  - name: Saravana Perumal K
+    email: saravana@korobos.io
+
+keywords:
+  - korobos
+  - graph
+  - knowledge-graph
+  - microservice
