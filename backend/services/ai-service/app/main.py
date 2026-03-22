@@ -8,11 +8,11 @@ Licensed under the GNU Affero General Public License v3.
 AI Service — intelligent recommendations microservice.
 """
 
-import asyncio
 from contextlib import asynccontextmanager
 
+import redis.asyncio as aioredis
 from app.api.routes import router as api_router
-from app.events.learning_insight_engine import LearningInsightEngine
+from app.config.settings import get_settings
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -21,14 +21,21 @@ from backend.shared.messaging.producer import close_producer, get_producer
 
 logger = get_logger("ai-service")
 
-# Global insight engine instance for lifespan management
-_learning_insight_engine: LearningInsightEngine | None = None
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _learning_insight_engine
-    logger.info("AI Service starting up")
+    """
+    API Service Lifespan Management
+
+    Note: Insight engines are now managed by a dedicated worker process
+    (workers/ai_worker.py) for better scalability and separation of concerns.
+    This lifespan handler only manages API-level resources:
+    - Kafka producer (for API responses, not event processing)
+    - Redis connection pool (for caching)
+    """
+    logger.info("AI Service (API) starting up")
+
+    settings = get_settings()
 
     try:
         await get_producer()
@@ -36,26 +43,25 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.warning(f"Kafka producer not available: {exc}")
 
-    # Start learning insight engine
+    # Initialize Redis connection pool
     try:
-        _learning_insight_engine = LearningInsightEngine()
-        asyncio.create_task(_learning_insight_engine.start())
-        logger.info("Learning insight engine started")
+        app.state.redis = aioredis.from_url(settings.redis_url, decode_responses=True)
+        await app.state.redis.ping()
+        logger.info("Redis connection pool initialized")
     except Exception as exc:
-        logger.warning("Learning insight engine failed to start: %s", exc)
-        _learning_insight_engine = None
+        logger.warning(f"Redis not available: {exc}")
+        app.state.redis = None
+
+    logger.info("AI Service (API) ready")
 
     yield
 
-    # Stop learning insight engine
-    if _learning_insight_engine:
-        try:
-            await _learning_insight_engine.stop()
-            logger.info("Learning insight engine stopped")
-        except Exception as exc:
-            logger.warning("Error stopping learning insight engine: %s", exc)
+    # Close Redis connection
+    if app.state.redis:
+        await app.state.redis.aclose()
+        logger.info("Redis connection pool closed")
 
-    logger.info("AI Service shutting down")
+    logger.info("AI Service (API) shutting down")
     await close_producer()
 
 

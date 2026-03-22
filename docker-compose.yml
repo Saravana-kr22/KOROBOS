@@ -186,7 +186,9 @@ services:
       - SERVICES_NOTIFICATIONS=http://notification-service:8000
       - SERVICES_AI=http://ai-service:8000
       - SERVICES_DATABASE=http://database-service:8000
+      - SERVICES_DASHBOARD=http://dashboard-service:8000
       - SERVICES_SEARCH=http://search-service:8000
+      - SERVICES_GRAPH=http://graph-service:8000
       - REDIS_URL=redis://redis:6379/0
       - JWT_SECRET=dev-secret-key
     depends_on:
@@ -199,7 +201,9 @@ services:
       - notification-service
       - ai-service
       - database-service
+      - dashboard-service
       - search-service
+      - graph-service
       - redis
 
   auth-service:
@@ -415,6 +419,8 @@ services:
       - KAFKA_SASL_PASSWORD=korobos-secret
       - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}  # get a free key at https://aistudio.google.com
+      - AI_ANALYTICS_SERVICE_URL=http://analytics-service:8000
+      - AI_GRAPH_SERVICE_URL=http://graph-service:8000
     volumes:
       - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
@@ -426,6 +432,10 @@ services:
         condition: service_started
       kafka-init:
         condition: service_completed_successfully
+      analytics-service:
+        condition: service_started
+      graph-service:
+        condition: service_started
 
   database-service:
     build:
@@ -572,10 +582,11 @@ services:
   ai-worker:
     build:
       context: .
-      dockerfile: backend/workers/Dockerfile
-    command: ["python", "-m", "backend.workers.ai_worker"]
+      dockerfile: backend/services/ai-service/Dockerfile
+    command: ["python", "-m", "backend.services.ai_service.workers.ai_worker"]
     environment:
       - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
+      - REDIS_URL=redis://redis:6379/0
       - KAFKA_BROKER=kafka:29093
       - KAFKA_SECURITY_PROTOCOL=SASL_SSL
       - KAFKA_SASL_MECHANISM=PLAIN
@@ -587,6 +598,8 @@ services:
       - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       kafka:
         condition: service_started

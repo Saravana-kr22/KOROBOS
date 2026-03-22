@@ -12,6 +12,7 @@ and provides a generic catch-all proxy for remaining services.
 import logging
 
 import httpx
+from app.routes.ai_routes import router as ai_router
 from app.routes.analytics_routes import router as analytics_router
 from app.routes.auth_routes import router as auth_router
 from app.routes.dashboard_routes import router as dashboard_router
@@ -38,6 +39,7 @@ api_router.include_router(habit_router)
 api_router.include_router(learning_router)
 api_router.include_router(health_router)
 api_router.include_router(analytics_router)
+api_router.include_router(ai_router)
 api_router.include_router(dashboard_router)
 api_router.include_router(databases_router)
 api_router.include_router(records_router)

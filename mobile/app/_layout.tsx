@@ -63,6 +63,20 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
+        name="ai/insights"
+        options={{
+          title: "Insights",
+          tabBarLabel: "Insights",
+        }}
+      />
+      <Tabs.Screen
+        name="ai/recommendations"
+        options={{
+          title: "Recommendations",
+          tabBarLabel: "Recommendations",
+        }}
+      />
+      <Tabs.Screen
         name="search"
         options={{
           title: "Search",

@@ -88,8 +88,10 @@ def _call_gemini(prompt: str, interaction_type: str) -> str:
 
 
 class AIService:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, redis=None, settings=None):
         self.repo = AIRepository(session)
+        self.redis = redis
+        self.settings = settings
 
     async def process_prompt(self, user_id: UUID, data: AIPromptRequest):
         """Create an AI interaction record, call Gemini, and persist the response."""
