@@ -16,6 +16,7 @@ from app.routes.analytics_routes import router as analytics_router
 from app.routes.auth_routes import router as auth_router
 from app.routes.dashboard_routes import router as dashboard_router
 from app.routes.database_routes import databases_router, records_router
+from app.routes.graph_routes import router as graph_router
 from app.routes.habit_routes import router as habit_router
 from app.routes.health_routes import router as health_router
 from app.routes.learning_routes import router as learning_router
@@ -41,6 +42,7 @@ api_router.include_router(dashboard_router)
 api_router.include_router(databases_router)
 api_router.include_router(records_router)
 api_router.include_router(search_router)
+api_router.include_router(graph_router)
 
 
 # -- Generic catch-all proxy for remaining services --

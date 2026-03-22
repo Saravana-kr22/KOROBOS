@@ -57,6 +57,7 @@ class HabitService:
             payload={
                 "habit_id": str(habit.id),
                 "user_id": str(user_id),
+                "name": habit.name,
             }
         )
         await publish_event(event, key=str(user_id))

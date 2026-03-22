@@ -1,0 +1,39 @@
+{
+  "event_type": "graph.edge.created",
+  "schema_version": 1,
+  "partition_key": "user_id",
+  "description": "Fired when a graph edge (relationship) is created",
+  "required_payload_fields": [
+    "edge_id",
+    "user_id",
+    "source_node_id",
+    "target_node_id",
+    "relation_type"
+  ],
+  "payload_properties": {
+    "edge_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the graph edge"
+    },
+    "user_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "User who owns the edge"
+    },
+    "source_node_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the source node"
+    },
+    "target_node_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the target node"
+    },
+    "relation_type": {
+      "type": "string",
+      "description": "Type of relationship (e.g., note_links, learning_related_to_note)"
+    }
+  }
+}

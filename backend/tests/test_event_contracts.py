@@ -127,6 +127,21 @@ EVENT_SAMPLES = {
         "learning_minutes": 45,
         "calories_balance": 1500,
     },
+    "graph.node.created": {
+        "node_id": "node-123",
+        "user_id": "user-123",
+        "type": "note",
+        "title": "Graph Node Sample",
+        "source_id": "note-456",
+        "metadata": {"key": "value"},
+    },
+    "graph.edge.created": {
+        "edge_id": "edge-123",
+        "user_id": "user-123",
+        "source_node_id": "node-123",
+        "target_node_id": "node-456",
+        "relation_type": "note_links",
+    },
 }
 
 DLQ_SAMPLE = {

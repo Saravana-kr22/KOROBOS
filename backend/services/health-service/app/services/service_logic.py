@@ -33,7 +33,7 @@ class HealthService:
         )
         event = MealLoggedEvent(
             payload={
-                "log_id": str(log.id),
+                "meal_id": str(log.id),
                 "user_id": str(user_id),
                 "calories": data.calories,
                 "description": data.description or "",
@@ -57,7 +57,7 @@ class HealthService:
         )
         event = WorkoutLoggedEvent(
             payload={
-                "log_id": str(log.id),
+                "workout_id": str(log.id),
                 "user_id": str(user_id),
                 "duration": data.duration,
                 "calories": data.calories or 0,

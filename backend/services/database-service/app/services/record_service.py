@@ -119,14 +119,22 @@ class RecordService:
             RecordCreatedEvent,
         )
 
-        event = RecordCreatedEvent(
-            payload={
-                "record_id": str(record.id),
-                "database_id": str(database_id),
-                "user_id": str(user_id),
-                "values": data.values,
-            }
-        )
+        # Prepare event payload for graph integration
+        event_payload = {
+            "record_id": str(record.id),
+            "database_id": str(database_id),
+            "user_id": str(user_id),
+            "database_name": data.database_name
+            if hasattr(data, "database_name")
+            else f"Record {record.id}",
+            "values": data.values,
+        }
+
+        # Add related note if linked
+        if note_id:
+            event_payload["related_note_id"] = str(note_id)
+
+        event = RecordCreatedEvent(payload=event_payload)
         try:
             await publish_event(event, key=str(user_id))
         except Exception as e:

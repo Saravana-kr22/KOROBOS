@@ -3,7 +3,7 @@ replicaCount: 2
 image:
   repository: ghcr.io/saravana-kr22/korobos/workers
   pullPolicy: IfNotPresent
-  tag: "sha-5ae2341"
+  tag: "sha-59080ef"
 
 nameOverride: ""
 fullnameOverride: ""

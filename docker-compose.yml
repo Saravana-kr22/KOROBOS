@@ -469,6 +469,33 @@ services:
       - redis
       - meilisearch
 
+  graph-service:
+    build:
+      context: .
+      dockerfile: backend/services/graph-service/Dockerfile
+    ports:
+      - "8011:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
+    volumes:
+      - kafka_certs:/etc/korobos/kafka:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
+
   analytics-worker:
     build:
       context: .
@@ -556,6 +583,30 @@ services:
       - KAFKA_SASL_PASSWORD=korobos-secret
       - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
       - SERVICE_NAME=ai-worker
+    volumes:
+      - kafka_certs:/etc/korobos/kafka:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
+
+  graph-worker:
+    build:
+      context: .
+      dockerfile: backend/workers/Dockerfile
+    command: ["python", "-m", "backend.workers.graph_worker"]
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://korobos:password@postgres:5432/korobos
+      - KAFKA_BROKER=kafka:29093
+      - KAFKA_SECURITY_PROTOCOL=SASL_SSL
+      - KAFKA_SASL_MECHANISM=PLAIN
+      - KAFKA_SASL_USERNAME=korobos
+      - KAFKA_SASL_PASSWORD=korobos-secret
+      - KAFKA_SSL_CA_FILE=/etc/korobos/kafka/ca.crt
+      - SERVICE_NAME=graph-worker
     volumes:
       - kafka_certs:/etc/korobos/kafka:ro
     depends_on:
