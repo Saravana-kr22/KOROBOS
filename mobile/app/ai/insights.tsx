@@ -20,7 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { getInsights, getSummary } from "../src/api/aiApi";
+import { getInsights, getSummary } from "../../src/api/aiApi";
 
 const INSIGHT_COLORS = {
   behavioral: "#3b82f6",

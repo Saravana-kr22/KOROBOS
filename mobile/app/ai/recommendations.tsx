@@ -20,7 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { getRecommendations } from "../src/api/aiApi";
+import { getRecommendations } from "../../src/api/aiApi";
 
 const CATEGORY_COLORS = {
   habit: "#f59e0b",

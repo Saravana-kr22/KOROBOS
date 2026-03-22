@@ -8,7 +8,7 @@
  * AI Service API client for mobile.
  */
 
-import { apiClient } from "./client";
+import { apiClient } from "../services/apiClient";
 
 export interface Insight {
   id: string;
