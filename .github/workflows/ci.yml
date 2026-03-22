@@ -185,12 +185,15 @@ jobs:
         env:
           KAFKA_BROKER_ID: 1
           KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+          KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
         ports:
-          - 9092:9092
+          - 29092:29092
         options: >-
-          --health-cmd "kafka-broker-api-versions.sh --bootstrap-server localhost:9092"
+          --health-cmd "kafka-broker-api-versions.sh --bootstrap-server localhost:29092"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -234,7 +237,7 @@ jobs:
         env:
           DATABASE_URL: postgresql+asyncpg://korobos:password@localhost:5432/korobos
           REDIS_URL: redis://localhost:6379/0
-          KAFKA_BROKER: kafka:9092
+          KAFKA_BROKER: localhost:29092
 
       - name: Run integration tests (Kafka, messaging)
         working-directory: backend
@@ -242,7 +245,7 @@ jobs:
         env:
           DATABASE_URL: postgresql+asyncpg://korobos:password@localhost:5432/korobos
           REDIS_URL: redis://localhost:6379/0
-          KAFKA_BROKER: kafka:9092
+          KAFKA_BROKER: localhost:29092
 
       - name: Run service-specific tests
         working-directory: backend
@@ -257,7 +260,7 @@ jobs:
         env:
           DATABASE_URL: postgresql+asyncpg://korobos:password@localhost:5432/korobos
           REDIS_URL: redis://localhost:6379/0
-          KAFKA_BROKER: kafka:9092
+          KAFKA_BROKER: localhost:29092
 
       - name: Run worker tests
         working-directory: backend
@@ -265,7 +268,7 @@ jobs:
         env:
           DATABASE_URL: postgresql+asyncpg://korobos:password@localhost:5432/korobos
           REDIS_URL: redis://localhost:6379/0
-          KAFKA_BROKER: kafka:9092
+          KAFKA_BROKER: localhost:29092
 
       - name: Generate coverage report
         working-directory: backend
