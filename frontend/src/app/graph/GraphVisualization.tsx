@@ -46,12 +46,6 @@ interface GraphLink {
   relation_type: string;
 }
 
-interface ViewTransform {
-  scale: number;
-  offsetX: number;
-  offsetY: number;
-}
-
 /**
  * Simple force-directed graph simulation with zoom/pan capabilities
  */
@@ -176,8 +170,8 @@ class ForceGraph {
         node.x! += node.vx!;
         node.y! += node.vy!;
         // Boundary conditions
-        node.x = Math.max(20, Math.min(this.width - 20, node.x));
-        node.y = Math.max(20, Math.min(this.height - 20, node.y));
+        node.x = Math.max(20, Math.min(this.width - 20, node.x!));
+        node.y = Math.max(20, Math.min(this.height - 20, node.y!));
       }
     }
   }
@@ -384,7 +378,7 @@ export default function GraphVisualization({
     return () => {
       graph.stop();
     };
-  }, [subgraph]);
+  }, [subgraph, selectedNode]);
 
   // Load and set clusters if enabled
   useEffect(() => {

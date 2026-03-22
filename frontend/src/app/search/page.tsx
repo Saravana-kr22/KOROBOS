@@ -10,9 +10,9 @@ Search Page — unified search across all domains with filtering.
 
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import styles from "./search.module.css";
-import { searchApi, SearchResponse, SearchResult } from "./searchApi";
+import { searchApi, SearchResult } from "./searchApi";
 
 const TYPE_LABELS: Record<string, string> = {
   note: "Note",

@@ -14,7 +14,7 @@ export interface NodeResponse {
   type: "note" | "habit" | "learning_topic" | "health_log" | "database_record";
   title: string;
   source_id: string;
-  metadata: Record<string, any> | null;
+  metadata: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 }

@@ -10,7 +10,6 @@
 
 import {
   NodeResponse,
-  EdgeResponse,
   SubgraphResponse,
   NeighborResponse,
   GraphStatsResponse,
