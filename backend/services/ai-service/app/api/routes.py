@@ -59,7 +59,7 @@ async def get_insights(
     _: None = Depends(check_ai_rate_limit),
 ) -> InsightListResponse:
     """Get user's insights with optional type filter."""
-    redis = request.app.state.redis if request else None
+    redis = getattr(request.app.state, "redis", None) if request else None
     settings = get_settings()
 
     # Create feature engineering and insight services
@@ -110,7 +110,7 @@ async def get_recommendations(
     _: None = Depends(check_ai_rate_limit),
 ) -> RecommendationListResponse:
     """Get user's recommendations with optional category filter."""
-    redis = request.app.state.redis if request else None
+    redis = getattr(request.app.state, "redis", None) if request else None
     settings = get_settings()
 
     # Create feature engineering and recommendation services
@@ -155,7 +155,7 @@ async def get_summary(
     _: None = Depends(check_ai_rate_limit),
 ) -> SummaryResponse:
     """Get aggregated summary of insights and recommendations."""
-    redis = request.app.state.redis if request else None
+    redis = getattr(request.app.state, "redis", None) if request else None
     settings = get_settings()
 
     # Create all services
@@ -241,7 +241,7 @@ async def create_prompt(
     _: None = Depends(check_ai_rate_limit),
 ) -> AIResponse:
     """Create a prompt and get AI response."""
-    redis = request.app.state.redis if request else None
+    redis = getattr(request.app.state, "redis", None) if request else None
     settings = get_settings()
 
     svc = AIService(session, redis, settings)
@@ -271,7 +271,7 @@ async def list_interactions(
     _: None = Depends(check_ai_rate_limit),
 ) -> AIInteractionListResponse:
     """List user's AI interactions."""
-    redis = request.app.state.redis if request else None
+    redis = getattr(request.app.state, "redis", None) if request else None
     settings = get_settings()
 
     svc = AIService(session, redis, settings)
@@ -305,7 +305,7 @@ async def get_interaction(
     _: None = Depends(check_ai_rate_limit),
 ) -> AIResponse:
     """Get a specific AI interaction."""
-    redis = request.app.state.redis if request else None
+    redis = getattr(request.app.state, "redis", None) if request else None
     settings = get_settings()
 
     svc = AIService(session, redis, settings)

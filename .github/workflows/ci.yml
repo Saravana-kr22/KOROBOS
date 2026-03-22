@@ -118,7 +118,7 @@ jobs:
 
       - name: Security check with Bandit
         working-directory: backend
-        run: poetry run bandit -r . -ll --skip B101,B601
+        run: poetry run bandit -r . -ll --skip B101,B601 --exclude ./.venv
         continue-on-error: false
 
   # ============================================================================
@@ -363,7 +363,7 @@ jobs:
 
       - name: Build mobile
         working-directory: mobile
-        run: npm run build
+        run: npx expo export --platform web
 
   # ============================================================================
   # CONFIGURATION VALIDATION
