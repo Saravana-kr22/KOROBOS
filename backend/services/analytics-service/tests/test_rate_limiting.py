@@ -2,7 +2,7 @@
 Tests for rate limiting middleware.
 """
 
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, MagicMock, Mock
 
 import pytest
 import redis
@@ -78,7 +78,7 @@ async def test_rate_limit_middleware_allows_under_limit():
 
     mock_limiter = Mock(spec=RedisRateLimiter)
     mock_limiter.check_rate_limit = AsyncMock(
-        return_value=(True, {"limit": 100, "remaining": 99})
+        return_value=(True, {"limit": 100, "remaining": 99, "reset_in_seconds": 60})
     )
     app.state.rate_limiter = mock_limiter
 
@@ -86,7 +86,7 @@ async def test_rate_limit_middleware_allows_under_limit():
     request.app = app
     request.headers = {"X-User-ID": "user123"}
 
-    call_next = AsyncMock(return_value=Mock())
+    call_next = AsyncMock(return_value=MagicMock())
 
     response = await rate_limit_middleware(request, call_next)
 

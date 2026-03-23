@@ -7,14 +7,10 @@ Data access layer for records and record values.
 import uuid
 from typing import Optional
 
+from app.models.record_model import Record, RecordValue
 from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
-
-from backend.services.database_service.app.models.record_model import (
-    Record,
-    RecordValue,
-)
 
 
 class RecordRepository:
@@ -60,7 +56,7 @@ class RecordRepository:
             .options(joinedload(Record.values))
         )
         result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        return result.unique().scalar_one_or_none()
 
     async def list_by_database(
         self,

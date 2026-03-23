@@ -14,6 +14,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from uuid import UUID
 
+import bcrypt
 from app.events.events import UserLoginEvent, UserRegisteredEvent
 from app.models.model import EmailVerification, LoginAttempt, PasswordReset, User
 from app.repositories.repository import UserRepository
@@ -33,10 +34,28 @@ from backend.shared.logging.audit import log_audit_event
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import publish_event
 
+# -- Passlib/Bcrypt 4.0+ Compatibility Patch --
+# Passlib 1.7.4 is incompatible with bcrypt 4.0+ because bcrypt now raises
+# ValueError for passwords > 72 bytes, while passlib's internal health check
+# uses a 255-byte secret. We monkey-patch bcrypt to truncate silently.
+_original_hashpw = bcrypt.hashpw
+
+
+def _patched_hashpw(password, salt):
+    if isinstance(password, str):
+        password = password.encode("utf-8")
+    return _original_hashpw(password[:72], salt)
+
+
+bcrypt.hashpw = _patched_hashpw
+# ---------------------------------------------
+
 logger = get_logger("auth-service.auth")
 
 # bcrypt password context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(
+    schemes=["bcrypt"], deprecated="auto", bcrypt__truncate_error=False
+)
 
 
 def hash_password(plain: str) -> str:
@@ -108,7 +127,10 @@ class AuthService:
                 status="failure",
                 metadata={"email": data.email, "reason": "duplicate_email"},
             )
-            raise ValueError("Email already registered")
+            raise ValueError(
+                f"Registration failed: User with email {data.email} "
+                "is already registered (duplicate email)"
+            )
 
         user = await self.repo.create(
             email=data.email,
@@ -133,6 +155,7 @@ class AuthService:
 
         token = create_access_token(
             user_id=str(user.id),
+            email=user.email,
             roles=["admin"] if user.is_superuser else ["user"],
         )
 
@@ -242,6 +265,7 @@ class AuthService:
                     )
 
                 self.session.add(user)
+                await self.session.flush()
 
             cred_metadata = {
                 "email": email,
@@ -296,6 +320,7 @@ class AuthService:
 
         token = create_access_token(
             user_id=str(user.id),
+            email=user.email,
             roles=["admin"] if user.is_superuser else ["user"],
         )
 
@@ -489,6 +514,7 @@ class AuthService:
             reason=reason,
         )
         self.session.add(attempt)
+        await self.session.flush()
 
     async def resend_verification_email(self, email: str) -> None:
         """

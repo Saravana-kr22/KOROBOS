@@ -13,7 +13,7 @@ from datetime import date
 from uuid import UUID
 
 from app.api.rate_limit import check_write_rate_limit
-from app.main import NOTES_CREATED, NOTES_DELETED, NOTES_UPDATED
+from app.metrics import NOTES_CREATED, NOTES_DELETED, NOTES_UPDATED
 from app.models.note_model import Note
 from app.schemas.note_schema import (
     BacklinkListResponse,
@@ -47,9 +47,15 @@ def _get_redis(request: Request):
 
 async def _build_note_response(note, repo) -> NoteResponse:
     tags = await repo.list_note_tag_names(note.id)
-    data = NoteResponse.model_validate(note)
-    data.tags = tags
-    return data
+    return NoteResponse(
+        id=note.id,
+        user_id=note.user_id,
+        title=note.title,
+        content_md=note.content_md,
+        created_at=note.created_at,
+        updated_at=note.updated_at,
+        tags=tags,
+    )
 
 
 # -- CRUD --

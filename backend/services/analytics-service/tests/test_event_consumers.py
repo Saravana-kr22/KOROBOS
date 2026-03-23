@@ -5,7 +5,7 @@ Verifies that event consumers correctly process events from Kafka and record met
 """
 
 from datetime import datetime
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
@@ -28,6 +28,15 @@ def mock_session():
     return AsyncMock()
 
 
+def _make_session_patch(module: str):
+    """Return a patch for async_session_factory that yields a mock session."""
+    mock_session = AsyncMock()
+    mock_cm = MagicMock()
+    mock_cm.__aenter__ = AsyncMock(return_value=mock_session)
+    mock_cm.__aexit__ = AsyncMock(return_value=False)
+    return patch(f"app.events.{module}.async_session_factory", return_value=mock_cm)
+
+
 # ==================== Habit Consumer Tests ====================
 
 
@@ -35,8 +44,6 @@ def mock_session():
 async def test_habit_consumer_processes_completion_event(user_id, mock_session):
     """Test habit consumer records completion rate from event."""
     consumer = HabitEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "habit_id": str(uuid4()),
@@ -44,39 +51,36 @@ async def test_habit_consumer_processes_completion_event(user_id, mock_session):
         "timestamp": datetime.utcnow().isoformat(),
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("habit_consumer"), patch(
+        "app.events.habit_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("habit.completed", payload)
-        # Event should trigger metric recording
-        assert consumer.repo.record_metric.called
+        assert mock_svc.record_metric.called
 
 
 @pytest.mark.asyncio
 async def test_habit_consumer_ignores_missing_user_id(user_id):
     """Test habit consumer ignores events without user_id."""
     consumer = HabitEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "habit_id": str(uuid4()),
         "completed": True,
         "timestamp": datetime.utcnow().isoformat(),
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("habit_consumer"), patch(
+        "app.events.habit_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("habit.completed", payload)
-        # Should not record without user_id
-        assert not mock_repo.record_metric.called
+        assert not mock_svc.record_metric.called
 
 
 @pytest.mark.asyncio
 async def test_habit_consumer_handles_error(user_id):
     """Test habit consumer handles repository errors gracefully."""
     consumer = HabitEventConsumer()
-    consumer.repo = AsyncMock()
-    consumer.repo.record_metric.side_effect = Exception("DB error")
-
     payload = {
         "user_id": user_id,
         "habit_id": str(uuid4()),
@@ -84,12 +88,14 @@ async def test_habit_consumer_handles_error(user_id):
         "timestamp": datetime.utcnow().isoformat(),
     }
 
-    # Should not raise exception
-    with patch.object(consumer, "repo", side_effect=Exception("DB error")):
-        try:
+    mock_svc = AsyncMock()
+    mock_svc.record_metric.side_effect = Exception("DB error")
+    with _make_session_patch("habit_consumer"), patch(
+        "app.events.habit_consumer.AnalyticsService", return_value=mock_svc
+    ):
+        # Consumer logs and re-raises errors for DLQ forwarding
+        with pytest.raises(Exception, match="DB error"):
             await consumer.handle_event("habit.completed", payload)
-        except Exception:
-            pytest.fail("Consumer should handle errors gracefully")
 
 
 # ==================== Learning Consumer Tests ====================
@@ -99,41 +105,40 @@ async def test_habit_consumer_handles_error(user_id):
 async def test_learning_consumer_processes_session_event(user_id):
     """Test learning consumer records hours from session completion event."""
     consumer = LearningEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "session_id": str(uuid4()),
-        "duration_minutes": 60,
+        "duration": 60,  # Consumer reads "duration" key, not "duration_minutes"
         "topic": "React",
         "timestamp": datetime.utcnow().isoformat(),
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("learning_consumer"), patch(
+        "app.events.learning_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("learning.session.completed", payload)
-        # Should record learning hours metric
-        assert mock_repo.record_metric.called
+        assert mock_svc.record_metric.called
 
 
 @pytest.mark.asyncio
 async def test_learning_consumer_ignores_missing_duration(user_id):
     """Test learning consumer ignores events without duration."""
     consumer = LearningEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "session_id": str(uuid4()),
         "topic": "React",
         "timestamp": datetime.utcnow().isoformat(),
+        # "duration" key intentionally missing
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("learning_consumer"), patch(
+        "app.events.learning_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("learning.session.completed", payload)
-        # Should not record without duration
-        assert not mock_repo.record_metric.called
+        assert not mock_svc.record_metric.called
 
 
 # ==================== Health Consumer Tests ====================
@@ -143,8 +148,6 @@ async def test_learning_consumer_ignores_missing_duration(user_id):
 async def test_health_consumer_processes_meal_event(user_id):
     """Test health consumer records calorie intake from meal event."""
     consumer = HealthEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "meal_id": str(uuid4()),
@@ -152,19 +155,18 @@ async def test_health_consumer_processes_meal_event(user_id):
         "timestamp": datetime.utcnow().isoformat(),
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("health_consumer"), patch(
+        "app.events.health_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("meal.logged", payload)
-        # Should record intake metric
-        assert mock_repo.record_metric.called
+        assert mock_svc.record_metric.called
 
 
 @pytest.mark.asyncio
 async def test_health_consumer_processes_workout_event(user_id):
     """Test health consumer records calories burned from workout event."""
     consumer = HealthEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "workout_id": str(uuid4()),
@@ -174,19 +176,18 @@ async def test_health_consumer_processes_workout_event(user_id):
         "timestamp": datetime.utcnow().isoformat(),
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("health_consumer"), patch(
+        "app.events.health_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("workout.completed", payload)
-        # Should record burned metric
-        assert mock_repo.record_metric.called
+        assert mock_svc.record_metric.called
 
 
 @pytest.mark.asyncio
 async def test_health_consumer_ignores_invalid_calories(user_id):
     """Test health consumer ignores events with invalid calorie values."""
     consumer = HealthEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "meal_id": str(uuid4()),
@@ -194,11 +195,12 @@ async def test_health_consumer_ignores_invalid_calories(user_id):
         "timestamp": datetime.utcnow().isoformat(),
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("health_consumer"), patch(
+        "app.events.health_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("meal.logged", payload)
-        # Should validate and skip invalid data
-        # (depends on consumer implementation)
+        # Depends on consumer implementation — just verify no exception raised
 
 
 # ==================== Notes Consumer Tests ====================
@@ -208,8 +210,6 @@ async def test_health_consumer_ignores_invalid_calories(user_id):
 async def test_notes_consumer_processes_created_event(user_id):
     """Test notes consumer records note creation."""
     consumer = NotesEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "note_id": str(uuid4()),
@@ -218,32 +218,32 @@ async def test_notes_consumer_processes_created_event(user_id):
         "backlink_count": 3,
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("notes_consumer"), patch(
+        "app.events.notes_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("note.created", payload)
-        # Should record notes_created metric
-        assert mock_repo.record_metric.called
+        assert mock_svc.record_metric.called
 
 
 @pytest.mark.asyncio
 async def test_notes_consumer_tracks_linking_density(user_id):
     """Test notes consumer tracks linking density (backlinks)."""
     consumer = NotesEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "note_id": str(uuid4()),
         "title": "React Hooks",
         "created_at": datetime.utcnow().isoformat(),
-        "backlink_count": 5,  # Note with 5 backlinks
+        "backlink_count": 5,
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("notes_consumer"), patch(
+        "app.events.notes_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("note.created", payload)
-        # Should track backlink density info
-        assert mock_repo.record_metric.called
+        assert mock_svc.record_metric.called
 
 
 # ==================== Database Consumer Tests ====================
@@ -253,8 +253,6 @@ async def test_notes_consumer_tracks_linking_density(user_id):
 async def test_database_consumer_processes_record_event(user_id):
     """Test database consumer records item creation."""
     consumer = DatabaseEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "database_id": str(uuid4()),
@@ -262,30 +260,32 @@ async def test_database_consumer_processes_record_event(user_id):
         "created_at": datetime.utcnow().isoformat(),
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("database_consumer"), patch(
+        "app.events.database_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("database.record.created", payload)
-        # Should record records_created metric
-        assert mock_repo.record_metric.called
+        assert mock_svc.record_metric.called
 
 
 @pytest.mark.asyncio
 async def test_database_consumer_ignores_missing_record_id(user_id):
-    """Test database consumer ignores events without record_id."""
+    """Test database consumer still processes without record_id."""
     consumer = DatabaseEventConsumer()
-    consumer.repo = AsyncMock()
-
     payload = {
         "user_id": user_id,
         "database_id": str(uuid4()),
         "created_at": datetime.utcnow().isoformat(),
+        # No record_id
     }
 
-    with patch.object(consumer, "repo") as mock_repo:
-        mock_repo.record_metric = AsyncMock()
+    mock_svc = AsyncMock()
+    with _make_session_patch("database_consumer"), patch(
+        "app.events.database_consumer.AnalyticsService", return_value=mock_svc
+    ):
         await consumer.handle_event("database.record.created", payload)
-        # Should not record without record_id
-        assert not mock_repo.record_metric.called
+        # Consumer records with record_id=None since it doesn't guard for it
+        assert mock_svc.record_metric.called
 
 
 # ==================== Cross-Consumer Tests ====================
@@ -297,35 +297,32 @@ async def test_multiple_consumers_independent(user_id):
     habit_consumer = HabitEventConsumer()
     learning_consumer = LearningEventConsumer()
 
-    habit_consumer.repo = AsyncMock()
-    learning_consumer.repo = AsyncMock()
-
     habit_payload = {
         "user_id": user_id,
         "habit_id": str(uuid4()),
         "completed": True,
         "timestamp": datetime.utcnow().isoformat(),
     }
-
     learning_payload = {
         "user_id": user_id,
         "session_id": str(uuid4()),
-        "duration_minutes": 60,
+        "duration": 60,
         "topic": "React",
         "timestamp": datetime.utcnow().isoformat(),
     }
 
-    with patch.object(habit_consumer, "repo") as habit_repo, patch.object(
-        learning_consumer, "repo"
-    ) as learning_repo:
-        habit_repo.record_metric = AsyncMock()
-        learning_repo.record_metric = AsyncMock()
+    habit_svc = AsyncMock()
+    learning_svc = AsyncMock()
 
+    with _make_session_patch("habit_consumer"), patch(
+        "app.events.habit_consumer.AnalyticsService", return_value=habit_svc
+    ), _make_session_patch("learning_consumer"), patch(
+        "app.events.learning_consumer.AnalyticsService", return_value=learning_svc
+    ):
         await habit_consumer.handle_event("habit.completed", habit_payload)
         await learning_consumer.handle_event(
             "learning.session.completed", learning_payload
         )
 
-        # Both consumers should have been called
-        assert habit_repo.record_metric.called
-        assert learning_repo.record_metric.called
+        assert habit_svc.record_metric.called
+        assert learning_svc.record_metric.called

@@ -7,13 +7,13 @@ FastAPI application for the structured database system.
 from contextlib import asynccontextmanager
 from typing import Any
 
-import aioredis
+import redis.asyncio as aioredis
+from app.api.database_routes import router
+from app.config.settings import get_settings
 from fastapi import FastAPI, Request
 from prometheus_client import Counter, Histogram, generate_latest
 from starlette.responses import JSONResponse, Response
 
-from backend.services.database_service.app.api.database_routes import router
-from backend.services.database_service.app.config.settings import get_settings
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import close_producer, get_producer
 
@@ -75,7 +75,7 @@ async def lifespan(app: FastAPI):
     # Initialize Redis
     try:
         settings = get_settings()
-        app.state.redis = await aioredis.from_url(
+        app.state.redis = aioredis.from_url(
             settings.redis_url,
             encoding="utf8",
             decode_responses=True,
@@ -91,7 +91,7 @@ async def lifespan(app: FastAPI):
     logger.info("Database Service shutting down")
     await close_producer()
     if app.state.redis:
-        await app.state.redis.close()
+        await app.state.redis.aclose()
 
 
 # ============================================================================

@@ -8,11 +8,11 @@ Licensed under the GNU Affero General Public License v3.
 Integration tests for Search Service API endpoints.
 """
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from .test_helpers import USER_ID, meili_response
+from .helpers import USER_ID, meili_response
 
 # -- GET /search --
 
@@ -34,8 +34,8 @@ async def test_search_missing_user_id_returns_422(client):
 @pytest.mark.asyncio
 async def test_search_returns_200_with_results(client):
     """Successful search returns 200 with results."""
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = meili_response(
             [
@@ -61,7 +61,7 @@ async def test_search_returns_200_with_results(client):
         mock_post.return_value = mock_response
 
         resp = await client.get(
-            "/search?q=test",
+            "/search?q=test&type=note",
             headers={"X-User-ID": USER_ID},
         )
 
@@ -75,8 +75,8 @@ async def test_search_returns_200_with_results(client):
 @pytest.mark.asyncio
 async def test_search_with_type_filter(client):
     """Type filter restricts search to specific index."""
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = meili_response([])
         mock_post.return_value = mock_response
@@ -106,8 +106,8 @@ async def test_search_limit_above_50_returns_422(client):
 @pytest.mark.asyncio
 async def test_search_user_isolation(client):
     """Search query includes user_id filter."""
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = meili_response([])
         mock_post.return_value = mock_response
@@ -147,8 +147,8 @@ async def test_search_rate_limit_exceeded(client):
 @pytest.mark.asyncio
 async def test_advanced_search_with_date_filters(client):
     """Advanced search with date range filters."""
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = meili_response([])
         mock_post.return_value = mock_response
@@ -164,8 +164,8 @@ async def test_advanced_search_with_date_filters(client):
 @pytest.mark.asyncio
 async def test_advanced_search_with_tags(client):
     """Advanced search with tags filter."""
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = meili_response([])
         mock_post.return_value = mock_response
@@ -194,44 +194,26 @@ async def test_advanced_search_missing_q_returns_422(client):
 @pytest.mark.asyncio
 async def test_suggest_returns_suggestions(client):
     """Suggest endpoint returns autocomplete suggestions."""
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_response = MagicMock()
         mock_response.status_code = 200
 
         # Mock 3 indexes returning different suggestions
         mock_post.side_effect = [
             # notes index
-            type(
-                "Response",
-                (),
-                {
-                    "status_code": 200,
-                    "json": lambda: meili_response(
-                        [
-                            {"title": "Machine Learning"},
-                            {"title": "Machine Vision"},
-                        ]
-                    ),
-                },
-            )(),
+            MagicMock(
+                status_code=200,
+                json=lambda: meili_response(
+                    [
+                        {"title": "Machine Learning"},
+                        {"title": "Machine Vision"},
+                    ]
+                ),
+            ),
             # habits index
-            type(
-                "Response",
-                (),
-                {
-                    "status_code": 200,
-                    "json": lambda: meili_response([]),
-                },
-            )(),
+            MagicMock(status_code=200, json=lambda: meili_response([])),
             # learning index
-            type(
-                "Response",
-                (),
-                {
-                    "status_code": 200,
-                    "json": lambda: meili_response([]),
-                },
-            )(),
+            MagicMock(status_code=200, json=lambda: meili_response([])),
         ]
 
         resp = await client.get(
@@ -258,35 +240,20 @@ async def test_suggest_missing_q_returns_422(client):
 @pytest.mark.asyncio
 async def test_suggest_deduplicates(client):
     """Suggest deduplicates suggestions from multiple indexes."""
-    with patch("httpx.AsyncClient.post") as mock_post:
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
         mock_post.side_effect = [
             # notes: returns "Machine Learning"
-            type(
-                "Response",
-                (),
-                {
-                    "status_code": 200,
-                    "json": lambda: meili_response([{"title": "Machine Learning"}]),
-                },
-            )(),
+            MagicMock(
+                status_code=200,
+                json=lambda: meili_response([{"title": "Machine Learning"}]),
+            ),
             # habits: returns "Machine Learning" (different case)
-            type(
-                "Response",
-                (),
-                {
-                    "status_code": 200,
-                    "json": lambda: meili_response([{"name": "machine learning"}]),
-                },
-            )(),
+            MagicMock(
+                status_code=200,
+                json=lambda: meili_response([{"name": "machine learning"}]),
+            ),
             # learning: returns nothing
-            type(
-                "Response",
-                (),
-                {
-                    "status_code": 200,
-                    "json": lambda: meili_response([]),
-                },
-            )(),
+            MagicMock(status_code=200, json=lambda: meili_response([])),
         ]
 
         resp = await client.get(

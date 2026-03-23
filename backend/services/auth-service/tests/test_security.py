@@ -115,7 +115,7 @@ class TestJWTTokens:
         """Test access token has required claims."""
         user_id = "test-user-123"
         roles = ["user", "admin"]
-        token = create_access_token(user_id, roles)
+        token = create_access_token(user_id, email="test@example.com", roles=roles)
 
         payload = verify_token(token)
 
@@ -127,7 +127,7 @@ class TestJWTTokens:
     def test_access_token_expiration(self):
         """Test access token expires after 15 minutes."""
         user_id = "test-user-123"
-        token = create_access_token(user_id)
+        token = create_access_token(user_id, email="test@example.com")
 
         payload = verify_token(token)
 
@@ -179,7 +179,7 @@ class TestJWTTokens:
         """Test that access and refresh tokens are different."""
         user_id = "test-user-123"
 
-        access_token = create_access_token(user_id)
+        access_token = create_access_token(user_id, email="test@example.com")
         refresh_token = create_refresh_token(user_id)
 
         assert access_token != refresh_token
@@ -199,7 +199,7 @@ class TestJWTTokens:
     def test_tampered_token_fails_verification(self):
         """Test that tampered tokens fail verification."""
         user_id = "test-user-123"
-        token = create_access_token(user_id)
+        token = create_access_token(user_id, email="test@example.com")
 
         # Tamper with token
         parts = token.split(".")
@@ -219,7 +219,7 @@ class TestTokenSecurity:
         # This is more of an integration test
         # In a real scenario, we'd check the session revocation
         user_id = "test-user-123"
-        token = create_access_token(user_id)
+        token = create_access_token(user_id, email="test@example.com")
 
         # Token should be valid initially
         payload = verify_token(token)
@@ -230,8 +230,8 @@ class TestTokenSecurity:
 
     def test_different_user_ids_produce_different_tokens(self):
         """Test that different users get different tokens."""
-        token1 = create_access_token("user-1")
-        token2 = create_access_token("user-2")
+        token1 = create_access_token("user-1", email="user1@example.com")
+        token2 = create_access_token("user-2", email="user2@example.com")
 
         assert token1 != token2
 
@@ -249,7 +249,7 @@ class TestTokenSecurity:
         user_id = "test-user-123"
 
         # Create valid token
-        create_access_token(user_id)
+        create_access_token(user_id, email="test@example.com")
 
         # Try to forge a token with different secret
         forged_token = jwt.encode(

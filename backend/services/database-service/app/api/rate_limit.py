@@ -33,7 +33,7 @@ async def check_write_rate_limit(
     Raises:
         HTTPException: 429 Too Many Requests if limit exceeded
     """
-    redis = request.app.state.redis
+    redis = getattr(request.app.state, "redis", None)
     if not redis:
         logger.debug("Redis unavailable, skipping rate limit check")
         return

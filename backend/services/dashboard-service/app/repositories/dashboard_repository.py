@@ -12,7 +12,7 @@ from datetime import date
 from uuid import UUID
 
 from app.models.dashboard_model import DailySnapshot
-from sqlalchemy import insert, select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -55,40 +55,37 @@ class DashboardRepository:
         Uses PostgreSQL ON CONFLICT ... DO UPDATE (upsert) pattern.
         """
         snapshot_date_iso = snapshot_date.isoformat()
-
-        # Try to insert; if conflict on (user_id, snapshot_date), update
-        stmt = (
-            insert(DailySnapshot).values(
-                user_id=str(user_id),
-                snapshot_date=snapshot_date_iso,
-                habits_completed=habits_completed,
-                total_habits=total_habits,
-                learning_minutes=learning_minutes,
-                calories_consumed=calories_consumed,
-                calories_burned=calories_burned,
-                net_calories=net_calories,
-                productivity_score=productivity_score,
-                notes_created_today=notes_created_today,
-                records_created_today=records_created_today,
-                current_streak=current_streak,
-            )
-        ).on_conflict_do_update(
-            index_elements=["user_id", "snapshot_date"],
-            set_={
-                DailySnapshot.habits_completed: habits_completed,
-                DailySnapshot.total_habits: total_habits,
-                DailySnapshot.learning_minutes: learning_minutes,
-                DailySnapshot.calories_consumed: calories_consumed,
-                DailySnapshot.calories_burned: calories_burned,
-                DailySnapshot.net_calories: net_calories,
-                DailySnapshot.productivity_score: productivity_score,
-                DailySnapshot.notes_created_today: notes_created_today,
-                DailySnapshot.records_created_today: records_created_today,
-                DailySnapshot.current_streak: current_streak,
-            },
+        values = dict(
+            habits_completed=habits_completed,
+            total_habits=total_habits,
+            learning_minutes=learning_minutes,
+            calories_consumed=calories_consumed,
+            calories_burned=calories_burned,
+            net_calories=net_calories,
+            productivity_score=productivity_score,
+            notes_created_today=notes_created_today,
+            records_created_today=records_created_today,
+            current_streak=current_streak,
         )
 
-        await self.session.execute(stmt)
+        existing = await self.get_snapshot(user_id, snapshot_date)
+        if existing:
+            await self.session.execute(
+                update(DailySnapshot)
+                .where(
+                    (DailySnapshot.user_id == str(user_id))
+                    & (DailySnapshot.snapshot_date == snapshot_date_iso)
+                )
+                .values(**values)
+            )
+        else:
+            self.session.add(
+                DailySnapshot(
+                    user_id=str(user_id),
+                    snapshot_date=snapshot_date_iso,
+                    **values,
+                )
+            )
         await self.session.flush()
 
         # Fetch and return the updated/inserted snapshot

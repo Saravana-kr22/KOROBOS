@@ -8,7 +8,9 @@ Licensed under the GNU Affero General Public License v3.
 Test configuration for Dashboard Service.
 """
 
-import asyncio
+import os
+import sys
+from unittest.mock import AsyncMock, patch
 from uuid import uuid4
 
 import pytest
@@ -18,6 +20,11 @@ from app.models.dashboard_model import Base
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
+
+# Ensure service root is on sys.path so `from app.X` imports work
+_SERVICE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if _SERVICE_ROOT not in sys.path:
+    sys.path.insert(0, _SERVICE_ROOT)
 
 # Use in-memory SQLite for tests
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -48,12 +55,12 @@ async def db_session():
 
 
 @pytest.fixture
-def mock_publish(mocker):
+def mock_publish():
     """Mock Kafka event publishing."""
-    return mocker.patch(
-        "backend.shared.messaging.producer.publish_event",
-        return_value=asyncio.coroutine(lambda *args, **kwargs: None),
-    )
+    with patch(
+        "backend.shared.messaging.producer.publish_event", new_callable=AsyncMock
+    ) as mock:
+        yield mock
 
 
 @pytest.fixture

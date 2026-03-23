@@ -7,10 +7,9 @@ Data access layer for properties (database fields).
 import uuid
 from typing import Any, Optional
 
+from app.models.property_model import Property
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.services.database_service.app.models.property_model import Property
 
 
 class PropertyRepository:

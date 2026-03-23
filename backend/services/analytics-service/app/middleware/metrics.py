@@ -12,13 +12,13 @@ Tracks: processing latency, event throughput, API latency, database latency.
 import time
 from typing import Callable
 
-from prometheus_client import Counter, Histogram, Registry
+from prometheus_client import CollectorRegistry, Counter, Histogram
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
 # Create metrics registry
-metrics_registry = Registry()
+metrics_registry = CollectorRegistry()
 
 # Request/API metrics
 http_request_duration = Histogram(

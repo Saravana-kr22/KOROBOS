@@ -15,8 +15,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.shared.database.base_model import Base, TimestampMixin
 
 if TYPE_CHECKING:
-    from backend.services.database_service.app.models.database_model import Database
-    from backend.services.database_service.app.models.property_model import Property
+    from app.models.database_model import Database
+    from app.models.property_model import Property
 
 
 class Record(Base, TimestampMixin):

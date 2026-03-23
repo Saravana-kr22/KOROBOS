@@ -141,7 +141,7 @@ async def get_health_analytics(
 
 @router.get("/trends")
 async def get_trends(
-    period: str = Query("7d", regex="^(7d|30d|90d)$"),
+    period: str = Query("7d", pattern="^(7d|30d|90d)$"),
     limit: int = Query(30, ge=1, le=90),
     offset: int = Query(0, ge=0),
     user_id: UUID = Depends(_get_user_id),

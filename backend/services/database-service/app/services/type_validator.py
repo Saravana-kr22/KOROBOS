@@ -60,7 +60,7 @@ class TypeValidator:
         """
         # Allow empty/null values
         if value is None or value == "":
-            return value or ""
+            return value
 
         # Dispatch to type-specific validator
         try:

@@ -8,14 +8,14 @@ Licensed under the GNU Affero General Public License v3.
 Unit tests for SearchService and IndexingService.
 """
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from app.schemas.search_schema import SearchQuery
 from app.services.indexing_service import IndexingService
 from app.services.search_service import SearchService
 
-from .test_helpers import USER_ID, meili_response
+from .helpers import USER_ID, meili_response
 
 # -- SearchService.search() --
 
@@ -47,8 +47,8 @@ async def test_search_caches_result():
     mock_redis = AsyncMock()
     mock_redis.get.return_value = None  # Cache miss
 
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = meili_response([])
         mock_post.return_value = mock_response
@@ -70,15 +70,15 @@ async def test_search_merges_multiple_indexes():
     mock_redis = AsyncMock()
     mock_redis.get.return_value = None
 
-    with patch("httpx.AsyncClient.post") as mock_post:
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
         # Mock multiple index responses
-        notes_response = AsyncMock()
+        notes_response = MagicMock()
         notes_response.status_code = 200
         notes_response.json.return_value = meili_response(
             [{"id": "1", "title": "Note 1", "type": "note", "_rankingScore": 0.9}]
         )
 
-        habits_response = AsyncMock()
+        habits_response = MagicMock()
         habits_response.status_code = 200
         habits_response.json.return_value = meili_response(
             [{"id": "2", "name": "Habit 1", "type": "habit", "_rankingScore": 0.8}]
@@ -107,11 +107,11 @@ async def test_search_handles_meilisearch_error_gracefully():
     mock_redis = AsyncMock()
     mock_redis.get.return_value = None
 
-    with patch("httpx.AsyncClient.post") as mock_post:
-        error_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        error_response = MagicMock()
         error_response.status_code = 500
 
-        ok_response = AsyncMock()
+        ok_response = MagicMock()
         ok_response.status_code = 200
         ok_response.json.return_value = meili_response(
             [{"id": "1", "title": "Habit 1", "type": "habit", "_rankingScore": 0.9}]
@@ -144,8 +144,8 @@ async def test_suggest_queries_multiple_indexes_in_parallel():
     mock_redis = AsyncMock()
     mock_redis.get.return_value = None
 
-    with patch("httpx.AsyncClient.post") as mock_post:
-        mock_response = AsyncMock()
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = meili_response([])
         mock_post.return_value = mock_response
@@ -164,21 +164,21 @@ async def test_suggest_truncates_to_five():
     mock_redis = AsyncMock()
     mock_redis.get.return_value = None
 
-    with patch("httpx.AsyncClient.post") as mock_post:
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
         # Return 7 total suggestions
-        notes_response = AsyncMock()
+        notes_response = MagicMock()
         notes_response.status_code = 200
         notes_response.json.return_value = meili_response(
             [{"title": f"Note {i}"} for i in range(5)]
         )
 
-        habits_response = AsyncMock()
+        habits_response = MagicMock()
         habits_response.status_code = 200
         habits_response.json.return_value = meili_response(
             [{"name": f"Habit {i}"} for i in range(2)]
         )
 
-        learning_response = AsyncMock()
+        learning_response = MagicMock()
         learning_response.status_code = 200
         learning_response.json.return_value = meili_response([])
 
@@ -198,32 +198,30 @@ async def test_suggest_deduplicates_case_insensitive():
     mock_redis = AsyncMock()
     mock_redis.get.return_value = None
 
-    with patch("httpx.AsyncClient.post") as mock_post:
-        # Return same suggestion from different indexes
-        notes_response = AsyncMock()
-        notes_response.status_code = 200
-        notes_response.json.return_value = meili_response(
-            [{"title": "Machine Learning"}]
-        )
+    service = SearchService(mock_redis, "http://meilisearch:7700", "key")
 
-        habits_response = AsyncMock()
-        habits_response.status_code = 200
-        habits_response.json.return_value = meili_response(
-            [{"name": "machine learning"}]
-        )
-
-        learning_response = AsyncMock()
-        learning_response.status_code = 200
-        learning_response.json.return_value = meili_response([])
-
-        mock_post.side_effect = [notes_response, habits_response, learning_response]
-
-        service = SearchService(mock_redis, "http://meilisearch:7700", "key")
-
+    # Mock the internal suggest methods directly to avoid httpx/asyncio ordering issues
+    with (
+        patch.object(
+            service,
+            "_suggest_from_notes",
+            new=AsyncMock(return_value=["Machine Learning"]),
+        ),
+        patch.object(
+            service,
+            "_suggest_from_habits",
+            new=AsyncMock(return_value=["machine learning"]),
+        ),
+        patch.object(
+            service,
+            "_suggest_from_learning",
+            new=AsyncMock(return_value=[]),
+        ),
+    ):
         result, _ = await service.suggest("mach", USER_ID)
 
-        # Should have only 1 (deduplicated)
-        assert len(result.suggestions) == 1
+    # Should have only 1 (deduplicated)
+    assert len(result.suggestions) == 1
 
 
 # -- IndexingService.initialize_indexes() --
@@ -232,14 +230,14 @@ async def test_suggest_deduplicates_case_insensitive():
 @pytest.mark.asyncio
 async def test_initialize_indexes_calls_settings_for_all_five():
     """IndexingService initializes settings for all 5 indexes."""
-    with patch("httpx.AsyncClient.post") as mock_post, patch(
-        "httpx.AsyncClient.patch"
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post, patch(
+        "httpx.AsyncClient.patch", new_callable=AsyncMock
     ) as mock_patch:
-        mock_create_response = AsyncMock()
+        mock_create_response = MagicMock()
         mock_create_response.status_code = 202
         mock_post.return_value = mock_create_response
 
-        mock_settings_response = AsyncMock()
+        mock_settings_response = MagicMock()
         mock_settings_response.status_code = 200
         mock_patch.return_value = mock_settings_response
 

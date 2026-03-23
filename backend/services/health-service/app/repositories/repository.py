@@ -96,7 +96,7 @@ class HealthRepository:
         workouts = (await self.session.execute(workouts_q)).scalar_one()
 
         cal_q = select(func.coalesce(func.sum(HealthLog.calories), 0)).where(
-            HealthLog.user_id == user_id
+            HealthLog.user_id == user_id, HealthLog.log_type == "meal"
         )
         total_cal = (await self.session.execute(cal_q)).scalar_one()
 
