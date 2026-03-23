@@ -74,12 +74,13 @@ class HealthService:
     async def get_stats(self, user_id: UUID):
         return await self.repo.get_stats(user_id)
 
-    async def delete_log(self, user_id: UUID, log_id: UUID) -> None:
+    async def delete_log(self, user_id: UUID, log_id: UUID) -> bool:
         """Delete a health log, validating user ownership."""
         log = await self.repo.get_by_id(log_id)
         if not log or log.user_id != user_id:
             return None
         await self.repo.delete(log)
+        return True
 
     async def get_daily_stats(self, user_id: UUID, date=None):
         """Get daily calorie stats for a given date (defaults to today)."""

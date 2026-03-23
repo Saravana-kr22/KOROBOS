@@ -9,14 +9,10 @@ from datetime import date
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.services.database_service.app.api.rate_limit import check_write_rate_limit
-from backend.services.database_service.app.models.database_model import Database
-from backend.services.database_service.app.models.record_model import Record
-from backend.services.database_service.app.schemas.database_schema import (
+from app.api.rate_limit import check_write_rate_limit
+from app.models.database_model import Database
+from app.models.record_model import Record
+from app.schemas.database_schema import (
     DatabaseCreate,
     DatabaseListResponse,
     DatabaseResponse,
@@ -31,10 +27,12 @@ from backend.services.database_service.app.schemas.database_schema import (
     RecordSort,
     RecordUpdate,
 )
-from backend.services.database_service.app.services.database_service import (
-    DatabaseService,
-)
-from backend.services.database_service.app.services.record_service import RecordService
+from app.services.database_service import DatabaseService
+from app.services.record_service import RecordService
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from backend.shared.database.connection import get_db_session
 
 logger = logging.getLogger(__name__)
@@ -88,7 +86,9 @@ async def create_database(
     Returns:
         Created DatabaseResponse
     """
-    svc = DatabaseService(session, request.app.state.redis if request else None)
+    svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await svc.create_database(user_id, data)
     await session.commit()
     return DatabaseResponse.model_validate(db)
@@ -118,7 +118,9 @@ async def list_databases(
     Returns:
         DatabaseListResponse with paginated databases
     """
-    svc = DatabaseService(session, request.app.state.redis if request else None)
+    svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     databases, total = await svc.list_databases(user_id, page, limit)
 
     pages = (total + limit - 1) // limit
@@ -191,7 +193,9 @@ async def get_database(
     Raises:
         HTTPException: 404 if database not found or doesn't belong to user
     """
-    svc = DatabaseService(session, request.app.state.redis if request else None)
+    svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await svc.get_database(db_id)
 
     if not db or db.user_id != user_id:
@@ -227,7 +231,9 @@ async def update_database(
     Raises:
         HTTPException: 404 if database not found or doesn't belong to user
     """
-    svc = DatabaseService(session, request.app.state.redis if request else None)
+    svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await svc.get_database(db_id)
 
     if not db or db.user_id != user_id:
@@ -261,7 +267,9 @@ async def delete_database(
     Raises:
         HTTPException: 404 if database not found or doesn't belong to user
     """
-    svc = DatabaseService(session, request.app.state.redis if request else None)
+    svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await svc.get_database(db_id)
 
     if not db or db.user_id != user_id:
@@ -304,7 +312,9 @@ async def add_property(
     Raises:
         HTTPException: 404 if database not found or doesn't belong to user
     """
-    svc = DatabaseService(session, request.app.state.redis if request else None)
+    svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await svc.get_database(db_id)
 
     if not db or db.user_id != user_id:
@@ -340,7 +350,9 @@ async def delete_property(
     Raises:
         HTTPException: 404 if database or property not found
     """
-    svc = DatabaseService(session, request.app.state.redis if request else None)
+    svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await svc.get_database(db_id)
 
     if not db or db.user_id != user_id:
@@ -390,7 +402,9 @@ async def create_record(
         HTTPException: 429 if rate limit exceeded
     """
     # Check ownership
-    db_svc = DatabaseService(session, request.app.state.redis if request else None)
+    db_svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await db_svc.get_database(db_id)
 
     if not db or db.user_id != user_id:
@@ -459,7 +473,9 @@ async def list_records(
         HTTPException: 422 if filter parameters don't match
     """
     # Check ownership
-    db_svc = DatabaseService(session, request.app.state.redis if request else None)
+    db_svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await db_svc.get_database(db_id)
 
     if not db or db.user_id != user_id:
@@ -482,7 +498,7 @@ async def list_records(
             )
 
         for prop_id, op, val in zip(filter_property_id, operators, values):
-            if val is not None:  # Only add filter if value provided
+            if val is not None and val != "":  # Only add filter if value provided
                 filters.append(
                     RecordFilter(
                         property_id=prop_id,
@@ -555,7 +571,9 @@ async def update_record(
         raise HTTPException(status_code=404, detail="Record not found")
 
     # Check ownership via database
-    db_svc = DatabaseService(session, request.app.state.redis if request else None)
+    db_svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await db_svc.get_database(record.database_id)
 
     if not db or db.user_id != user_id:
@@ -608,7 +626,9 @@ async def delete_record(
         raise HTTPException(status_code=404, detail="Record not found")
 
     # Check ownership via database
-    db_svc = DatabaseService(session, request.app.state.redis if request else None)
+    db_svc = DatabaseService(
+        session, getattr(request.app.state, "redis", None) if request else None
+    )
     db = await db_svc.get_database(record.database_id)
 
     if not db or db.user_id != user_id:

@@ -10,10 +10,10 @@ API endpoint tests for Analytics Service.
 
 from uuid import uuid4
 
+import httpx
 import pytest
 from app.main import app
 from app.services.service_logic import AnalyticsService
-from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -50,14 +50,20 @@ async def db_session():
 
 
 @pytest.fixture
-def test_client(db_session):
-    """Create FastAPI test client with dependency override."""
+async def test_client(db_session):
+    """Create async FastAPI test client with dependency override."""
 
     async def override_get_db():
         yield db_session
 
     app.dependency_overrides[get_db_session] = override_get_db
-    return TestClient(app)
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        yield client
+
+    app.dependency_overrides.clear()
 
 
 @pytest.mark.asyncio
@@ -84,7 +90,7 @@ class TestAnalyticsAPI:
         )
         await db_session.commit()
 
-        response = test_client.get(
+        response = await test_client.get(
             "/analytics/overview",
             headers={"X-User-ID": str(user_id)},
         )
@@ -113,7 +119,7 @@ class TestAnalyticsAPI:
         )
         await db_session.commit()
 
-        response = test_client.get(
+        response = await test_client.get(
             "/analytics/health",
             headers={"X-User-ID": str(user_id)},
         )
@@ -139,7 +145,7 @@ class TestAnalyticsAPI:
             )
         await db_session.commit()
 
-        response = test_client.get(
+        response = await test_client.get(
             "/analytics/trends?period=7d",
             headers={"X-User-ID": str(user_id)},
         )
@@ -154,7 +160,7 @@ class TestAnalyticsAPI:
         """Test GET /analytics/trends?period=30d endpoint."""
         user_id = uuid4()
 
-        response = test_client.get(
+        response = await test_client.get(
             "/analytics/trends?period=30d",
             headers={"X-User-ID": str(user_id)},
         )
@@ -167,7 +173,7 @@ class TestAnalyticsAPI:
         """Test GET /analytics/trends?period=90d endpoint."""
         user_id = uuid4()
 
-        response = test_client.get(
+        response = await test_client.get(
             "/analytics/trends?period=90d",
             headers={"X-User-ID": str(user_id)},
         )
@@ -180,7 +186,7 @@ class TestAnalyticsAPI:
         """Test trends endpoint with invalid period parameter."""
         user_id = uuid4()
 
-        response = test_client.get(
+        response = await test_client.get(
             "/analytics/trends?period=invalid",
             headers={"X-User-ID": str(user_id)},
         )
@@ -203,7 +209,7 @@ class TestAnalyticsAPI:
         )
         await db_session.commit()
 
-        response = test_client.get(
+        response = await test_client.get(
             "/analytics/productivity",
             headers={"X-User-ID": str(user_id)},
         )
@@ -224,8 +230,8 @@ class TestAnalyticsAPI:
             )
         await db_session.commit()
 
-        response = test_client.get(
-            "/analytics/learning-growth?limit=5",
+        response = await test_client.get(
+            "/analytics/learning?limit=5",
             headers={"X-User-ID": str(user_id)},
         )
 

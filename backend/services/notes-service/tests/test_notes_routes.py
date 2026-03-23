@@ -39,9 +39,9 @@ async def client():
 
     app.dependency_overrides[get_db_session] = override_session
 
-    with patch("app.services.service_logic.publish_event", new_callable=AsyncMock):
+    with patch("app.services.notes_service.publish_event", new_callable=AsyncMock):
         with patch(
-            "app.api.routes._get_redis", return_value=AsyncMock(return_value=None)
+            "app.api.notes_routes._get_redis", return_value=AsyncMock(return_value=None)
         ):
             async with AsyncClient(
                 transport=ASGITransport(app=app), base_url="http://test"
@@ -98,7 +98,9 @@ async def test_create_note_missing_user_header_returns_422(client):
 async def test_list_notes_empty(client):
     resp = await client.get("/notes", headers=_headers())
     assert resp.status_code == 200
-    assert resp.json() == {"notes": [], "total": 0}
+    body = resp.json()
+    assert body["notes"] == []
+    assert body["total"] == 0
 
 
 @pytest.mark.asyncio
@@ -278,4 +280,6 @@ async def test_get_backlinks_empty(client):
 
     resp = await client.get(f"/notes/{note_id}/backlinks", headers=_headers())
     assert resp.status_code == 200
-    assert resp.json() == {"backlinks": [], "total": 0}
+    body = resp.json()
+    assert body["backlinks"] == []
+    assert body["total"] == 0

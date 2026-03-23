@@ -35,13 +35,36 @@ async def db_session():
     await engine.dispose()
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def mock_publish():
-    """Patch Kafka publish_event so tests don't need a broker."""
+    """Mock Kafka producer lifecycle."""
     with patch(
-        "app.services.service_logic.publish_event", new_callable=AsyncMock
+        "backend.shared.messaging.producer.get_producer", new_callable=AsyncMock
+    ), patch(
+        "backend.shared.messaging.producer.close_producer", new_callable=AsyncMock
+    ), patch(
+        "app.services.notes_service.publish_event", new_callable=AsyncMock
     ) as mock:
         yield mock
+
+
+@pytest.fixture(autouse=True)
+def mock_redis(monkeypatch):
+    """Mock Redis globally for notes-service."""
+    mock_redis = AsyncMock()
+    mock_redis.get = AsyncMock(return_value=None)
+    mock_redis.set = AsyncMock(return_value=True)
+    mock_redis.delete = AsyncMock(return_value=True)
+    mock_redis.ping = AsyncMock(return_value=True)
+    mock_redis.incr = AsyncMock(return_value=1)
+    mock_redis.expire = AsyncMock(return_value=True)
+
+    # Patch all Redis extraction points
+    monkeypatch.setattr("app.api.notes_routes._get_redis", lambda r: mock_redis)
+    monkeypatch.setattr(
+        "app.api.rate_limit._redis_from_request", AsyncMock(return_value=mock_redis)
+    )
+    return mock_redis
 
 
 @pytest.fixture

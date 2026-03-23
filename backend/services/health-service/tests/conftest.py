@@ -17,6 +17,7 @@ from app.main import app
 from app.models.model import Base
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from backend.shared.database.connection import get_db_session
 
@@ -26,27 +27,40 @@ os.environ["JWT_SECRET"] = "test-secret-key"
 os.environ["SERVICE_NAME"] = "health-service-test"
 os.environ["HEALTH_REDIS_URL"] = "redis://localhost:6379/0"
 
+_test_engine = None
+_test_session_factory = None
+
 
 @pytest_asyncio.fixture
 async def db_session():
     """Create an in-memory SQLite database for testing."""
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    global _test_engine, _test_session_factory
+    _test_engine = create_async_engine(
+        "sqlite+aiosqlite:///:memory:",
+        echo=False,
+        poolclass=StaticPool,
+        connect_args={"check_same_thread": False},
+    )
 
-    async with engine.begin() as conn:
+    async with _test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    factory = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    _test_session_factory = sessionmaker(
+        _test_engine, class_=AsyncSession, expire_on_commit=False
+    )
 
-    async with factory() as session:
+    async with _test_session_factory() as session:
         yield session
 
-    async with engine.begin() as conn:
+    async with _test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
-    await engine.dispose()
+    await _test_engine.dispose()
+    _test_engine = None
+    _test_session_factory = None
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def mock_publish():
     """Mock Kafka event publishing."""
     with patch(
@@ -60,7 +74,8 @@ async def client(db_session):
     """Create a test HTTP client with dependency overrides."""
 
     async def override_get_db():
-        return db_session
+        async with _test_session_factory() as session:
+            yield session
 
     app.dependency_overrides[get_db_session] = override_get_db
 

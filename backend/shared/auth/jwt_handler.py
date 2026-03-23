@@ -6,6 +6,7 @@ Copyright (c) 2026 Saravana Perumal K
 Licensed under the GNU Affero General Public License v3.
 """
 
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
@@ -126,6 +127,7 @@ def create_refresh_token(user_id: str) -> str:
     payload: dict[str, Any] = {
         "sub": user_id,
         "token_type": "refresh",
+        "jti": str(uuid.uuid4()),
         "iat": now,
         "exp": expire,
     }

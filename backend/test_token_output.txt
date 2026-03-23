@@ -1,0 +1,307 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /home/grl/Documents/KOROBOS/backend
+configfile: pyproject.toml
+plugins: asyncio-0.24.0, anyio-4.12.1
+asyncio: mode=Mode.AUTO, default_loop_scope=None
+collected 12 items
+
+services/auth-service/tests/test_token_service.py FFFFF.FFFFFF           [100%]
+
+=================================== FAILURES ===================================
+_____ TestTokenServiceCreateTokens.test_create_tokens_returns_both_tokens ______
+
+self = <tests.test_token_service.TestTokenServiceCreateTokens object at 0x7141e5fb2780>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e6006510>
+
+    async def test_create_tokens_returns_both_tokens(self, test_db: AsyncSession):
+        """Test create_tokens returns access and refresh tokens."""
+        # Create test user
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+>       tokens = await token_svc.create_tokens(user.id, roles=["user"])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:36: TypeError
+______ TestTokenServiceCreateTokens.test_create_tokens_access_token_valid ______
+
+self = <tests.test_token_service.TestTokenServiceCreateTokens object at 0x7141e605c9b0>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e5fb3a40>
+
+    async def test_create_tokens_access_token_valid(self, test_db: AsyncSession):
+        """Test created access token is valid."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+>       tokens = await token_svc.create_tokens(user.id, roles=["user"])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:56: TypeError
+_____ TestTokenServiceCreateTokens.test_create_tokens_refresh_token_valid ______
+
+self = <tests.test_token_service.TestTokenServiceCreateTokens object at 0x7141e605cb90>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e5fd4fb0>
+
+    async def test_create_tokens_refresh_token_valid(self, test_db: AsyncSession):
+        """Test created refresh token is valid."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+>       tokens = await token_svc.create_tokens(user.id, roles=["user"])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:75: TypeError
+_______ TestTokenServiceCreateTokens.test_create_tokens_creates_session ________
+
+self = <tests.test_token_service.TestTokenServiceCreateTokens object at 0x7141e605cd70>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e5f31520>
+
+    async def test_create_tokens_creates_session(self, test_db: AsyncSession):
+        """Test create_tokens creates a session record."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+>       await token_svc.create_tokens(
+            user.id,
+            roles=["user"],
+            device_info={"type": "mobile", "os": "iOS"},
+            ip_address="192.168.1.1",
+        )
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:94: TypeError
+__________ TestTokenServiceRefresh.test_refresh_access_token_success ___________
+
+self = <tests.test_token_service.TestTokenServiceRefresh object at 0x7141e605d070>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e5f32f90>
+
+    async def test_refresh_access_token_success(self, test_db: AsyncSession):
+        """Test successful token refresh."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            is_active=True,
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+
+        # Create initial tokens
+>       tokens = await token_svc.create_tokens(user.id, roles=["user"])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:135: TypeError
+__________ TestTokenServiceRefresh.test_refresh_revoked_session_fails __________
+
+self = <tests.test_token_service.TestTokenServiceRefresh object at 0x7141e605d430>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e631a270>
+
+    async def test_refresh_revoked_session_fails(self, test_db: AsyncSession):
+        """Test refresh with revoked session fails."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            is_active=True,
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+
+        # Create tokens
+>       tokens = await token_svc.create_tokens(user.id, roles=["user"])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:166: TypeError
+___________ TestTokenServiceRefresh.test_refresh_inactive_user_fails ___________
+
+self = <tests.test_token_service.TestTokenServiceRefresh object at 0x7141e605d610>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e61f2780>
+
+    async def test_refresh_inactive_user_fails(self, test_db: AsyncSession):
+        """Test refresh fails for inactive user."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            is_active=False,
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+
+        # Create tokens
+>       tokens = await token_svc.create_tokens(user.id, roles=["user"])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:192: TypeError
+_____________ TestTokenServiceRevoke.test_revoke_specific_session ______________
+
+self = <tests.test_token_service.TestTokenServiceRevoke object at 0x7141e605d8b0>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e5fd4440>
+
+    async def test_revoke_specific_session(self, test_db: AsyncSession):
+        """Test revoking a specific session."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+
+        # Create two sessions
+>       tokens1 = await token_svc.create_tokens(user.id, roles=["user"])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:223: TypeError
+_______________ TestTokenServiceRevoke.test_revoke_all_sessions ________________
+
+self = <tests.test_token_service.TestTokenServiceRevoke object at 0x7141e605cfb0>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e541b080>
+
+    async def test_revoke_all_sessions(self, test_db: AsyncSession):
+        """Test revoking all sessions."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+
+        # Create two sessions
+>       tokens1 = await token_svc.create_tokens(user.id, roles=["user"])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:253: TypeError
+_____________ TestTokenServiceGetSessions.test_get_active_sessions _____________
+
+self = <tests.test_token_service.TestTokenServiceGetSessions object at 0x7141e605c860>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e5fb3a40>
+
+    async def test_get_active_sessions(self, test_db: AsyncSession):
+        """Test retrieving active sessions."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+
+        # Create two sessions
+>       await token_svc.create_tokens(
+            user.id, roles=["user"], device_info={"type": "web"}
+        )
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:287: TypeError
+________ TestTokenServiceGetSessions.test_get_sessions_excludes_revoked ________
+
+self = <tests.test_token_service.TestTokenServiceGetSessions object at 0x7141e605db50>
+test_db = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x7141e5468320>
+
+    async def test_get_sessions_excludes_revoked(self, test_db: AsyncSession):
+        """Test that revoked sessions are excluded."""
+        user = User(
+            email="test@example.com",
+            username="testuser",
+            hashed_password="hashed",
+            email_verified=True,
+        )
+        test_db.add(user)
+        await test_db.flush()
+
+        token_svc = TokenService(test_db)
+
+        # Create two sessions
+>       tokens1 = await token_svc.create_tokens(user.id, roles=["user"])
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TokenService.create_tokens() missing 1 required positional argument: 'email'
+
+services/auth-service/tests/test_token_service.py:316: TypeError
+=============================== warnings summary ===============================
+../../../.cache/pypoetry/virtualenvs/korobos-backend-TazSCJ9P-py3.12/lib/python3.12/site-packages/passlib/utils/__init__.py:854
+  /home/grl/.cache/pypoetry/virtualenvs/korobos-backend-TazSCJ9P-py3.12/lib/python3.12/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+services/auth-service/tests/test_token_service.py::TestTokenServiceCreateTokens::test_create_tokens_returns_both_tokens
+  /home/grl/.cache/pypoetry/virtualenvs/korobos-backend-TazSCJ9P-py3.12/lib/python3.12/site-packages/pytest_asyncio/plugin.py:783: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
+  /home/grl/Documents/KOROBOS/backend/services/auth-service/tests/conftest.py:28
+  Replacing the event_loop fixture with a custom implementation is deprecated
+  and will lead to errors in the future.
+  If you want to request an asyncio event loop with a scope other than function
+  scope, use the "scope" argument to the asyncio mark when marking the tests.
+  If you want to return different types of event loops, use the event_loop_policy
+  fixture.
+
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceCreateTokens::test_create_tokens_returns_both_tokens
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceCreateTokens::test_create_tokens_access_token_valid
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceCreateTokens::test_create_tokens_refresh_token_valid
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceCreateTokens::test_create_tokens_creates_session
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceRefresh::test_refresh_access_token_success
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceRefresh::test_refresh_revoked_session_fails
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceRefresh::test_refresh_inactive_user_fails
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceRevoke::test_revoke_specific_session
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceRevoke::test_revoke_all_sessions
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceGetSessions::test_get_active_sessions
+FAILED services/auth-service/tests/test_token_service.py::TestTokenServiceGetSessions::test_get_sessions_excludes_revoked
+=================== 11 failed, 1 passed, 2 warnings in 0.66s ===================

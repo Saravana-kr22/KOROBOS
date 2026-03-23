@@ -102,7 +102,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Include API router
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy", "service": "dashboard-service"}
+
+
+@app.get("/metrics")
+async def metrics():
+    """Prometheus-compatible metrics endpoint."""
+    return Response(
+        content=generate_latest(),
+        media_type=CONTENT_TYPE_LATEST,
+    )
+
+
+# Include API router AFTER fixed system routes so /metrics isn't shadowed
 app.include_router(api_router)
 
 
@@ -119,21 +135,6 @@ async def global_exception_handler(request: Request, exc: Exception):
                 "message": "An unexpected error occurred",
             },
         },
-    )
-
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy", "service": "dashboard-service"}
-
-
-@app.get("/metrics")
-async def metrics():
-    """Prometheus-compatible metrics endpoint."""
-    return Response(
-        content=generate_latest(),
-        media_type=CONTENT_TYPE_LATEST,
     )
 
 

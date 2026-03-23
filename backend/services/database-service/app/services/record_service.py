@@ -8,26 +8,19 @@ import logging
 import uuid
 from typing import Optional
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.services.database_service.app.models.record_model import Record
-from backend.services.database_service.app.repositories.property_repository import (
-    PropertyRepository,
-)
-from backend.services.database_service.app.repositories.record_repository import (
-    RecordRepository,
-)
-from backend.services.database_service.app.schemas.database_schema import (
+from app.models.record_model import Record
+from app.repositories.property_repository import PropertyRepository
+from app.repositories.record_repository import RecordRepository
+from app.schemas.database_schema import (
     RecordCreate,
     RecordFilter,
     RecordSort,
     RecordUpdate,
 )
-from backend.services.database_service.app.services.query_engine import QueryEngine
-from backend.services.database_service.app.services.type_validator import (
-    TypeValidator,
-    ValidationError,
-)
+from app.services.query_engine import QueryEngine
+from app.services.type_validator import TypeValidator, ValidationError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from backend.shared.messaging.producer import publish_event
 
 logger = logging.getLogger(__name__)
@@ -115,9 +108,7 @@ class RecordService:
         record = await self.record_repo.get_by_id(record.id)
 
         # Publish event
-        from backend.services.database_service.app.events.database_events import (
-            RecordCreatedEvent,
-        )
+        from app.events.database_events import RecordCreatedEvent
 
         # Prepare event payload for graph integration
         event_payload = {
@@ -253,9 +244,7 @@ class RecordService:
         record = await self.record_repo.get_by_id(record.id)
 
         # Publish event
-        from backend.services.database_service.app.events.database_events import (
-            RecordUpdatedEvent,
-        )
+        from app.events.database_events import RecordUpdatedEvent
 
         event = RecordUpdatedEvent(
             payload={
@@ -291,9 +280,7 @@ class RecordService:
         await self.record_repo.delete(record)
 
         # Publish event
-        from backend.services.database_service.app.events.database_events import (
-            RecordDeletedEvent,
-        )
+        from app.events.database_events import RecordDeletedEvent
 
         event = RecordDeletedEvent(
             payload={

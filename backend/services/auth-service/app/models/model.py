@@ -121,14 +121,20 @@ class Session(Base, TimestampMixin):
     __table_args__ = (Index("idx_user_id_created", "user_id", "created_at"),)
 
     def is_valid(self) -> bool:
-        """Check if session is still valid."""
+        """Check if session is still valid (handles naive/aware datetimes)."""
         now = datetime.now(timezone.utc)
-        return self.revoked_at is None and now < self.expires_at
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            now = now.replace(tzinfo=None)
+        return self.revoked_at is None and now < expires
 
     def is_expired(self) -> bool:
-        """Check if session has expired."""
+        """Check if session has expired (handles naive/aware datetimes)."""
         now = datetime.now(timezone.utc)
-        return now >= self.expires_at
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            now = now.replace(tzinfo=None)
+        return now >= expires
 
     def revoke(self) -> None:
         """Mark session as revoked (logout)."""
@@ -207,14 +213,20 @@ class PasswordReset(Base):
     )
 
     def is_valid(self) -> bool:
-        """Check if reset token is still valid."""
+        """Check if reset token is still valid (handles naive/aware datetimes)."""
         now = datetime.now(timezone.utc)
-        return self.used_at is None and now < self.expires_at
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            now = now.replace(tzinfo=None)
+        return self.used_at is None and now < expires
 
     def is_expired(self) -> bool:
-        """Check if token has expired."""
+        """Check if token has expired (handles naive/aware datetimes)."""
         now = datetime.now(timezone.utc)
-        return now >= self.expires_at
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            now = now.replace(tzinfo=None)
+        return now >= expires
 
 
 class EmailVerification(Base):
@@ -250,11 +262,17 @@ class EmailVerification(Base):
     )
 
     def is_valid(self) -> bool:
-        """Check if verification token is still valid."""
+        """Check if verification token is still valid (handles naive/aware)."""
         now = datetime.now(timezone.utc)
-        return self.verified_at is None and now < self.expires_at
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            now = now.replace(tzinfo=None)
+        return self.verified_at is None and now < expires
 
     def is_expired(self) -> bool:
-        """Check if token has expired."""
+        """Check if token has expired (handles naive/aware datetimes)."""
         now = datetime.now(timezone.utc)
-        return now >= self.expires_at
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            now = now.replace(tzinfo=None)
+        return now >= expires

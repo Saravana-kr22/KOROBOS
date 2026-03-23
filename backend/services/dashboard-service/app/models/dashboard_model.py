@@ -8,6 +8,9 @@ Licensed under the GNU Affero General Public License v3.
 Dashboard Service ORM models.
 """
 
+import uuid
+
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.shared.database.base_model import Base, TimestampMixin
@@ -24,6 +27,9 @@ class DailySnapshot(Base, TimestampMixin):
 
     __tablename__ = "daily_snapshots"
 
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     user_id: Mapped[str] = mapped_column(nullable=False, index=True)
     snapshot_date: Mapped[str] = mapped_column(nullable=False)  # ISO date string
 

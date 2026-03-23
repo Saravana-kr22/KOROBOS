@@ -66,7 +66,7 @@ class TestGraphServiceCaching:
         source_id = uuid4()
 
         # Create node in database
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Test Note",
@@ -81,7 +81,7 @@ class TestGraphServiceCaching:
         assert result.id == node.id
         assert result.title == "Test Note"
         # Verify cache set was called
-        mock_redis.set.assert_called_once()
+        mock_redis.setex.assert_called_once()
 
     async def test_get_node_cache_hit_returns_cached(self, async_session, mock_redis):
         """Cache hit should return cached node without DB query"""
@@ -89,22 +89,23 @@ class TestGraphServiceCaching:
         user_id = uuid4()
         node_id = uuid4()
 
-        # Mock cached response
+        # Mock cached response (must include all required NodeResponse fields)
         cached_data = {
             "id": str(node_id),
+            "user_id": str(user_id),
             "type": "note",
             "title": "Cached Note",
             "source_id": str(uuid4()),
             "metadata": None,
+            "created_at": "2026-01-01T00:00:00+00:00",
+            "updated_at": "2026-01-01T00:00:00+00:00",
         }
         import json
 
         mock_redis.get.return_value = json.dumps(cached_data)
 
         # Spy on repository to ensure it's not called
-        with patch.object(
-            service._repository, "get_node", new_callable=AsyncMock
-        ) as mock_get:
+        with patch.object(service.repo, "get_node", new_callable=AsyncMock) as mock_get:
             result = await service.get_node(user_id, node_id)
 
             # Should return from cache without calling repository
@@ -118,21 +119,21 @@ class TestGraphServiceCaching:
         source_id = uuid4()
 
         # Create node and neighbors
-        center_node = await service._repository.upsert_node(
+        center_node = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Center",
             source_id=source_id,
         )
 
-        neighbor_node = await service._repository.upsert_node(
+        neighbor_node = await service.repo.upsert_node(
             user_id=user_id,
             type="habit",
             title="Neighbor",
             source_id=uuid4(),
         )
 
-        await service._repository.create_edge(
+        await service.repo.create_edge(
             user_id=user_id,
             source_node_id=center_node.id,
             target_node_id=neighbor_node.id,
@@ -147,7 +148,7 @@ class TestGraphServiceCaching:
         assert result.node.id == center_node.id
         assert len(result.neighbors) == 1
         # Verify cache set was called for neighbors
-        assert mock_redis.set.called
+        assert mock_redis.setex.called
 
     async def test_get_subgraph_with_depth_parameter(self, async_session, mock_redis):
         """Get subgraph should respect depth parameter and cache result"""
@@ -157,7 +158,7 @@ class TestGraphServiceCaching:
         # Create chain: n1 -> n2 -> n3
         nodes = []
         for i in range(3):
-            node = await service._repository.upsert_node(
+            node = await service.repo.upsert_node(
                 user_id=user_id,
                 type="note",
                 title=f"Note {i}",
@@ -166,7 +167,7 @@ class TestGraphServiceCaching:
             nodes.append(node)
 
         for i in range(len(nodes) - 1):
-            await service._repository.create_edge(
+            await service.repo.create_edge(
                 user_id=user_id,
                 source_node_id=nodes[i].id,
                 target_node_id=nodes[i + 1].id,
@@ -207,7 +208,7 @@ class TestGraphServiceCacheInvalidation:
         source_id = uuid4()
 
         # Create and delete node
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Test",
@@ -215,11 +216,11 @@ class TestGraphServiceCacheInvalidation:
         )
 
         mock_redis.get.return_value = None
-        await service._repository.delete_node_by_source(source_id)
+        await service.repo.delete_node_by_source(source_id)
 
         # Cache invalidation happens after delete in service method
         # (would be implemented in service delete wrapper)
-        fetched = await service._repository.get_node(user_id, node.id)
+        fetched = await service.repo.get_node(user_id, node.id)
         assert fetched is None
 
     async def test_upsert_invalidates_existing_node_cache(
@@ -231,7 +232,7 @@ class TestGraphServiceCacheInvalidation:
         source_id = uuid4()
 
         # Create node
-        node1 = await service._repository.upsert_node(
+        node1 = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Original",
@@ -240,7 +241,7 @@ class TestGraphServiceCacheInvalidation:
 
         # Upsert with same source_id
         mock_redis.get.return_value = None
-        node2 = await service._repository.upsert_node(
+        node2 = await service.repo.upsert_node(
             user_id=user_id,
             type="habit",
             title="Updated",
@@ -262,7 +263,7 @@ class TestGraphServiceResponseSchemas:
         user_id = uuid4()
         source_id = uuid4()
 
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Test",
@@ -275,7 +276,7 @@ class TestGraphServiceResponseSchemas:
 
         # Verify response is proper schema
         assert isinstance(result, NodeResponse)
-        assert result.id == str(node.id)
+        assert result.id == node.id
         assert result.type == "note"
         assert result.title == "Test"
 
@@ -286,21 +287,21 @@ class TestGraphServiceResponseSchemas:
         service = GraphService(async_session, mock_redis)
         user_id = uuid4()
 
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Center",
             source_id=uuid4(),
         )
 
-        neighbor = await service._repository.upsert_node(
+        neighbor = await service.repo.upsert_node(
             user_id=user_id,
             type="habit",
             title="Neighbor",
             source_id=uuid4(),
         )
 
-        await service._repository.create_edge(
+        await service.repo.create_edge(
             user_id=user_id,
             source_node_id=node.id,
             target_node_id=neighbor.id,
@@ -323,7 +324,7 @@ class TestGraphServiceResponseSchemas:
         service = GraphService(async_session, mock_redis)
         user_id = uuid4()
 
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Test",
@@ -353,7 +354,7 @@ class TestGraphServiceUserIsolation:
         source_id = uuid4()
 
         # Create node for user1
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user1_id,
             type="note",
             title="User1 Note",
@@ -374,7 +375,7 @@ class TestGraphServiceUserIsolation:
         user1_id = uuid4()
         user2_id = uuid4()
 
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user1_id,
             type="note",
             title="User1 Node",
@@ -394,7 +395,7 @@ class TestGraphServiceUserIsolation:
         user1_id = uuid4()
         user2_id = uuid4()
 
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user1_id,
             type="note",
             title="User1 Node",
@@ -427,7 +428,7 @@ class TestGraphServiceErrorHandling:
         user_id = uuid4()
         source_id = uuid4()
 
-        node = await service._repository.upsert_node(
+        node = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Test",
@@ -455,14 +456,14 @@ class TestGraphServiceStats:
         user_id = uuid4()
 
         # Create 2 nodes of different types
-        note = await service._repository.upsert_node(
+        note = await service.repo.upsert_node(
             user_id=user_id,
             type="note",
             title="Note",
             source_id=uuid4(),
         )
 
-        habit = await service._repository.upsert_node(
+        habit = await service.repo.upsert_node(
             user_id=user_id,
             type="habit",
             title="Habit",
@@ -470,7 +471,7 @@ class TestGraphServiceStats:
         )
 
         # Create edge
-        await service._repository.create_edge(
+        await service.repo.create_edge(
             user_id=user_id,
             source_node_id=note.id,
             target_node_id=habit.id,
@@ -482,7 +483,7 @@ class TestGraphServiceStats:
             total_edges,
             node_types,
             relation_types,
-        ) = await service._repository.get_stats(user_id)
+        ) = await service.repo.get_stats(user_id)
 
         assert total_nodes == 2
         assert total_edges == 1
@@ -497,7 +498,7 @@ class TestGraphServiceStats:
         user2_id = uuid4()
 
         # Create node for user1
-        await service._repository.upsert_node(
+        await service.repo.upsert_node(
             user_id=user1_id,
             type="note",
             title="User1 Note",
@@ -505,7 +506,7 @@ class TestGraphServiceStats:
         )
 
         # Create node for user2
-        await service._repository.upsert_node(
+        await service.repo.upsert_node(
             user_id=user2_id,
             type="note",
             title="User2 Note",
@@ -513,7 +514,7 @@ class TestGraphServiceStats:
         )
 
         # Get stats for user1
-        total_nodes, _, _, _ = await service._repository.get_stats(user1_id)
+        total_nodes, _, _, _ = await service.repo.get_stats(user1_id)
 
         # Should only count user1's node
         assert total_nodes == 1

@@ -6,12 +6,13 @@ Integration tests for the database API endpoints.
 
 import uuid
 
+import httpx
 import pytest
+from app.main import app
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from backend.services.database_service.app.main import app
 from backend.shared.database.base_model import Base
 
 
@@ -37,7 +38,9 @@ async def test_create_database_route():
     """Test POST /databases endpoint."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         response = await client.post(
             "/databases",
             json={
@@ -60,7 +63,9 @@ async def test_list_databases_route():
     """Test GET /databases endpoint."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create a database first
         await client.post(
             "/databases",
@@ -85,7 +90,9 @@ async def test_get_database_route():
     """Test GET /databases/{id} endpoint."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create a database
         create_response = await client.post(
             "/databases",
@@ -111,7 +118,9 @@ async def test_update_database_route():
     """Test PUT /databases/{id} endpoint."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create a database
         create_response = await client.post(
             "/databases",
@@ -137,7 +146,9 @@ async def test_delete_database_route():
     """Test DELETE /databases/{id} endpoint."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create a database
         create_response = await client.post(
             "/databases",
@@ -161,7 +172,9 @@ async def test_unauthorized_access():
     user_id = uuid.uuid4()
     other_user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create database as user 1
         create_response = await client.post(
             "/databases",
@@ -184,7 +197,9 @@ async def test_add_property_route():
     """Test POST /databases/{id}/properties endpoint."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create a database
         create_response = await client.post(
             "/databases",
@@ -214,7 +229,9 @@ async def test_create_record_route():
     """Test POST /databases/{id}/records endpoint."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create a database
         create_db = await client.post(
             "/databases",
@@ -252,7 +269,9 @@ async def test_list_records_route():
     """Test GET /databases/{id}/records endpoint."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create a database
         create_db = await client.post(
             "/databases",

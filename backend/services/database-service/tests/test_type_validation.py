@@ -5,11 +5,7 @@ Tests for the TypeValidator to ensure proper property type validation.
 """
 
 import pytest
-
-from backend.services.database_service.app.services.type_validator import (
-    TypeValidator,
-    ValidationError,
-)
+from app.services.type_validator import TypeValidator, ValidationError
 
 
 class TestTextValidation:

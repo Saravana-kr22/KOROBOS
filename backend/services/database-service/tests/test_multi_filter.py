@@ -6,12 +6,13 @@ Tests for multiple filter support with AND logic.
 
 import uuid
 
+import httpx
 import pytest
+from app.main import app
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from backend.services.database_service.app.main import app
 from backend.shared.database.base_model import Base
 
 
@@ -37,7 +38,9 @@ async def test_single_filter():
     """Test filtering with a single condition."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create database
         db_resp = await client.post(
             "/databases",
@@ -91,7 +94,9 @@ async def test_multiple_filters_and_logic():
     """Test filtering with multiple conditions (AND logic)."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create database
         db_resp = await client.post(
             "/databases",
@@ -162,7 +167,9 @@ async def test_filter_with_contains_operator():
     """Test filtering with contains operator."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create database
         db_resp = await client.post(
             "/databases",
@@ -212,7 +219,9 @@ async def test_mismatched_filter_parameters():
     """Test error when filter parameter counts don't match."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create database
         db_resp = await client.post(
             "/databases",
@@ -241,7 +250,9 @@ async def test_filter_empty_values_ignored():
     """Test that filters with empty values are ignored."""
     user_id = uuid.uuid4()
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as client:
         # Create database
         db_resp = await client.post(
             "/databases",

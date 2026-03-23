@@ -12,6 +12,7 @@ import pytest
 from app.models.model import EmailVerification
 from app.schemas.schema import UserLogin, UserSignup
 from app.services.service_logic import AuthService, hash_password, verify_password
+from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -67,12 +68,9 @@ class TestAuthServiceSignup:
         self, test_db: AsyncSession, test_user_data: dict
     ):
         """Test weak password is rejected."""
-        svc = AuthService(test_db)
         test_user_data["password"] = "weak"
-        signup_data = UserSignup(**test_user_data)
-
-        with pytest.raises(ValueError, match="password"):
-            await svc.signup(signup_data)
+        with pytest.raises(ValidationError):
+            UserSignup(**test_user_data)
 
     async def test_signup_invalid_email_fails(
         self, test_db: AsyncSession, test_user_data: dict

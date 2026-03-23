@@ -7,18 +7,12 @@ Unit tests for database, property, and record repositories.
 import uuid
 
 import pytest
+from app.repositories.database_repository import DatabaseRepository
+from app.repositories.property_repository import PropertyRepository
+from app.repositories.record_repository import RecordRepository
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from backend.services.database_service.app.repositories.database_repository import (
-    DatabaseRepository,
-)
-from backend.services.database_service.app.repositories.property_repository import (
-    PropertyRepository,
-)
-from backend.services.database_service.app.repositories.record_repository import (
-    RecordRepository,
-)
 from backend.shared.database.base_model import Base
 
 

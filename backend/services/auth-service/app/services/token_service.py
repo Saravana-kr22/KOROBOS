@@ -9,7 +9,6 @@ Token service — manages token creation, validation, and session tracking.
 """
 
 import hashlib
-import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from uuid import UUID
@@ -19,7 +18,11 @@ from app.services.metrics import increment_metric
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.shared.auth.jwt_handler import create_access_token, verify_refresh_token
+from backend.shared.auth.jwt_handler import (
+    create_access_token,
+    create_refresh_token,
+    verify_refresh_token,
+)
 
 
 class TokenService:
@@ -56,8 +59,8 @@ class TokenService:
         # Generate tokens
         access_token = create_access_token(str(user_id), email=email, roles=roles)
 
-        # Generate refresh token securely
-        refresh_token_raw = secrets.token_urlsafe(32)
+        # Generate refresh token securely (JWT)
+        refresh_token_raw = create_refresh_token(str(user_id))
         refresh_token_hash = self._hash_token(refresh_token_raw)
 
         # Create session record

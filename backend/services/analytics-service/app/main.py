@@ -132,7 +132,7 @@ app = FastAPI(
 
 # Add middleware in reverse order (innermost first)
 app.add_middleware(MetricsMiddleware)
-app.add_middleware(rate_limit_middleware)
+app.middleware("http")(rate_limit_middleware)
 
 app.include_router(api_router, prefix="/analytics")
 

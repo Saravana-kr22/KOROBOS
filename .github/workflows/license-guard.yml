@@ -50,6 +50,13 @@ jobs:
           cyclonedx-py environment -o ../backend-sbom.json
           cd ..
 
+      - name: Generate Mobile SBOM
+        run: |
+          cd mobile
+          npm install || echo "npm install might have failed but generating sbom"
+          cyclonedx-npm --output-file ../mobile-sbom.json
+          cd ..
+
       - name: Upload SBOMs
         uses: actions/upload-artifact@v4
         with:
@@ -57,6 +64,7 @@ jobs:
           path: |
             frontend-sbom.json
             backend-sbom.json
+            mobile-sbom.json
 
   dependency-scan:
     name: OSS Review Toolkit / License Scanning
@@ -73,12 +81,22 @@ jobs:
           name: sboms
 
       - name: Run License Policy Enforcement Check
-        # Here we parse the generated SBOM and cross-reference `scripts/compliance/license_policy.yml`.
-        # Pseudo code script placeholder since ORT setup takes a dedicated node runtime:
         run: |
-          echo "Scanning SBOM for prohibited licenses against scripts/compliance/license_policy.yml..."
-          # Mock compliance enforcement script
-          echo "Compliance Check Passed."
+          echo "Scanning SBOMs for prohibited licenses against scripts/compliance/license_policy.yml..."
+
+          if [ -f "scripts/compliance/check_licenses.py" ]; then
+            python3 scripts/compliance/check_licenses.py
+            exit_code=$?
+            if [ $exit_code -eq 0 ]; then
+              echo "✅ All dependencies comply with license policy"
+            else
+              echo "❌ License policy violations detected"
+              exit 1
+            fi
+          else
+            echo "⚠️  License check script not found, skipping detailed check"
+            exit 0
+          fi
 
   build-allowed:
     name: Block or Allow Merge

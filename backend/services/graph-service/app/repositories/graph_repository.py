@@ -146,60 +146,48 @@ class GraphRepository:
     async def get_subgraph(
         self, user_id: UUID, node_id: UUID, depth: int = 2
     ) -> tuple[list[GraphNode], list[GraphEdge]]:
-        """Get subgraph using recursive CTE (breadth-first search up to depth)."""
-        # Use recursive CTE to find all nodes within depth hops
-        query = text(
-            """
-        WITH RECURSIVE graph_traversal AS (
-            -- Base case: start node
-            SELECT id, 1 as level
-            FROM graph_nodes
-            WHERE id = :node_id AND user_id = :user_id
+        """Get subgraph using Python-level BFS (portable across all databases)."""
+        visited: set[UUID] = set()
+        current_level: set[UUID] = {node_id}
+        all_nodes: list[GraphNode] = []
+        all_edges: list[GraphEdge] = []
 
-            UNION ALL
+        for level in range(depth + 1):
+            if not current_level:
+                break
 
-            -- Recursive case: follow edges
-            SELECT DISTINCT gn.id, gt.level + 1
-            FROM graph_traversal gt
-            JOIN graph_edges ge ON gt.id = ge.source_node_id
-            JOIN graph_nodes gn ON ge.target_node_id = gn.id
-            WHERE gt.level < :depth AND gn.user_id = :user_id
-        )
-        SELECT DISTINCT gn.id
-        FROM graph_traversal gt
-        JOIN graph_nodes gn ON gt.id = gn.id
-        """
-        )
-
-        # Execute CTE to get node IDs
-        cte_result = await self.session.execute(
-            query,
-            {"node_id": node_id, "user_id": user_id, "depth": depth},
-        )
-        node_ids = [row[0] for row in cte_result.all()]
-
-        if not node_ids:
-            return [], []
-
-        # Fetch all nodes in the subgraph
-        nodes_result = await self.session.execute(
-            select(GraphNode).where(GraphNode.id.in_(node_ids))
-        )
-        nodes = list(nodes_result.scalars().all())
-
-        # Fetch all edges between nodes in the subgraph
-        edges_result = await self.session.execute(
-            select(GraphEdge).where(
-                and_(
-                    GraphEdge.source_node_id.in_(node_ids),
-                    GraphEdge.target_node_id.in_(node_ids),
-                    GraphEdge.user_id == user_id,
+            # Fetch nodes in current level that belong to user
+            nodes_result = await self.session.execute(
+                select(GraphNode).where(
+                    and_(
+                        GraphNode.id.in_(current_level),
+                        GraphNode.user_id == user_id,
+                    )
                 )
             )
-        )
-        edges = list(edges_result.scalars().all())
+            nodes = list(nodes_result.scalars().all())
+            if not nodes:
+                break
+            all_nodes.extend(nodes)
+            visited.update(current_level)
 
-        return nodes, edges
+            if level < depth:
+                # Get outgoing edges from current level nodes
+                edges_result = await self.session.execute(
+                    select(GraphEdge).where(
+                        and_(
+                            GraphEdge.source_node_id.in_(current_level),
+                            GraphEdge.user_id == user_id,
+                        )
+                    )
+                )
+                edges = list(edges_result.scalars().all())
+                all_edges.extend(edges)
+
+                # Next level: target nodes not yet visited
+                current_level = {e.target_node_id for e in edges} - visited
+
+        return all_nodes, all_edges
 
     async def get_stats(self, user_id: UUID) -> tuple[int, int, dict, dict]:
         """Get graph statistics for a user."""

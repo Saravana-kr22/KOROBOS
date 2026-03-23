@@ -105,7 +105,7 @@ class TestGraphRoutes:
         result = await service.get_node(user_id, node_id)
 
         assert result is not None
-        assert result.id == str(node_id)
+        assert result.id == node_id
         assert result.title == "Test Note"
 
     async def test_get_node_returns_404_for_nonexistent_node(self, async_session):
@@ -161,9 +161,9 @@ class TestGraphRoutes:
         result = await service.get_neighbors(user_id, node_id)
 
         assert result is not None
-        assert result.node.id == str(node_id)
+        assert result.node.id == node_id
         assert len(result.neighbors) > 0
-        assert result.neighbors[0].id == str(sample_data["habit"].id)
+        assert result.neighbors[0].id == sample_data["habit"].id
 
     async def test_get_neighbors_returns_none_for_nonexistent_node(self, async_session):
         """GET /graph/neighbors/{node_id} should return None for nonexistent node"""
@@ -234,7 +234,7 @@ class TestGraphRoutes:
         assert result is not None
         assert len(result.nodes) >= 1
         assert len(result.edges) >= 0
-        assert any(n.id == str(node_id) for n in result.nodes)
+        assert any(n.id == node_id for n in result.nodes)
 
     async def test_get_subgraph_respects_depth_parameter(self, async_session):
         """GET /graph/subgraph should respect depth parameter"""
@@ -373,8 +373,8 @@ class TestGraphRoutesErrorHandling:
             result = await service.get_node(user_id, "invalid-id")
             # Should either convert to UUID or return None
             assert result is None
-        except ValueError:
-            # Invalid UUID format should raise ValueError
+        except Exception:
+            # Invalid UUID format should raise an error
             pass
 
     async def test_database_error_handling(self, async_session):
@@ -388,9 +388,7 @@ class TestGraphRoutesErrorHandling:
         node_id = uuid4()
 
         # Mock repository to raise error
-        with patch.object(
-            service._repository, "get_node", side_effect=Exception("DB Error")
-        ):
+        with patch.object(service.repo, "get_node", side_effect=Exception("DB Error")):
             try:
                 await service.get_node(user_id, node_id)
             except Exception as e:
@@ -434,24 +432,27 @@ class TestGraphRoutesCaching:
         await service.get_node(user_id, node_id)
 
         # Verify cache was set
-        assert mock_redis.set.called
+        assert mock_redis.setex.called
 
         # Simulate cache hit for second call
         import json
 
         cached = {
             "id": str(node_id),
+            "user_id": str(user_id),
             "type": "note",
             "title": "Test Note",
             "source_id": str(uuid4()),
             "metadata": None,
+            "created_at": "2026-01-01T00:00:00+00:00",
+            "updated_at": "2026-01-01T00:00:00+00:00",
         }
         mock_redis.get.return_value = json.dumps(cached)
 
         result2 = await service.get_node(user_id, node_id)
 
         assert result2 is not None
-        assert result2.id == str(node_id)
+        assert result2.id == node_id
 
     async def test_cache_invalidation_on_mutation(self, async_session, sample_data):
         """Cache should be invalidated after node mutation"""

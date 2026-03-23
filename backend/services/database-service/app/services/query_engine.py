@@ -16,18 +16,11 @@ Pattern:
 import uuid
 from typing import Optional
 
-from sqlalchemy import and_, case, exists, func, literal, select
+from app.models.record_model import Record, RecordValue
+from app.schemas.database_schema import RecordFilter, RecordSort
+from sqlalchemy import Float, and_, case, cast, exists, func, literal, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload
-
-from backend.services.database_service.app.models.record_model import (
-    Record,
-    RecordValue,
-)
-from backend.services.database_service.app.schemas.database_schema import (
-    RecordFilter,
-    RecordSort,
-)
 
 
 class QueryEngine:
@@ -130,26 +123,26 @@ class QueryEngine:
         elif filter_spec.operator == "gt":
             try:
                 float_val = float(filter_spec.value)
-                subq = subq.where(func.cast(rv.value, float) > float_val)
+                subq = subq.where(cast(rv.value, Float) > float_val)
             except (ValueError, TypeError):
                 # Non-numeric value for numeric operator
                 subq = subq.where(literal(False))
         elif filter_spec.operator == "lt":
             try:
                 float_val = float(filter_spec.value)
-                subq = subq.where(func.cast(rv.value, float) < float_val)
+                subq = subq.where(cast(rv.value, Float) < float_val)
             except (ValueError, TypeError):
                 subq = subq.where(literal(False))
         elif filter_spec.operator == "gte":
             try:
                 float_val = float(filter_spec.value)
-                subq = subq.where(func.cast(rv.value, float) >= float_val)
+                subq = subq.where(cast(rv.value, Float) >= float_val)
             except (ValueError, TypeError):
                 subq = subq.where(literal(False))
         elif filter_spec.operator == "lte":
             try:
                 float_val = float(filter_spec.value)
-                subq = subq.where(func.cast(rv.value, float) <= float_val)
+                subq = subq.where(cast(rv.value, Float) <= float_val)
             except (ValueError, TypeError):
                 subq = subq.where(literal(False))
 

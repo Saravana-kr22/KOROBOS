@@ -55,7 +55,7 @@ class GraphNode(Base, TimestampMixin):
         return f"<GraphNode id={self.id} type={self.type} title={self.title}>"
 
 
-class GraphEdge(Base):
+class GraphEdge(Base, TimestampMixin):
     """Graph edges — relationships between nodes."""
 
     __tablename__ = "graph_edges"

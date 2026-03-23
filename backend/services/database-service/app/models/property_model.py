@@ -10,15 +10,15 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Optional
 
+from sqlalchemy import JSON as JSONB
 from sqlalchemy import ForeignKey, Integer, String
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.shared.database.base_model import Base
 
 if TYPE_CHECKING:
-    from backend.services.database_service.app.models.database_model import Database
-    from backend.services.database_service.app.models.record_model import RecordValue
+    from app.models.database_model import Database
+    from app.models.record_model import RecordValue
 
 
 class Property(Base):

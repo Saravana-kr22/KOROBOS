@@ -10,16 +10,52 @@ Pytest configuration and fixtures for Auth Service tests.
 
 import asyncio
 from typing import AsyncGenerator
+from unittest.mock import AsyncMock, patch
 
+import bcrypt
 import pytest
 import pytest_asyncio
 from app.main import app
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import StaticPool
 
 from backend.shared.database.base_model import Base
 from backend.shared.database.connection import get_db_session
+
+# -- Passlib/Bcrypt 4.0+ Compatibility Patch --
+_original_hashpw = bcrypt.hashpw
+
+
+def _patched_hashpw(password, salt):
+    if isinstance(password, str):
+        password = password.encode("utf-8")
+    return _original_hashpw(password[:72], salt)
+
+
+bcrypt.hashpw = _patched_hashpw
+# ---------------------------------------------
+
+
+@pytest.fixture(autouse=True)
+def mock_external_services():
+    """Mock external services like Kafka and Email."""
+    with patch(
+        "backend.shared.messaging.producer.publish_event", new_callable=AsyncMock
+    ) as mock_publish, patch(
+        "app.services.email_service.send_verification_email", new_callable=AsyncMock
+    ) as mock_verify_email, patch(
+        "app.services.email_service.send_password_reset_email", new_callable=AsyncMock
+    ) as mock_reset_email, patch(
+        "backend.shared.messaging.producer.get_producer", new_callable=AsyncMock
+    ) as mock_get_producer:
+        mock_get_producer.return_value = AsyncMock()
+        yield {
+            "publish_event": mock_publish,
+            "send_verification_email": mock_verify_email,
+            "send_password_reset_email": mock_reset_email,
+        }
+
 
 # Use in-memory SQLite for testing
 TEST_SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -73,7 +109,9 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
 
     app.dependency_overrides[get_db_session] = override_get_db
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
         yield ac
 
     app.dependency_overrides.clear()

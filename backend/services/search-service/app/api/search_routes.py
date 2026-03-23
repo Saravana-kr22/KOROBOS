@@ -14,7 +14,7 @@ import redis.asyncio as aioredis
 from app.api.rate_limit import RateLimiter
 from app.schemas.search_schema import SearchQuery, SearchResponse, SuggestResponse
 from app.services.search_service import SearchService
-from fastapi import APIRouter, Depends, Header, Query
+from fastapi import APIRouter, Depends, Header, Query, Request
 from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/search", tags=["Search"])
@@ -25,7 +25,7 @@ async def _get_user_id(x_user_id: str = Header(...)) -> str:
     return x_user_id
 
 
-async def _get_redis(request) -> aioredis.Redis:
+async def _get_redis(request: Request) -> aioredis.Redis:
     """Get Redis client from app state."""
     return request.app.state.redis
 
@@ -37,7 +37,7 @@ async def _get_redis(request) -> aioredis.Redis:
     description="Search across all domains with keyword and optional type filter",
 )
 async def search(
-    request,
+    request: Request,
     q: str = Query(..., description="Search query"),
     type: str | None = Query(None, description="Filter by type"),
     limit: int = Query(20, ge=1, le=50),
@@ -97,7 +97,7 @@ async def search(
     description="Search with date range, tags, and type filters",
 )
 async def search_advanced(
-    request,
+    request: Request,
     q: str = Query(..., description="Search query"),
     type: str | None = Query(None, description="Filter by type"),
     date_from: datetime | None = Query(
@@ -171,7 +171,7 @@ async def search_advanced(
     description="Get search suggestions based on note titles",
 )
 async def suggest(
-    request,
+    request: Request,
     q: str = Query(..., description="Partial search query for suggestions"),
     x_user_id: str = Depends(_get_user_id),
 ) -> SuggestResponse:

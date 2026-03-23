@@ -245,9 +245,15 @@ class GraphEventConsumer(BaseEventConsumer):
     ) -> None:
         """Upsert a node in the graph database."""
         # Import here to avoid circular imports
+        # Handle hyphenated module name using importlib
+        from importlib import import_module
+
         from sqlalchemy import and_, select
 
-        from backend.services.graph_service.app.models.graph_model import GraphNode
+        graph_models = import_module(
+            "backend.services.graph-service.app.models.graph_model"
+        )
+        GraphNode = graph_models.GraphNode
 
         session = await self._get_session()
         try:
@@ -286,9 +292,15 @@ class GraphEventConsumer(BaseEventConsumer):
 
     async def _delete_node_by_source(self, source_id: UUID) -> None:
         """Delete a node by source_id."""
+        # Handle hyphenated module name using importlib
+        from importlib import import_module
+
         from sqlalchemy import select
 
-        from backend.services.graph_service.app.models.graph_model import GraphNode
+        graph_models = import_module(
+            "backend.services.graph-service.app.models.graph_model"
+        )
+        GraphNode = graph_models.GraphNode
 
         session = await self._get_session()
         try:

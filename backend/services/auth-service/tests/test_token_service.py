@@ -33,7 +33,7 @@ class TestTokenServiceCreateTokens:
         await test_db.flush()
 
         token_svc = TokenService(test_db)
-        tokens = await token_svc.create_tokens(user.id, roles=["user"])
+        tokens = await token_svc.create_tokens(user.id, user.email, roles=["user"])
 
         assert "access_token" in tokens
         assert "refresh_token" in tokens
@@ -53,7 +53,7 @@ class TestTokenServiceCreateTokens:
         await test_db.flush()
 
         token_svc = TokenService(test_db)
-        tokens = await token_svc.create_tokens(user.id, roles=["user"])
+        tokens = await token_svc.create_tokens(user.id, user.email, roles=["user"])
 
         # Verify token
         payload = verify_token(tokens["access_token"])
@@ -72,7 +72,7 @@ class TestTokenServiceCreateTokens:
         await test_db.flush()
 
         token_svc = TokenService(test_db)
-        tokens = await token_svc.create_tokens(user.id, roles=["user"])
+        tokens = await token_svc.create_tokens(user.id, user.email, roles=["user"])
 
         # Verify refresh token
         payload = verify_refresh_token(tokens["refresh_token"])
@@ -93,6 +93,7 @@ class TestTokenServiceCreateTokens:
         token_svc = TokenService(test_db)
         await token_svc.create_tokens(
             user.id,
+            user.email,
             roles=["user"],
             device_info={"type": "mobile", "os": "iOS"},
             ip_address="192.168.1.1",
@@ -132,7 +133,7 @@ class TestTokenServiceRefresh:
         token_svc = TokenService(test_db)
 
         # Create initial tokens
-        tokens = await token_svc.create_tokens(user.id, roles=["user"])
+        tokens = await token_svc.create_tokens(user.id, user.email, roles=["user"])
         await test_db.commit()
 
         # Refresh the token
@@ -163,7 +164,7 @@ class TestTokenServiceRefresh:
         token_svc = TokenService(test_db)
 
         # Create tokens
-        tokens = await token_svc.create_tokens(user.id, roles=["user"])
+        tokens = await token_svc.create_tokens(user.id, user.email, roles=["user"])
         await test_db.commit()
 
         # Revoke the session
@@ -189,7 +190,7 @@ class TestTokenServiceRefresh:
         token_svc = TokenService(test_db)
 
         # Create tokens
-        tokens = await token_svc.create_tokens(user.id, roles=["user"])
+        tokens = await token_svc.create_tokens(user.id, user.email, roles=["user"])
         await test_db.commit()
 
         # Deactivate user
@@ -220,8 +221,8 @@ class TestTokenServiceRevoke:
         token_svc = TokenService(test_db)
 
         # Create two sessions
-        tokens1 = await token_svc.create_tokens(user.id, roles=["user"])
-        tokens2 = await token_svc.create_tokens(user.id, roles=["user"])
+        tokens1 = await token_svc.create_tokens(user.id, user.email, roles=["user"])
+        tokens2 = await token_svc.create_tokens(user.id, user.email, roles=["user"])
         await test_db.commit()
 
         # Revoke first session
@@ -250,8 +251,8 @@ class TestTokenServiceRevoke:
         token_svc = TokenService(test_db)
 
         # Create two sessions
-        tokens1 = await token_svc.create_tokens(user.id, roles=["user"])
-        tokens2 = await token_svc.create_tokens(user.id, roles=["user"])
+        tokens1 = await token_svc.create_tokens(user.id, user.email, roles=["user"])
+        tokens2 = await token_svc.create_tokens(user.id, user.email, roles=["user"])
         await test_db.commit()
 
         # Revoke all sessions
@@ -285,10 +286,10 @@ class TestTokenServiceGetSessions:
 
         # Create two sessions
         await token_svc.create_tokens(
-            user.id, roles=["user"], device_info={"type": "web"}
+            user.id, user.email, roles=["user"], device_info={"type": "web"}
         )
         await token_svc.create_tokens(
-            user.id, roles=["user"], device_info={"type": "mobile"}
+            user.id, user.email, roles=["user"], device_info={"type": "mobile"}
         )
         await test_db.commit()
 
@@ -313,8 +314,8 @@ class TestTokenServiceGetSessions:
         token_svc = TokenService(test_db)
 
         # Create two sessions
-        tokens1 = await token_svc.create_tokens(user.id, roles=["user"])
-        await token_svc.create_tokens(user.id, roles=["user"])
+        tokens1 = await token_svc.create_tokens(user.id, user.email, roles=["user"])
+        await token_svc.create_tokens(user.id, user.email, roles=["user"])
         await test_db.commit()
 
         # Revoke first

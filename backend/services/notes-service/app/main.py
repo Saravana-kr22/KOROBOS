@@ -15,35 +15,12 @@ from app.api.notes_routes import router as api_router
 from app.config.settings import get_settings
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
-from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from backend.shared.logging.logger import get_logger
 from backend.shared.messaging.producer import close_producer, get_producer
 
 logger = get_logger("notes-service")
-
-# -- Prometheus metrics (Sprint 6 §22) --
-
-NOTES_CREATED = Counter(
-    "notes_created_total",
-    "Total number of notes created",
-    ["service"],
-)
-NOTES_UPDATED = Counter(
-    "notes_updated_total",
-    "Total number of notes updated",
-    ["service"],
-)
-NOTES_DELETED = Counter(
-    "notes_deleted_total",
-    "Total number of notes deleted",
-    ["service"],
-)
-REQUEST_LATENCY = Histogram(
-    "notes_request_duration_seconds",
-    "HTTP request latency for notes endpoints",
-    ["method", "endpoint"],
-)
 
 
 @asynccontextmanager

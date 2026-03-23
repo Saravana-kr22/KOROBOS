@@ -8,9 +8,11 @@ Licensed under the GNU Affero General Public License v3.
 Notification Service — reminders and alerts microservice.
 """
 
+import asyncio
 from contextlib import asynccontextmanager
 
 from app.api.routes import router as api_router
+from app.events.ai_consumer import AIInteractionConsumer
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -19,15 +21,38 @@ from backend.shared.messaging.producer import close_producer, get_producer
 
 logger = get_logger("notification-service")
 
+# Global AI consumer instance for lifespan management
+_ai_consumer: AIInteractionConsumer | None = None
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global _ai_consumer
     logger.info("Notification Service starting up")
     try:
         await get_producer()
     except Exception as exc:
         logger.warning("Kafka producer unavailable: %s", exc)
+
+    # Start AI consumer for push notifications
+    try:
+        _ai_consumer = AIInteractionConsumer()
+        asyncio.create_task(_ai_consumer.start())
+        logger.info("AI interaction consumer started")
+    except Exception as exc:
+        logger.warning("AI consumer failed to start: %s", exc)
+        _ai_consumer = None
+
     yield
+
+    # Stop AI consumer
+    if _ai_consumer:
+        try:
+            await _ai_consumer.stop()
+            logger.info("AI interaction consumer stopped")
+        except Exception as exc:
+            logger.warning("Error stopping AI consumer: %s", exc)
+
     await close_producer()
     logger.info("Notification Service shutting down")
 

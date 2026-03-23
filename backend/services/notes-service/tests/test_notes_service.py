@@ -10,7 +10,7 @@ Unit tests for NotesService business logic.
 
 import pytest
 from app.schemas.schema import NoteCreate, NoteUpdate
-from app.services.service_logic import NotesService
+from app.services.notes_service import NotesService
 
 # -- Create --
 
@@ -168,7 +168,7 @@ async def test_list_notes_pagination(db_session, mock_publish, sample_user_id):
         )
     await db_session.commit()
 
-    notes, total = await svc.list_notes(sample_user_id, offset=0, limit=3)
+    notes, total = await svc.list_notes(sample_user_id, page=1, limit=3)
     assert total == 5
     assert len(notes) == 3
 

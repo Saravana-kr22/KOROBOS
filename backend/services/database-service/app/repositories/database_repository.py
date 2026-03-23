@@ -7,10 +7,12 @@ Data access layer for databases.
 import uuid
 from typing import Optional
 
+from app.models.database_model import Database
+from app.models.record_model import Record
+from sqlalchemy import delete as sql_delete
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from backend.services.database_service.app.models.database_model import Database
+from sqlalchemy.orm import selectinload
 
 
 class DatabaseRepository:
@@ -45,7 +47,13 @@ class DatabaseRepository:
         )
         self.session.add(db)
         await self.session.flush()
-        return db
+        # Re-fetch with relationships eagerly loaded
+        result = await self.session.execute(
+            select(Database)
+            .options(selectinload(Database.properties), selectinload(Database.records))
+            .where(Database.id == db.id)
+        )
+        return result.scalar_one()
 
     async def get_by_id(self, db_id: uuid.UUID) -> Optional[Database]:
         """Fetch a database by ID with eager-loaded properties.
@@ -56,7 +64,11 @@ class DatabaseRepository:
         Returns:
             Database instance or None if not found
         """
-        stmt = select(Database).where(Database.id == db_id)
+        stmt = (
+            select(Database)
+            .options(selectinload(Database.properties), selectinload(Database.records))
+            .where(Database.id == db_id)
+        )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
@@ -85,9 +97,10 @@ class DatabaseRepository:
         total = await self.session.execute(count_stmt)
         total_count = total.scalar_one()
 
-        # Fetch paginated
+        # Fetch paginated with eager-loaded relationships
         stmt = (
             select(Database)
+            .options(selectinload(Database.properties), selectinload(Database.records))
             .where(Database.user_id == user_id)
             .order_by(Database.created_at.desc())
             .offset(offset)
@@ -116,7 +129,8 @@ class DatabaseRepository:
             if value is not None and hasattr(db, key):
                 setattr(db, key, value)
         await self.session.flush()
-        return db
+        # Reload with relationships after update
+        return await self.get_by_id(db.id)
 
     async def delete(self, db: Database) -> None:
         """Delete a database.
@@ -124,5 +138,10 @@ class DatabaseRepository:
         Args:
             db: Database instance to delete
         """
+        # Explicitly delete child records first (SQLite doesn't enforce FK
+        # cascades by default)
+        await self.session.execute(
+            sql_delete(Record).where(Record.database_id == db.id)
+        )
         await self.session.delete(db)
         await self.session.flush()

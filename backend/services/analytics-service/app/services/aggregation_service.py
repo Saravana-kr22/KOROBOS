@@ -143,10 +143,10 @@ class AggregationService:
         Calculated as: 1.0 - (std_dev / mean), clamped to [0, 1]
         """
         values = await asyncio.gather(
-            self.metrics.get_metric_range(user_id, "habit_completion_rate", limit=7),
-            self.metrics.get_metric_range(user_id, "learning_hours", limit=7),
-            self.metrics.get_metric_range(user_id, "calorie_intake", limit=7),
-            self.metrics.get_metric_range(user_id, "notes_created", limit=7),
+            self.metrics.get_metric_range(user_id, "habit_completion_rate", days=7),
+            self.metrics.get_metric_range(user_id, "learning_hours", days=7),
+            self.metrics.get_metric_range(user_id, "calorie_intake", days=7),
+            self.metrics.get_metric_range(user_id, "notes_created", days=7),
         )
 
         consistency = {}

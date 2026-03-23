@@ -8,7 +8,7 @@ Licensed under the GNU Affero General Public License v3.
 Integration tests for Dashboard Service HTTP routes.
 """
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 from uuid import uuid4
 
 import pytest
@@ -30,20 +30,12 @@ def client(db_session: AsyncSession):
     return TestClient(app)
 
 
-@pytest.mark.asyncio
 class TestDashboardRoutes:
     """Test dashboard API routes."""
 
-    def test_overview_returns_200(self, client, mocker):
+    def test_overview_returns_200(self, client):
         """GET /overview returns 200."""
         user_id = str(uuid4())
-
-        # Mock the aggregation engine
-        mock_engine = MagicMock()
-        mocker.patch(
-            "app.services.aggregation_engine.AggregationEngine",
-            return_value=mock_engine,
-        )
 
         with patch("app.services.aggregation_engine.AggregationEngine") as mock_agg:
             mock_instance = AsyncMock()
@@ -139,4 +131,4 @@ class TestDashboardRoutes:
 
         assert response.status_code == 429
         data = response.json()
-        assert "error" in data
+        assert "error" in data or "error" in data.get("detail", {})

@@ -8,21 +8,13 @@ import logging
 import uuid
 from typing import Optional
 
+from app.models.database_model import Database
+from app.models.property_model import Property
+from app.repositories.database_repository import DatabaseRepository
+from app.repositories.property_repository import PropertyRepository
+from app.schemas.database_schema import DatabaseCreate, DatabaseUpdate, PropertyCreate
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.services.database_service.app.models.database_model import Database
-from backend.services.database_service.app.models.property_model import Property
-from backend.services.database_service.app.repositories.database_repository import (
-    DatabaseRepository,
-)
-from backend.services.database_service.app.repositories.property_repository import (
-    PropertyRepository,
-)
-from backend.services.database_service.app.schemas.database_schema import (
-    DatabaseCreate,
-    DatabaseUpdate,
-    PropertyCreate,
-)
 from backend.shared.messaging.producer import publish_event
 
 logger = logging.getLogger(__name__)
@@ -61,9 +53,7 @@ class DatabaseService:
         )
 
         # Publish event
-        from backend.services.database_service.app.events.database_events import (
-            DatabaseCreatedEvent,
-        )
+        from app.events.database_events import DatabaseCreatedEvent
 
         event = DatabaseCreatedEvent(
             payload={

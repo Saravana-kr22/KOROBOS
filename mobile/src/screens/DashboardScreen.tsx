@@ -16,23 +16,34 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LineChart } from "react-native-chart-kit";
 import { useFocusEffect } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { analyticsApi, AnalyticsOverview } from "../services/analyticsApi";
+import { getSummary } from "../api/aiApi";
 
 const DashboardScreen = () => {
+  const router = useRouter();
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [summary, setSummary] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isStale, setIsStale] = useState(false);
 
   const loadDashboard = useCallback(async () => {
     try {
-      const overviewData = await analyticsApi.getOverview();
+      const [overviewData, summaryData] = await Promise.all([
+        analyticsApi.getOverview(),
+        getSummary().catch(() => null),
+      ]);
       setOverview(overviewData);
+      if (summaryData) {
+        setSummary(summaryData.summary);
+      }
       setIsStale(false);
 
       // Cache to AsyncStorage on success
@@ -97,6 +108,24 @@ const DashboardScreen = () => {
             📡 Showing cached data (offline mode)
           </Text>
         </View>
+      )}
+
+      {/* Insight Highlights Card */}
+      {summary && (
+        <TouchableOpacity
+          style={styles.insightCard}
+          onPress={() => router.push("/ai/insights")}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.insightCardIcon}>🧠</Text>
+          <View style={styles.insightCardContent}>
+            <Text style={styles.insightCardTitle}>AI Insight Highlight</Text>
+            <Text style={styles.insightCardText} numberOfLines={2}>
+              {summary}
+            </Text>
+            <Text style={styles.insightCardCTA}>View all insights →</Text>
+          </View>
+        </TouchableOpacity>
       )}
 
       {/* Overview Card */}
@@ -180,6 +209,40 @@ const styles = StyleSheet.create({
     color: "#856404",
     fontSize: 13,
     fontWeight: "500",
+  },
+  insightCard: {
+    flexDirection: "row",
+    backgroundColor: "#f0f4ff",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: "#3b82f6",
+    alignItems: "flex-start",
+  },
+  insightCardIcon: {
+    fontSize: 32,
+    marginRight: 12,
+  },
+  insightCardContent: {
+    flex: 1,
+  },
+  insightCardTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#1e40af",
+    marginBottom: 4,
+  },
+  insightCardText: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: "#333",
+    marginBottom: 8,
+  },
+  insightCardCTA: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#3b82f6",
   },
   card: {
     backgroundColor: "#f8f9fa",

@@ -470,10 +470,14 @@ class SearchService:
     def _cache_key(self, prefix: str, user_id: str, query: Any) -> str:
         """Generate a Redis cache key for a query."""
         if isinstance(query, str):
-            query_hash = hashlib.md5(query.encode()).hexdigest()[:8]
+            query_hash = hashlib.md5(query.encode(), usedforsecurity=False).hexdigest()[
+                :8
+            ]
         else:
-            query_str = json.dumps(query.model_dump(), sort_keys=True)
-            query_hash = hashlib.md5(query_str.encode()).hexdigest()[:8]
+            query_str = json.dumps(query.model_dump(mode="json"), sort_keys=True)
+            query_hash = hashlib.md5(
+                query_str.encode(), usedforsecurity=False
+            ).hexdigest()[:8]
         return f"{prefix}:{user_id}:{query_hash}"
 
     def _meilisearch_headers(self) -> dict[str, str]:
