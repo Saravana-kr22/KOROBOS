@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/saravana-kr22/korobos/api-gateway
   pullPolicy: IfNotPresent
-  tag: "sha-31aa5e3"
+  tag: sha-bf70f54
 
 nameOverride: ""
 fullnameOverride: ""
