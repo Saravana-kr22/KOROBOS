@@ -141,8 +141,6 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
           extra_args: --only-verified
         continue-on-error: false
 
@@ -285,6 +283,7 @@ jobs:
           files: ./backend/coverage.xml
           flags: backend
           name: backend-coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
         continue-on-error: true
 
   # ============================================================================
